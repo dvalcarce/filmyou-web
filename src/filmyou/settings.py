@@ -2,7 +2,8 @@
 import os
 
 
-DEBUG = False
+DEBUG = True
+PRODUCTION = False
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
@@ -13,8 +14,9 @@ MANAGERS = ADMINS
 
 ROOT_PATH = os.path.abspath(os.path.curdir)
 
-DATABASES = {
-    'default': {
+if PRODUCTION:
+    DATABASES = {
+        'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
         'NAME': 'recommender',                      # Or path to database file if using sqlite3.
         # The following settings are not used with sqlite3:
@@ -22,8 +24,20 @@ DATABASES = {
         'PASSWORD': os.environ.get("FILMYOU_DB_PASSWORD", ''),
         'HOST': '127.0.0.1',                      # Empty for localhost through domain sockets or '127.0.0.1' for localhost through TCP.
         'PORT': '5432',                      # Set to empty string for default.
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+        'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
+        'NAME': 'recommender.db',                      # Or path to database file if using sqlite3.
+        # The following settings are not used with sqlite3:
+        'USER': '',
+        'PASSWORD': '',
+        'HOST': '',                      # Empty for localhost through domain sockets or '127.0.0.1' for localhost through TCP.
+        'PORT': '',                      # Set to empty string for default.
+        }
+    }
 
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
@@ -127,10 +141,27 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     # Uncomment the next line to enable the admin:
-    # 'django.contrib.admin',
+    'django.contrib.admin',
+    'registration',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
 )
+
+# This is the number of days users will have to activate
+# their accounts after registering.
+ACCOUNT_ACTIVATION_DAYS = 7
+
+# The URL where requests are redirected after login
+# when there is no next parameter.
+LOGIN_REDIRECT_URL = '/'
+
+# A dictionary mapping "app_label.model_name" strings to
+# functions that take a model object and return its URL.
+# This is a way of overriding get_absolute_url() methods
+# on a per-installation basis.
+ABSOLUTE_URL_OVERRIDES = {
+    'auth.user': lambda o: "/", # % o.username,
+}
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to

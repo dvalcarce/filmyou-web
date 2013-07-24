@@ -1,20 +1,72 @@
+{% load i18n %}
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
     <meta charset="utf-8">
-    <title>FilmYou</title>
-    <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+    <title>Bootstrap, from Twitter</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="/static/css/bootstrap-responsive.min.css" rel="stylesheet">
-    {% block prehead %} {% endblock %}
-    {% block head %} {% endblock %}
-    {% block posthead %} {% endblock %}
-</head>
-<body>
-{% block header %} {% endblock %}
-<div class="container">
-    {% block body %} {% endblock %}
-    {% block footer %} {% endblock %}
-</div>
-</body>
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <!-- Le styles -->
+    <link rel="shortcut icon" href="http://twitter.github.com/bootstrap/assets/ico/favicon.ico">
+    <link href="{{ STATIC_URL }}css/bootstrap.min.css" rel="stylesheet">
+    <style type="text/css">
+      body {
+        padding-top: 60px;
+        padding-bottom: 40px;
+      }
+    </style>
+    <link href="{{ STATIC_URL }}css/bootstrap-responsive.min.css" rel="stylesheet">
+  </head>
+
+  <body>
+
+    <div class="navbar navbar-fixed-top">
+        <div class="navbar-inner">
+            <div class="container">
+                <a class="btn btn-navbar" data-toggle="collapse" data-target=".navbar-responsive-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </a>
+                <a class="brand" href="{% url 'filmyou.views.home' %}">FilmYou</a>
+                <div class="nav-collapse collapse navbar-responsive-collapse">
+                    <ul class="nav">
+                        <li><a href="/">{% trans 'About' %}</a></li>
+                        <li><a href="/admin">Admin</a></li>
+                    </ul>
+                    
+                    {% if user.is_authenticated %}
+                        <ul class="nav pull-right">
+                            <span class="label label-inverse">{% trans 'Hello' %} {{ user.username }},</span>
+                            <li class="divider-vertical"></li>
+                            <a href="{% url 'django.contrib.auth.views.password_change' %}">{% trans "Change password" %}</a>
+                            <a class="btn btn-inverse" href="{% url 'django.contrib.auth.views.logout' %}">{% trans 'Leave' %}</a>
+                        </ul>
+
+                    {% else %}
+                    <form class="navbar-form pull-right" action="{% url 'django.contrib.auth.views.login' %}" method="post">
+                        {% csrf_token %}
+                        <input type="text" class="input-small" id="id_username" placeholder="{% trans 'Username' %}">
+                        <input type="password" class="input-small" id="id_password" placeholder="{% trans 'Password' %}">
+                        <button type="submit" class="btn">{% trans 'Log in' %}</button>
+                    </form>
+                    {% endif %}
+                </div><!-- /.nav-collapse -->
+            </div>
+        </div><!-- /navbar-inner -->
+    </div>
+
+    <div class="container">
+    {% block container %}
+    {% endblock %}
+    <hr>
+    <footer>
+        <p>Footer</p>
+    </footer>
+    </div> <!-- /container -->
+    <script src="{{ STATIC_URL }}js/jquery.min.js"></script>
+    <script src="{{ STATIC_URL }}js/bootstrap.min.js"></script>
+
+  </body>
 </html>

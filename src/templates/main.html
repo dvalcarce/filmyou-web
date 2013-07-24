@@ -1,4 +1,4 @@
-{% extends "page.html" %}
+{% extends "base.html" %}
 {% load i18n %}
 
 {% block head %}
@@ -21,13 +21,11 @@
 </style>
 {% endblock %}
 
-{% block body %}
-<div class="container">
+{% block container %}
     <!-- Jumbotron -->
     <div class="jumbotron">
         <h1>{{ title }}</h1>
 
         <p class="lead">FilmYou is just awesome.</p>
     </div>
-</div>
 {% endblock %}

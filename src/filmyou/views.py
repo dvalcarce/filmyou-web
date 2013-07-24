@@ -8,7 +8,7 @@ def home(request):
     """
     Renders homepage
     """
-    c = {'title': "Homepage", 'footer': footer, 'request': request}
+    c = {'title': "FilmYou", 'footer': footer, 'request': request}
 
     return render_to_response('main.html', c, context_instance=RequestContext(request))
 
