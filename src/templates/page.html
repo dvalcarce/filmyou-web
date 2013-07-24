@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block prehead %}
+<style type="text/css">
+    body {
+        padding-top: 60px;
+        padding-bottom: 40px;
+    }
+
+    .container {
+        margin: 0 auto;
+        max-width: 1000px;
+    }
+
+    .container > hr {
+        margin: 60px 0;
+    }
+</style>
+{% endblock %}
+
+{% block header %}
+<div class="navbar navbar-inverse navbar-fixed-top">
+    <div class="navbar-inner">
+        <div class="container">
+            <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="brand" href="/">Shogun Bakufu</a>
+
+            <div class="nav-collapse collapse">
+                <ul class="nav">
+                    <li><a href="{% url 'pages.views.upload' %}">{% trans 'Upload' %}</a></li>
+                    <li><a href="/">{% trans 'About' %}</a></li>
+                    <!--<li><a href="/admin">Admin</a></li>-->
+                </ul>
+                {% if user.is_authenticated %}
+                <form class="navbar-form pull-right">
+                    <a href="/accounts/logout" class="btn">{% trans 'Log out' %}</a>
+                </form>
+                {% else %}
+                <form class="navbar-form pull-right">
+                    <a href="/accounts/login?next={% firstof request.path '/' %}" class="btn">{% trans 'Log in' %}</a>
+                    <a href="/accounts/register?next={% firstof request.path '/' %}" class="btn">{% trans 'Register' %}</a>
+                </form>
+                {% endif %}
+
+            </div>
+            <!--/.nav-collapse -->
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block footer %}
+<hr>
+<footer>
+    <p>{{ footer }}</p>
+</footer> <!-- /footer -->
+{% endblock %}
