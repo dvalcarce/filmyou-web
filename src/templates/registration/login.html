@@ -1,34 +1,39 @@
 {% extends 'base.html' %}
 {% load i18n %}
 
-{% block container %}
-    <div class="content">
-        {% if form.errors %}
-            <div class="alert alert-block fade in">
-                <a class="close" data-dismiss="alert" href="#">×</a>
-                <p><strong>{% trans "Oh snap!" %}</strong> {% trans "Please enter a correct username and password. Note that both fields are case-sensitive." %}</p>
-            </div>
-        {% endif %}
-        <form action="{% url 'django.contrib.auth.views.login' %}" method="post" id="login-form">{% csrf_token %}
-            <fieldset>
-                <legend>{% trans 'Log in' %}</legend>
-                {% for field in form %}
-                    {% include 'registration/form_field.html' %}
-                {% endfor %}
-                <div class="actions">
-                    <input type="submit" class="btn primary" value="{% trans 'Log in' %}">&nbsp;<button type="reset" class="btn">{% trans 'Cancel' %}</button>
+{% block content %}
+    {% if form.errors %}
+        <div class="alert alert-block">
+            <h4>{% trans 'Bad username or password' %}</h4>
+            <p>{% trans 'Please, check your data. Note that both fields are case-sensitive.' %}</p>
+        </div>
+    {% endif %}
+
+   <form action="{% url 'django.contrib.auth.views.login' %}" method="post" id="login-form">
+        {% csrf_token %}
+            <legend>{% trans 'Log in' %}</legend>
+            {% for field in form %}
+                <div class="form-group {% if field.errors %} has-error{% endif %}">
+                    <label class="control-label" for="id_{{ field.html_name }}">{{ field.label }}</label>
+                    <input id="id_{{ field.html_name }}" type="{% if field.html_name == 'password' %}password{% else %}text{% endif %}" name="{{ field.html_name }}" class="form-control" >
+                    <span class="help-block">{{ field.errors.as_text }}</span>
                 </div>
-            </fieldset>
-        </form>
-        <p><a href="{% url 'django.contrib.auth.views.password_reset' %}">{% trans "Reset my password" %}</a></p>
-        <script type="text/javascript">
-            $(function(){
-                $(".alert-message").alert();
-                $('#mainForm').submit(function(){
-                    $('#submit').button('loading');
-                })
-            });
-            document.forms[1].elements[2].focus();
-        </script>
-    </div>
+            {% endfor %}
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox"> {% trans 'Remember me' %}
+                </label>
+            </div>
+        <input type="hidden" name="next" value="{{ next }}" />
+        <input type="submit" value="{% trans 'Log in' %}" class="btn btn-primary" />
+        <input type="reset" value="{% trans 'Cancel' %}" class="btn btn-danger" />
+    </form>
+    <br />
+    <p>{% trans "Forgot password" %}? <a href="{% url 'auth_password_reset' %}">{% trans "Reset it" %}</a></p>
+    <p>{% trans "Not member" %}? <a href="{% url 'registration_register' %}">{% trans "Register" %}</a></p>
+
+<script type="text/javascript">
+    document.getElementById('id_username').focus()
+</script>
+
 {% endblock %}

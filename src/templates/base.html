@@ -3,67 +3,76 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Bootstrap, from Twitter</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
-    <!-- Le styles -->
-    <link rel="shortcut icon" href="http://twitter.github.com/bootstrap/assets/ico/favicon.ico">
+
+    <title>FilmYou</title>
+
     <link href="{{ STATIC_URL }}css/bootstrap.min.css" rel="stylesheet">
+
     <style type="text/css">
-      body {
-        padding-top: 60px;
-        padding-bottom: 40px;
-      }
+        /* Move down content because we have a fixed navbar that is 50px tall */
+        body {
+            padding-top: 60px;
+            padding-bottom: 20px;
+        }
+        /* Set widths on the navbar form inputs since otherwise they're 100% wide */
+        .navbar-form input[type="text"],
+        .navbar-form input[type="password"] {
+            width: 180px;
+        }
+        /* Wrapping element */
+        /* Set some basic padding to keep content from hitting the edges */
+        .body-content {
+            padding-left: 15px;
+            padding-right: 15px;
+        }
     </style>
-    <link href="{{ STATIC_URL }}css/bootstrap-responsive.min.css" rel="stylesheet">
+
+    {% block head %}
+    {% endblock %}
+
   </head>
 
   <body>
 
-    <div class="navbar navbar-fixed-top">
-        <div class="navbar-inner">
-            <div class="container">
-                <a class="btn btn-navbar" data-toggle="collapse" data-target=".navbar-responsive-collapse">
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </a>
-                <a class="brand" href="{% url 'filmyou.views.home' %}">FilmYou</a>
-                <div class="nav-collapse collapse navbar-responsive-collapse">
-                    <ul class="nav">
-                        <li><a href="/">{% trans 'About' %}</a></li>
-                        <li><a href="/admin">Admin</a></li>
-                    </ul>
-                    
-                    {% if user.is_authenticated %}
-                        <ul class="nav pull-right">
-                            <span class="label label-inverse">{% trans 'Hello' %} {{ user.username }},</span>
-                            <li class="divider-vertical"></li>
-                            <a href="{% url 'django.contrib.auth.views.password_change' %}">{% trans "Change password" %}</a>
-                            <a class="btn btn-inverse" href="{% url 'django.contrib.auth.views.logout' %}">{% trans 'Leave' %}</a>
-                        </ul>
-
-                    {% else %}
-                    <form class="navbar-form pull-right" action="{% url 'django.contrib.auth.views.login' %}" method="post">
-                        {% csrf_token %}
-                        <input type="text" class="input-small" id="id_username" placeholder="{% trans 'Username' %}">
-                        <input type="password" class="input-small" id="id_password" placeholder="{% trans 'Password' %}">
-                        <button type="submit" class="btn">{% trans 'Log in' %}</button>
-                    </form>
-                    {% endif %}
-                </div><!-- /.nav-collapse -->
-            </div>
-        </div><!-- /navbar-inner -->
+    <div class="navbar navbar-fixed-top navbar-inverse">
+        <div class="container">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="{% url 'filmyou.views.home' %}">FilmYou</a>
+            <div class="nav-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li><a href="/">{% trans 'About' %}</a></li>
+                    <li><a href="/admin">Admin</a></li>
+                </ul>
+                {% if user.is_authenticated %}
+                <ul class="nav navbar-nav pull-right">
+                    <p class="navbar-text">{% trans 'Signed as ' %} <strong>{{ user.username }}</strong> | <a href="{% url 'django.contrib.auth.views.logout' %}">{% trans 'Leave' %}</a></p>
+                </ul>
+                {% else %}
+                <form class="navbar-form form-inline pull-right" action="{% url 'django.contrib.auth.views.login' %}" method="post">
+                    {% csrf_token %}
+                    <input type="text" class="form-control input-small" id="nav_username" name="username" placeholder="{% trans 'Username' %}">
+                    <input type="password" class="form-control input-small" id="nav_password" name="password" placeholder="{% trans 'Password' %}">
+                    <button type="submit" class="btn btn-default">{% trans 'Log in' %}</button>
+                </form>
+                {% endif %}
+            </div><!-- /.nav-collapse -->
+        </div><!-- /container -->
     </div>
 
     <div class="container">
-    {% block container %}
-    {% endblock %}
-    <hr>
-    <footer>
-        <p>Footer</p>
-    </footer>
+        {% block content %}
+        {% endblock %}
+        <hr>
+        <footer>
+            <p>Footer</p>
+        </footer>
     </div> <!-- /container -->
     <script src="{{ STATIC_URL }}js/jquery.min.js"></script>
     <script src="{{ STATIC_URL }}js/bootstrap.min.js"></script>

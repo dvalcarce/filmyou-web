@@ -2,10 +2,7 @@
 {% load i18n %}
 
 {% block content %}
-
-{% if validlink %}
-
-<form action="." method="post">
+<form action="." method="post" id="login-form">
     {% csrf_token %}
         <legend>{% trans 'Register' %}</legend>
         {% for field in form %}
@@ -19,11 +16,5 @@
     <input type="submit" value="{% trans 'Submit' %}" class="btn btn-primary" />
     <input type="reset" value="{% trans 'Cancel' %}" class="btn btn-danger" />
 </form>
-
-{% else %}
-
-<p>{% trans "Password reset failed" %}</p>
-
-{% endif %}
 
 {% endblock %}

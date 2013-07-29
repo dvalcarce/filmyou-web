@@ -3,29 +3,27 @@
 
 {% block head %}
 <style type="text/css">
-    .jumbotron {
-        margin: 80px 0;
-        text-align: center;
+    /* Responsive: Portrait tablets and up */
+    @media screen and (min-width: 768px) {
+      /* Let the jumbotron breathe */
+      .jumbotron {
+        margin-top: 20px;
+      }
+      /* Remove padding from wrapping element since we kick in the grid classes here */
+      .body-content {
+        padding: 0;
+      }
     }
-
-    .jumbotron h1 {
-        font-size: 100px;
-        line-height: 1;
-    }
-
-    .jumbotron .lead {
-        font-size: 24px;
-        line-height: 1.25;
-    }
-
 </style>
+
 {% endblock %}
 
-{% block container %}
+{% block content %}
     <!-- Jumbotron -->
     <div class="jumbotron">
         <h1>{{ title }}</h1>
 
         <p class="lead">FilmYou is just awesome.</p>
     </div>
+    
 {% endblock %}
