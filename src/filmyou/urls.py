@@ -17,6 +17,8 @@ urlpatterns = patterns('',
 
     url(r'^admin/', include(admin.site.urls)),
 
+    url(r'^profile/(?P<username>[0-9A-Za-z]+)/$', 'filmyou.views.profile'),
+
    # Login
     (r'^login/$', 'django.contrib.auth.views.login'),
     (r'^accounts/', include('registration.backends.simple.urls')),

@@ -47,12 +47,12 @@
             <a class="navbar-brand" href="{% url 'filmyou.views.home' %}">FilmYou</a>
             <div class="nav-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <li><a href="/">{% trans 'About' %}</a></li>
-                    <li><a href="/admin">Admin</a></li>
+                    <li><a href="/">{% trans 'Movies' %}</a></li>
+                    <li><a href="/admin">{% trans 'Admin' %}</a></li>
                 </ul>
                 {% if user.is_authenticated %}
                 <ul class="nav navbar-nav pull-right">
-                    <p class="navbar-text">{% trans 'Signed as ' %} <strong>{{ user.username }}</strong> | <a href="{% url 'django.contrib.auth.views.logout' %}">{% trans 'Leave' %}</a></p>
+                    <p class="navbar-text">{% trans 'Signed as ' %} <strong><a href="/profile/{{ user.username }}">{{ user.username }}</a></strong> | <a href="{% url 'django.contrib.auth.views.logout' %}">{% trans 'Leave' %}</a></p>
                 </ul>
                 {% else %}
                 <form class="navbar-form form-inline pull-right" action="{% url 'django.contrib.auth.views.login' %}" method="post">
@@ -71,7 +71,7 @@
         {% endblock %}
         <hr>
         <footer>
-            <p>Footer</p>
+            <p><small>Universidade da Coruña</small></p>
         </footer>
     </div> <!-- /container -->
     <script src="{{ STATIC_URL }}js/jquery.min.js"></script>
