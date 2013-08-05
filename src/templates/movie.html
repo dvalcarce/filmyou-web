@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block head %}
+
+{% endblock %}
+
+{% block content %}
+
+<h1>{{ title }}</h1>
+
+<dl class="dl-horizontal">
+    <dt>Id</dt>
+        <dd>{{ movie_id }}</dd>
+    <dt>Year</dt>
+        <dd>{{ year }}</dd>
+    <dt>Genre</dt>
+        <dd>{% for g in genre %} {{ g }}, {% endfor %}</dd>
+    <dt>Runtime</dt>
+        <dd>{{ runtime }}</dd>
+    <dt>Rating</dt>
+        <dd>{{ rating }}</dd>
+    <dt>Director</dt>
+        <dd>{% for g in director %} {{ g }}, {% endfor %}</dd>
+    <dt>Writer</dt>
+        <dd>{% for g in writer %} {{ g }}, {% endfor %}</dd>
+    <dt>Cast</dt>
+        <dd>{% for g in cast %} {{ g }}, {% endfor %}</dd>
+    <dt>Released</dt>
+        <dd>{{ released|date }}</dd>
+    <dt>Plot</dt>
+        <dd>{{ plot }}</dd>
+    <dt>Fullplot</dt>
+        <dd>{{ fullplot }}</dd>
+</dl>
+
+<img src="{{ poster }}" />
+
+{% endblock %}

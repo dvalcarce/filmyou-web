@@ -1,7 +1,7 @@
 {% load i18n %}
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
@@ -33,10 +33,10 @@
     {% block head %}
     {% endblock %}
 
-  </head>
+</head>
 
-  <body>
-
+<body>
+    <!-- horizontal navbar -->
     <div class="navbar navbar-fixed-top navbar-inverse">
         <div class="container">
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
@@ -64,18 +64,26 @@
                 {% endif %}
             </div><!-- /.nav-collapse -->
         </div><!-- /container -->
-    </div>
+    </div><!-- /horizontal navbar -->
+
+    <!-- vertical navbar
+    <ul class="nav nav-pills nav-stacked">
+        <li><a href="/">{% trans 'Movies' %}</a></li>
+        <li><a href="/admin">{% trans 'Admin' %}</a></li>
+    </ul> /horizontal navbar -->
+
 
     <div class="container">
         {% block content %}
         {% endblock %}
         <hr>
         <footer>
-            <p><small>Universidade da Coruña</small></p>
+            <p class="pull-right"><a href="#">{% trans 'Back to top' %}</a></p>
+            <p>&copy; 2013 Universidade da Coruña. &middot; <a href="#">{% trans 'Privacy' %}</a> &middot; <a href="#">{%trans 'Terms' %}</a></p>
         </footer>
     </div> <!-- /container -->
     <script src="{{ STATIC_URL }}js/jquery.min.js"></script>
     <script src="{{ STATIC_URL }}js/bootstrap.min.js"></script>
 
-  </body>
+</body>
 </html>
