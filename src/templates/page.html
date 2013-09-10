@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block head %}
+<style type="text/css">
+    @media screen and (max-width: 768px) {
+        .row-offcanvas {
+            position: relative;
+            -webkit-transition: all 0.25s ease-out;
+            -moz-transition: all 0.25s ease-out;
+            transition: all 0.25s ease-out;
+        }
+        .row-offcanvas-right
+        .sidebar-offcanvas {
+            right: -50%; /* 6 columns */
+        }
+        .row-offcanvas-left
+        .sidebar-offcanvas {
+            left: -50%; /* 6 columns */
+        }
+        .row-offcanvas-right.active {
+            right: 50%; /* 6 columns */
+        }
+        .row-offcanvas-left.active {
+            left: 50%; /* 6 columns */
+        }
+        .sidebar-offcanvas {
+            position: absolute;
+            top: 0;
+            width: 50%; /* 6 columns */
+        }
+    }
+</style>
+
+{% endblock %}
+
+{% block content %}
+
+    <div class="row row-offcanvas row-offcanvas-right">
+
+        <!-- sidebar -->
+        <div class="col-xs-6 col-sm-3 sidebar-offcanvas" id="sidebar" role="navigation">
+            <div class="well sidebar-nav" data-spy="affix">
+                <ul class="nav">
+                    <li>Sidebar</li>
+                    <li class="active"><a href="#">What's new</a></li>
+                    <li><a href="#">Recommendations</a></li>
+                    <li><a href="#">Link</a></li>
+                </ul>
+            </div><!--/.well -->
+        </div><!--/sidebar-->
+
+        <div class="col-xs-12 col-sm-9">
+            <p class="pull-right visible-xs">
+                <button type="button" class="btn btn-primary btn-sm" data-toggle="offcanvas">{% trans 'Toggle nav' %}</button>
+            </p>
+            <div class="row">
+                <div class="col-8 col-sm-4">
+                    <h2>Some movie</h2>
+                    <p>Donec sed odio dui. Etiam porta sem malesuada magna mollis euismod. Nullam id dolor id nibh ultricies vehicula ut id elit. Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Praesent commodo cursus magna.</p>
+                </div><!-- /.col-8 col-sm-4 -->
+                <div class="col-8 col-sm-4">
+                    <h2>Cool movie</h2>
+                    <p>Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit. Cras mattis consectetur purus sit amet fermentum. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh.</p>
+                </div><!-- /.col-8 col-sm-4 -->
+                <div class="col-8 col-sm-4">
+                    <h2>Another cool movie</h2>
+                    <p>Donec sed odio dui. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Vestibulum id ligula porta felis euismod semper. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</p>
+                </div><!-- /.col-8 col-sm-4 -->
+                <div class="col-8 col-sm-4">
+                    <h2>New movie</h2>
+                    <p>Donec sed odio dui. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Vestibulum id ligula porta felis euismod semper. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</p>
+                </div><!-- /.col-sm-2 -->
+                <div class="col-8 col-sm-4">
+                    <h2>Some movie</h2>
+                    <p>Donec sed odio dui. Etiam porta sem malesuada magna mollis euismod. Nullam id dolor id nibh ultricies vehicula ut id elit. Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Praesent commodo cursus magna.</p>
+                </div><!-- /.col-8 col-sm-4 -->
+                <div class="col-8 col-sm-4">
+                    <h2>Cool movie</h2>
+                    <p>Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit. Cras mattis consectetur purus sit amet fermentum. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh.</p>
+                </div><!-- /.col-6 col-sm-4 -->
+                <div class="col-8 col-sm-4">
+                    <h2>Some movie</h2>
+                    <p>Donec sed odio dui. Etiam porta sem malesuada magna mollis euismod. Nullam id dolor id nibh ultricies vehicula ut id elit. Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Praesent commodo cursus magna.</p>
+                </div><!-- /.col-8 col-sm-4 -->
+                <div class="col-8 col-sm-4">
+                    <h2>Cool movie</h2>
+                    <p>Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit. Cras mattis consectetur purus sit amet fermentum. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh.</p>
+                </div><!-- /.col-8 col-sm-4 -->
+                <div class="col-8 col-sm-4">
+                    <h2>Another cool movie</h2>
+                    <p>Donec sed odio dui. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Vestibulum id ligula porta felis euismod semper. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</p>
+                </div><!-- /.col-8 col-sm-4 -->
+                <div class="col-8 col-sm-4">
+                    <h2>New movie</h2>
+                    <p>Donec sed odio dui. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Vestibulum id ligula porta felis euismod semper. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</p>
+                </div><!-- /.col-sm-2 -->
+                <div class="col-8 col-sm-4">
+                    <h2>Some movie</h2>
+                    <p>Donec sed odio dui. Etiam porta sem malesuada magna mollis euismod. Nullam id dolor id nibh ultricies vehicula ut id elit. Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Praesent commodo cursus magna.</p>
+                </div><!-- /.col-8 col-sm-4 -->
+                <div class="col-8 col-sm-4">
+                    <h2>Cool movie</h2>
+                    <p>Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit. Cras mattis consectetur purus sit amet fermentum. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh.</p>
+                </div><!-- /.col-6 col-sm-4 -->
+            </div><!-- /.row -->
+        </div><!-- /.col -->
+
+    </div><!-- /.row -->
+
+{% endblock %}

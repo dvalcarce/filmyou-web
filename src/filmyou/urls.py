@@ -22,6 +22,7 @@ urlpatterns = patterns('',
 
    # Login
     (r'^login/$', 'django.contrib.auth.views.login'),
+    (r'^accounts/logout/$', 'django.contrib.auth.views.logout', {'next_page': '/'}),
     (r'^accounts/', include('registration.backends.simple.urls')),
-    (r'^reset/(?P<uidb36>[0-9A-Za-z]+)-(?P<token>.+)/$', 'django.contrib.auth.views.password_reset_confirm', {'template_name' : 'registration/password_reset.html',  'post_reset_redirect': '/logout/' }),
+    (r'^reset/(?P<uidb36>[0-9A-Za-z]+)-(?P<token>.+)/$', 'django.contrib.auth.views.password_reset_confirm', {'template_name' : 'registration/password_reset.html',  'post_reset_redirect': '/accounts/logout/' }),
 ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

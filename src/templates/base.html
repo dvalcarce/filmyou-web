@@ -14,7 +14,7 @@
     <style type="text/css">
         /* Move down content because we have a fixed navbar that is 50px tall */
         body {
-            padding-top: 60px;
+            padding-top: 70px;
             padding-bottom: 20px;
         }
         /* Set widths on the navbar form inputs since otherwise they're 100% wide */
@@ -37,23 +37,40 @@
 
 <body>
     <!-- horizontal navbar -->
-    <div class="navbar navbar-fixed-top navbar-inverse">
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
         <div class="container">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="{% url 'filmyou.views.home' %}">FilmYou</a>
-            <div class="nav-collapse collapse">
+            <div class="navbar-header">
+                <!-- Mobile display -->
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/">FilmYou</a>
+            </div><!-- /.nav-header -->
+            <div class="collapse navbar-collapse navbar-ex1-collapse">
                 <ul class="nav navbar-nav">
-                    <li><a href="/">{% trans 'Movies' %}</a></li>
-                    <li><a href="/admin">{% trans 'Admin' %}</a></li>
+                    <li><a href="#">Link</a></li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="#">Action</a></li>
+                            <li><a href="#">Another action</a></li>
+                            <li><a href="#">Something else here</a></li>
+                            <li><a href="#">Separated link</a></li>
+                            <li><a href="#">One more separated link</a></li>
+                        </ul>
+                    </li>
                 </ul>
                 {% if user.is_authenticated %}
-                <ul class="nav navbar-nav pull-right">
-                    <p class="navbar-text">{% trans 'Signed as ' %} <strong><a href="/profile/{{ user.username }}">{{ user.username }}</a></strong> | <a href="{% url 'django.contrib.auth.views.logout' %}">{% trans 'Leave' %}</a></p>
-                </ul>
+                <form class="navbar-form navbar-left" role="search">
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Search">
+                    </div>
+                    <button type="submit" class="btn btn-default">Submit</button>
+                </form>
+                <p class="navbar-right navbar-text">Signed as  <strong><a href="/profile/a">a</a></strong> | <a href="/accounts/logout/">Leave</a></p>
                 {% else %}
                 <form class="navbar-form form-inline pull-right" action="{% url 'django.contrib.auth.views.login' %}" method="post">
                     {% csrf_token %}
@@ -63,27 +80,28 @@
                 </form>
                 {% endif %}
             </div><!-- /.nav-collapse -->
-        </div><!-- /container -->
-    </div><!-- /horizontal navbar -->
-
-    <!-- vertical navbar
-    <ul class="nav nav-pills nav-stacked">
-        <li><a href="/">{% trans 'Movies' %}</a></li>
-        <li><a href="/admin">{% trans 'Admin' %}</a></li>
-    </ul> /horizontal navbar -->
-
+        </div><!-- /.container -->
+    </nav><!-- /horizontal navbar -->
 
     <div class="container">
         {% block content %}
         {% endblock %}
+
         <hr>
         <footer>
             <p class="pull-right"><a href="#">{% trans 'Back to top' %}</a></p>
-            <p>&copy; 2013 Universidade da Coruña. &middot; <a href="#">{% trans 'Privacy' %}</a> &middot; <a href="#">{%trans 'Terms' %}</a></p>
+            <p>&copy; 2013 Universidade da Coruña. &middot; <a href="#">{% trans 'Privacy' %}</a> &middot; <a href="#">{% trans 'Terms' %}</a></p>
         </footer>
     </div> <!-- /container -->
+
     <script src="{{ STATIC_URL }}js/jquery.min.js"></script>
     <script src="{{ STATIC_URL }}js/bootstrap.min.js"></script>
-
+    <script>
+        $(document).ready(function() {
+            $('[data-toggle=offcanvas]').click(function() {
+                $('.row-offcanvas').toggleClass('active');
+            });
+        });
+    </script>
 </body>
 </html>

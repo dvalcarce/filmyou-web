@@ -14,8 +14,12 @@ def home(request):
     Renders homepage
     """
     c = {}
+    if request.user.is_authenticated():
+        template = "page.html"
+    else:
+        template = "intro.html"
 
-    return render_to_response('main.html', c, context_instance=RequestContext(request))
+    return render_to_response(template, c, context_instance=RequestContext(request))
 
 def profile(request, username):
     """
