@@ -67,3 +67,14 @@
     </div><!-- /.carousel -->
 
 {% endblock %}
+
+{% block script %}
+<script type="text/javascript">
+    var $ = jQuery.noConflict();
+    $(document).ready(function() {
+        $('#myCarousel').carousel({
+            interval: 4000,
+            cycle: true });
+    }); 
+</script>
+{% endblock %}

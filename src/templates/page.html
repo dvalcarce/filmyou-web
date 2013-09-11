@@ -109,3 +109,13 @@
     </div><!-- /.row -->
 
 {% endblock %}
+
+{% block script %}
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('[data-toggle=offcanvas]').click(function() {
+            $('.row-offcanvas').toggleClass('active');
+        });
+    });
+</script>
+{% endblock %}

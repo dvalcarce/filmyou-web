@@ -96,12 +96,8 @@
 
     <script src="{{ STATIC_URL }}js/jquery.min.js"></script>
     <script src="{{ STATIC_URL }}js/bootstrap.min.js"></script>
-    <script>
-        $(document).ready(function() {
-            $('[data-toggle=offcanvas]').click(function() {
-                $('.row-offcanvas').toggleClass('active');
-            });
-        });
-    </script>
+    {% block script %}
+    {% endblock %}
+
 </body>
 </html>
