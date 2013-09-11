@@ -1,26 +1,11 @@
 from django.db import models
 
 
-class Director(models.Model):
+class Person(models.Model):
     name = models.CharField(max_length=80)
 
     def __unicode__(self):
         return self.name
-
-
-class Writer(models.Model):
-    name = models.CharField(max_length=80)
-
-    def __unicode__(self):
-        return self.name
-
-
-class Cast(models.Model):
-    name = models.CharField(max_length=80)
-
-    def __unicode__(self):
-        return self.name
-
 
 class Genre(models.Model):
     name = models.CharField(max_length=40)
@@ -36,9 +21,9 @@ class Movie(models.Model):
     runtime = models.PositiveSmallIntegerField()
     rating = models.CharField(max_length=12)
 
-    director = models.ManyToManyField(Director)
-    writer = models.ManyToManyField(Writer)
-    cast = models.ManyToManyField(Cast)
+    director = models.ManyToManyField(Person, related_name="director")
+    writer = models.ManyToManyField(Person, related_name="writer")
+    cast = models.ManyToManyField(Person, related_name="cast")
     genre = models.ManyToManyField(Genre)
 
     released = models.DateField()
@@ -48,6 +33,3 @@ class Movie(models.Model):
 
     def __unicode__(self):
         return self.title
-
-
-
