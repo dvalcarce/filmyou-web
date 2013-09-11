@@ -146,6 +146,7 @@ INSTALLED_APPS = (
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
     'django_extensions',
+    'filmyou',
 )
 
 # This is the number of days users will have to activate
