@@ -4,6 +4,8 @@ INDEX_DIR = "pylucene/Movies.index"
 
 import sys, os, lucene
 
+from datetime import datetime
+
 from java.io import File
 from org.apache.lucene.analysis.standard import StandardAnalyzer
 from org.apache.lucene.index import DirectoryReader
@@ -33,9 +35,11 @@ class MovieReader(object):
         Returns a list of the documents that match the query.
         """
         query = QueryParser(Version.LUCENE_CURRENT, field, analyzer).parse(content)
-        scoreDocs = searcher.search(query, n_results).scoreDocs
+        topDocs = searcher.search(query, n_results)
+        scoreDocs = topDocs.scoreDocs
+        totalHits = topDocs.totalHits
 
-        return map(lambda x: searcher.doc(x.doc), scoreDocs)
+        return map(lambda x: LuceneMovie(self, searcher.doc(x.doc)), scoreDocs), totalHits
 
     def get_fields(self, movie, field, numeric=False):
         """
@@ -47,6 +51,35 @@ class MovieReader(object):
         content = movie.getFields(field)
         f = (lambda x: x.numericValue()) if numeric else (lambda x: x.stringValue())
         return map(f, content)
+
+
+class LuceneMovie(object):
+    """
+    This class encapsulates a movie stored in a Lucene index
+    """
+    def __init__(self, reader, movie):
+        self.movie_id = reader.get_fields(movie, "id")[0]
+        self.title = reader.get_fields(movie, "title")[0]
+        self.year = reader.get_fields(movie, "year", numeric=True)[0]
+        self.genres = reader.get_fields(movie, "genre")
+        self.runtime = reader.get_fields(movie, "runtime")[0]
+        self.rating = reader.get_fields(movie, "rating")[0]
+        self.directors = reader.get_fields(movie, "director")
+        self.writers = reader.get_fields(movie, "writer")
+        self.casts = reader.get_fields(movie, "cast")
+
+        ts = reader.get_fields(movie, "released", numeric=True)[0].longValue()
+        self.released = datetime.fromtimestamp(ts) if ts != -2**63 else None
+
+        self.plot = reader.get_fields(movie, "plot")[0]
+        self.fullplot = reader.get_fields(movie, "fullplot")[0]
+        self.poster = reader.get_fields(movie, "poster")[0]
+
+    def __unicode__(self):
+        return u"{id}: '{title}'".format(id=self.movie_id, title=self.title)
+
+    def __repr__(self):
+        return self.__unicode__()
 
 
 # Initialize Lucene

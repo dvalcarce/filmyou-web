@@ -7,33 +7,33 @@
 
 {% block content %}
 
-<h1>{{ title }}</h1>
+<h1>{{ movie.title }}</h1>
 
 <dl class="dl-horizontal">
     <dt>Id</dt>
-        <dd>{{ movie_id }}</dd>
+        <dd>{{ movie.movie_id }}</dd>
     <dt>Year</dt>
-        <dd>{{ year }}</dd>
+        <dd>{{ movie.year }}</dd>
     <dt>Genre</dt>
-        <dd>{% for g in genre %} {{ g }}, {% endfor %}</dd>
+        <dd>{{ movie.genres|join:", " }}</dd>
     <dt>Runtime</dt>
-        <dd>{{ runtime }}</dd>
+        <dd>{{ movie.runtime }}</dd>
     <dt>Rating</dt>
-        <dd>{{ rating }}</dd>
+        <dd>{{ movie.rating }}</dd>
     <dt>Director</dt>
-        <dd>{% for g in director %} {{ g }}, {% endfor %}</dd>
+        <dd>{{ movie.directors|join:", " }}</dd>
     <dt>Writer</dt>
-        <dd>{% for g in writer %} {{ g }}, {% endfor %}</dd>
+        <dd>{{ movie.writers|join:", " }}</dd>
     <dt>Cast</dt>
-        <dd>{% for g in cast %} {{ g }}, {% endfor %}</dd>
+        <dd>{{ movie.casts|join:", " }}</dd>
     <dt>Released</dt>
-        <dd>{{ released|date }}</dd>
+        <dd>{{ movie.released|date }}</dd>
     <dt>Plot</dt>
-        <dd>{{ plot }}</dd>
+        <dd>{{ movie.plot }}</dd>
     <dt>Fullplot</dt>
-        <dd>{{ fullplot }}</dd>
+        <dd>{{ movie.fullplot }}</dd>
 </dl>
 
-<img src="{{ poster }}" />
+<img src="{{ movie.poster }}" />
 
 {% endblock %}
