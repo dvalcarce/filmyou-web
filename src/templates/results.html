@@ -3,8 +3,8 @@
 
 {% block inner %}
 <div class="col-xs-12" id="rows_append">
-<h2>{% trans 'Search results' %}</h2>
-<p>{% trans 'Your query was' %} <strong>{{ query }}</strong>.</p>
+<h1>{% trans 'Search results' %}</h1>
+<p>{% trans 'Your query was' %} <strong>{{ query }}</strong>. {% trans 'Do you want better results?' %} <a href="/search/advanced/">{% trans 'Try advanced search' %}.</a></p>
 
 {% include page_template %}
 

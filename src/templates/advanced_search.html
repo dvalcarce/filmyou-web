@@ -1,0 +1,26 @@
+{% extends "page.html" %}
+{% load i18n %}
+
+{% block inner %}
+<div class="col-xs-12" id="rows_append">
+<h1>{% trans 'Advanced search' %}</h1>
+<p>{% trans 'You can search movies by any filter you want.' %}</p>
+
+<form class="form-horizontal" action="{% url 'filmyou.views.advanced_search' %}" method="post" role="form">
+    {% csrf_token %}
+    {% for field in fields %}
+    <div class="form-group">
+        <label class="col-lg-2 control-label" for="{{ field }}">{{ field|capfirst }}</label>
+        <div class="col-lg-10">
+            <input type="text" class="form-control" name="{{ field }}">
+        </div>
+    </div>
+    {% endfor %}
+    <input type="submit" class="btn btn-primary btn-block" value="{% trans 'Search' %}" />
+    <input type="reset" class="btn btn-danger btn-block" value="{% trans 'Cancel' %}"/>
+</form>
+
+
+
+</div> <!-- /.col-xs-12 -->
+{% endblock %}
