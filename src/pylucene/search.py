@@ -2,7 +2,7 @@
 
 INDEX_DIR = "pylucene/Movies.index"
 
-import sys, os, lucene
+import os, lucene, functools
 
 from datetime import datetime
 
@@ -10,8 +10,7 @@ from java.io import File
 from org.apache.lucene.analysis.standard import StandardAnalyzer
 from org.apache.lucene.index import DirectoryReader
 from org.apache.lucene.queryparser.classic import QueryParser
-from org.apache.lucene.index import DirectoryReader
-from org.apache.lucene.search import IndexSearcher
+from org.apache.lucene.search import IndexSearcher, ScoreDoc
 from org.apache.lucene.store import SimpleFSDirectory
 from org.apache.lucene.util import Version
 
@@ -30,16 +29,30 @@ class MovieReader(object):
         self.searcher = searcher
         self.analyzer = analyzer
 
-    def query(self, field, content, n_results=1):
+    def query(self, field, content, n_results=10, score=False):
         """
         Returns a list of the documents that match the query.
         """
-        query = QueryParser(Version.LUCENE_CURRENT, field, analyzer).parse(content)
-        topDocs = searcher.search(query, n_results)
+        query = QueryParser(Version.LUCENE_CURRENT, field, self.analyzer).parse(content)
+        topDocs = self.searcher.search(query, n_results)
         scoreDocs = topDocs.scoreDocs
-        totalHits = topDocs.totalHits
 
-        return map(lambda x: LuceneMovie(self, searcher.doc(x.doc)), scoreDocs), totalHits
+        f = functools.partial(LuceneMovie.init_args, self)
+        return map(f, scoreDocs)
+
+    def search_after(self, field, content, last_id, last_score, n_results=10):
+        """
+        Returns a list of the documents that match the query.
+        """
+        # Build ScoreDoc from doc_id and score
+        after = ScoreDoc(int(last_id), float(last_score))
+
+        query = QueryParser(Version.LUCENE_CURRENT, field, self.analyzer).parse(content)
+        topDocs = self.searcher.searchAfter(after, query, n_results)
+        scoreDocs = topDocs.scoreDocs
+
+        f = functools.partial(LuceneMovie.init_args, self)
+        return map(f, scoreDocs)
 
     def get_fields(self, movie, field, numeric=False):
         """
@@ -57,7 +70,21 @@ class LuceneMovie(object):
     """
     This class encapsulates a movie stored in a Lucene index
     """
-    def __init__(self, reader, movie):
+
+    @classmethod
+    def init_args(self, reader, x):
+        """
+        This method instantiates a valid LuceneMovie object given a
+        MovieReader and a ScoreDoc.
+        """
+        return LuceneMovie(reader, x.doc, x.score, reader.searcher.doc(x.doc))
+
+    def __init__(self, reader, doc_id, score, movie):
+        """
+        LuceneMovie constructor.
+        """
+        self.doc_id = doc_id
+        self.score = score
         self.movie_id = reader.get_fields(movie, "id")[0]
         self.title = reader.get_fields(movie, "title")[0]
         self.year = reader.get_fields(movie, "year", numeric=True)[0]

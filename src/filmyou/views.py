@@ -1,6 +1,3 @@
-
-import math
-
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.http import Http404
@@ -19,7 +16,8 @@ def home(request):
     else:
         template = "intro.html"
 
-    return render_to_response(template, {}, context_instance=RequestContext(request))
+    return render_to_response(template, {},
+        context_instance=RequestContext(request))
 
 
 def profile(request, username):
@@ -30,36 +28,51 @@ def profile(request, username):
 
     c = {'user': user}
 
-    return render_to_response('profile.html', c, context_instance=RequestContext(request))
+    return render_to_response('profile.html', c,
+        context_instance=RequestContext(request))
 
 
-def search(request):
+def search(request, template='results.html', page_template='page_results.html',
+    extra_context=None):
     """
     Renders search page
     """
-
     if request.is_ajax():
-        # Endless scroll
-        template = page_template
-        return render_to_response(template,context,context_instance=RequestContext(request))
+        return _search_ajax(request, page_template)
 
-    results_per_page = 10
+    query = request.POST.get('query', None)
+    if query:
+        reader = MovieReader()
+        results = reader.query("title", query)
+    else:
+        results = []
 
-    query = request.POST["query"]
+    c = {
+        'page_template': page_template,
+        'query': query,
+        'results': results
+    }
+
+    if extra_context is not None:
+        c.update(extra_context)
+    return render_to_response(template, c,
+        context_instance=RequestContext(request))
+
+
+def _search_ajax(request, template):
+    last_id = request.GET['last_id']
+    last_score = request.GET['last_score']
+    query = request.GET['query']
     reader = MovieReader()
-    results, totalHits = reader.query("title", query, n_results=results_per_page)
-    n_pages = int(math.ceil(totalHits / float(results_per_page)))
-    page = 1
+    results = reader.search_after("title", query, last_id, last_score)
 
     c = {
         'query': query,
-        'results': results,
-        'totalHits': totalHits,
-        'range_pages': range(1, min(n_pages, 6)),
-        'page': 1
+        'results': results
     }
 
-    return render_to_response('results.html', c, context_instance=RequestContext(request))
+    return render_to_response(template, c,
+        context_instance=RequestContext(request))
 
 
 def movie(request, movie_id):
@@ -67,7 +80,7 @@ def movie(request, movie_id):
     Renders homepage
     """
     reader = MovieReader()
-    results, unused_totalHits = reader.query("id", movie_id)
+    results = reader.query("id", movie_id)
 
     if results:
         movie = results[0]
@@ -76,4 +89,5 @@ def movie(request, movie_id):
 
     c = { 'movie': movie }
 
-    return render_to_response('movie.html', c, context_instance=RequestContext(request))
+    return render_to_response('movie.html', c,
+        context_instance=RequestContext(request))
