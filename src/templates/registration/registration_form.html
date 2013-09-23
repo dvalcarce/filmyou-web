@@ -2,9 +2,11 @@
 {% load i18n %}
 
 {% block content %}
-<form action="." method="post" id="login-form">
-    {% csrf_token %}
-        <legend>{% trans 'Register' %}</legend>
+<div class="col-xs-12">
+    <h1>{% trans 'Register' %}</h1>
+    <hr />
+    <form action="." method="post" id="login-form">
+        {% csrf_token %}
         {% for field in form %}
             <div class="form-group {% if field.errors %} has-error{% endif %}">
                 <label class="control-label" for="id_{{ field.html_name }}">{{ field.label }}</label>
@@ -12,9 +14,9 @@
                 <span class="help-block">{{ field.errors.as_text }}</span>
             </div>
         {% endfor %}
-    <input type="hidden" name="next" value="{{ next }}" />
-    <input type="submit" value="{% trans 'Submit' %}" class="btn btn-primary btn-block" />
-    <input type="reset" value="{% trans 'Cancel' %}" class="btn btn-danger btn-block" />
-</form>
-
+        <input type="hidden" name="next" value="{{ next }}" />
+        <input type="submit" value="{% trans 'Submit' %}" class="btn btn-primary btn-block" />
+        <input type="reset" value="{% trans 'Cancel' %}" class="btn btn-danger btn-block" />
+    </form>
+</div>
 {% endblock %}
