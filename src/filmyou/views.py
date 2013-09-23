@@ -139,3 +139,17 @@ def movie(request, movie_id):
 
     return render_to_response('movie.html', c,
         context_instance=RequestContext(request))
+
+
+def recommendations(request):
+    """
+    Renders homepage
+    """
+    raise Http404
+
+
+def friends(request):
+    """
+    Renders homepage
+    """
+    raise Http404

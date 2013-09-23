@@ -17,8 +17,11 @@ urlpatterns = patterns('',
 
     url(r'^admin/', include(admin.site.urls)),
 
-    url(r'^movie/(?P<movie_id>[0-9]+)/$', 'filmyou.views.movie'),
     url(r'^profile/(?P<username>[0-9A-Za-z]+)/$', 'filmyou.views.profile'),
+    url(r'^friends/$', 'filmyou.views.friends'),
+
+    url(r'^movie/(?P<movie_id>[0-9]+)/$', 'filmyou.views.movie'),
+    url(r'^recommendations/$', 'filmyou.views.recommendations'),
 
     url(r'^search/advanced/$', 'filmyou.views.advanced_search'),
     url(r'^search/$', 'filmyou.views.search'),

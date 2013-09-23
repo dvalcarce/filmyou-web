@@ -3,6 +3,9 @@
 
 {% block head %}
 <style type="text/css">
+    .nav > li.active > a {
+        font-weight: bold;
+    }
     @media screen and (max-width: 768px) {
         .row-offcanvas {
             position: relative;
@@ -37,14 +40,19 @@
 {% block content %}
     <div class="row row-offcanvas row-offcanvas-right">
 
+    {% load sidebar %}
+
         <!-- sidebar -->
         <div class="col-xs-6 col-sm-3 sidebar-offcanvas" id="sidebar" role="navigation">
             <div class="well sidebar-nav">
                 <ul class="nav">
-                    <li>Sidebar</li>
-                    <li class="active"><a href="#">What's new</a></li>
-                    <li><a href="#">Recommendations</a></li>
-                    <li><a href="#">Link</a></li>
+                    <li>Movies</li>
+                    <li class="{% navactive request 'filmyou.views.home' %}"><a href="/">{% trans 'Top movies' %}</a></li>
+                    <li class="{% navactive request 'filmyou.views.recommendations' %}"><a href="{% url 'filmyou.views.recommendations' %}">{% trans 'Recommendations' %}</a></li>
+                    <li class="{% navactive request 'filmyou.views.advanced_search' %}"><a href="{% url 'filmyou.views.advanced_search' %}">{% trans 'Advanced Search' %}</a></li>
+                    <li>Me</li>
+                    <li class="{% navactive request 'filmyou.views.profile' user %}"><a href="{% url 'filmyou.views.profile' user %}">{% trans 'My profile' %}</a></li>
+                    <li class="{% navactive request 'filmyou.views.friends' %}"><a href="{% url 'filmyou.views.friends' %}">{% trans 'My friends' %}</a></li>
                 </ul>
             </div><!--/.well -->
         </div><!--/sidebar-->
