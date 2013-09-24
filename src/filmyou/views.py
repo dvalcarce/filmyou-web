@@ -1,8 +1,10 @@
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.http import Http404
-from django.contrib.auth.models import User
 from django.utils.translation import ugettext as _
+
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 
 from pylucene.search import MovieReader
 
@@ -21,6 +23,7 @@ def home(request):
         context_instance=RequestContext(request))
 
 
+@login_required
 def profile(request, username):
     """
     Renders page for user profiles
@@ -33,6 +36,7 @@ def profile(request, username):
         context_instance=RequestContext(request))
 
 
+@login_required
 def search(request, template='results.html', page_template='page_results.html',
     extra_context=None):
     """
@@ -76,6 +80,7 @@ def _search_ajax(request, template):
         context_instance=RequestContext(request))
 
 
+@login_required
 def advanced_search(request):
     """
     Renders advanced search settings page
@@ -123,6 +128,7 @@ def advanced_search(request):
     #     context_instance=RequestContext(request))
 
 
+@login_required
 def movie(request, movie_id):
     """
     Renders homepage
@@ -141,6 +147,7 @@ def movie(request, movie_id):
         context_instance=RequestContext(request))
 
 
+@login_required
 def recommendations(request):
     """
     Renders homepage
@@ -148,6 +155,7 @@ def recommendations(request):
     raise Http404
 
 
+@login_required
 def friends(request):
     """
     Renders homepage
