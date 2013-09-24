@@ -62,7 +62,10 @@ class MovieReader(object):
         returned instead of a string one.
         """
         content = movie.getFields(field)
-        f = (lambda x: x.numericValue()) if numeric else (lambda x: x.stringValue())
+        if numeric:
+            f = lambda x: x.numericValue()
+        else:
+            f = lambda x: x.stringValue() if x.stringValue() != "N/A" else None
         return map(f, content)
 
 

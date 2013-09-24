@@ -1,39 +1,47 @@
-{% extends "base.html" %}
+{% extends "page.html" %}
 {% load i18n %}
 
-{% block head %}
-
-{% endblock %}
-
-{% block content %}
-
-<h1>{{ movie.title }}</h1>
-
-<dl class="dl-horizontal">
-    <dt>Id</dt>
-        <dd>{{ movie.movie_id }}</dd>
-    <dt>Year</dt>
-        <dd>{{ movie.year }}</dd>
-    <dt>Genre</dt>
-        <dd>{{ movie.genres|join:", " }}</dd>
-    <dt>Runtime</dt>
-        <dd>{{ movie.runtime }}</dd>
-    <dt>Rating</dt>
-        <dd>{{ movie.rating }}</dd>
-    <dt>Director</dt>
-        <dd>{{ movie.directors|join:", " }}</dd>
-    <dt>Writer</dt>
-        <dd>{{ movie.writers|join:", " }}</dd>
-    <dt>Cast</dt>
-        <dd>{{ movie.casts|join:", " }}</dd>
-    <dt>Released</dt>
-        <dd>{{ movie.released|date }}</dd>
-    <dt>Plot</dt>
-        <dd>{{ movie.plot }}</dd>
-    <dt>Fullplot</dt>
-        <dd>{{ movie.fullplot }}</dd>
-</dl>
-
-<img src="{{ movie.poster }}" />
+{% block inner %}
+<div class="col-xs-12">
+    <h1>{{ movie.title }}</h1>
+    <hr />
+    <div class="row">
+        <div class="col-xs-12 col-sm-3">
+            <p>
+            {% if movie.poster %}
+                <img src="{{ movie.poster }}" class="img-responsive" />
+            {% else %}
+                <img src="{{ STATIC_URL }}img/noposter200.png" class="img-responsive" />
+            {% endif %}
+            </p>
+        </div>
+        <div class="col-xs-12 col-sm-9">
+            <dl class="dl-horizontal">
+                <dt>Id</dt>
+                    <dd>{{ movie.movie_id }}</dd>
+                <dt>Year</dt>
+                    <dd>{{ movie.year }}</dd>
+                <dt>Genre</dt>
+                    <dd>{{ movie.genres|join:", " }}</dd>
+                <dt>Runtime</dt>
+                    <dd>{{ movie.runtime }}</dd>
+                <dt>Rating</dt>
+                    <dd>{{ movie.rating }}</dd>
+                <dt>Director</dt>
+                    <dd>{{ movie.directors|join:", " }}</dd>
+                <dt>Writer</dt>
+                    <dd>{{ movie.writers|join:", " }}</dd>
+                <dt>Cast</dt>
+                    <dd>{{ movie.casts|join:", " }}</dd>
+                <dt>Released</dt>
+                    <dd>{{ movie.released|date }}</dd>
+                <dt>Plot</dt>
+                    <dd>{{ movie.plot }}</dd>
+                <dt>Fullplot</dt>
+                    <dd>{{ movie.fullplot }}</dd>
+            </dl>
+        </div>
+    </div><!-- /.row -->
+</div><!-- /.col-xs-12 -->
 
 {% endblock %}

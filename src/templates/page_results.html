@@ -1,25 +1,33 @@
 {% load i18n %}
 
 {% for movie in results %}
-<row>
-    <h4><a href="/movie/{{ movie.movie_id }}">{{ movie.title }}</a></h4>
-    <div class="col-xs-4 col-sm-2 col-md-1">
-        <p><img src="{{ movie.poster }}" width=60/></p>
+<div class="row">
+    <div class="col-xs-12">
+        <h4><a href="/movie/{{ movie.movie_id }}">{{ movie.title }}</a></h4>
+        <div class="col-xs-4 col-sm-2 col-md-1">
+            <p>
+                {% if movie.poster %}
+                <img src="{{ movie.poster }}" width=60 />
+                {% else %}
+                <img src="{{ STATIC_URL }}img/noposter60.png" width=60 />
+                {% endif %}
+            </p>
+        </div>
+        <div class="col-xs-8 col-sm-10 col-md-11">
+            <dl class="dl-horizontal">
+                <dt>{% trans 'Year' %}</dt>
+                    <dd>{{ movie.year }}</dd>
+                <dt>{% trans 'Genre' %}</dt>
+                    <dd>{{ movie.genres|join:", " }}</dd>
+                <dt>{% trans 'Director' %}</dt>
+                    <dd>{{ movie.directors|join:", " }}</dd>
+                <dt class="hidden-xs">{% trans 'Cast' %}</dt>
+                    <dd class="hidden-xs">{{ movie.casts|join:", " }}</dd>
+            </dl>
+        </div>
     </div>
-    <div class="col-xs-8 col-sm-10 col-md-11">
-        <dl class="dl-horizontal">
-            <dt>{% trans 'Year' %}</dt>
-                <dd>{{ movie.year }}</dd>
-            <dt>{% trans 'Genre' %}</dt>
-                <dd>{{ movie.genres|join:", " }}</dd>
-            <dt>{% trans 'Director' %}</dt>
-                <dd>{{ movie.directors|join:", " }}</dd>
-            <dt class="hidden-xs">{% trans 'Cast' %}</dt>
-                <dd class="hidden-xs">{{ movie.casts|join:", " }}</dd>
-        </dl>
-    </div>
+</div>
 <hr />
-</row>
 {% endfor %}
 
 <div id="scrolling_container">
