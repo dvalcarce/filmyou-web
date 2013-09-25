@@ -1,4 +1,7 @@
 from django.db import models
+from django.contrib.auth.models import User
+
+from filmyou.cassandra import CassandraAdapter
 
 
 class Person(models.Model):
@@ -36,3 +39,41 @@ class Movie(models.Model):
     def __unicode__(self):
         return self.title
 
+
+class MyUser(User):
+    class Meta:
+        proxy = True
+
+    def get_rate_for_movie(self, movie):
+        query = "SELECT score FROM ratings WHERE user = :user AND movie = :movie"
+        parameters = {
+            'user': self.id,
+            'movie': movie.movie_id,
+        }
+
+        with CassandraAdapter() as db:
+            result = db.execute(query, parameters)
+
+        return result
+
+    def get_movies_rated(self):
+        query = "SELECT movie, score FROM ratings WHERE user = :user"
+        parameters = {
+            'user': self.id,
+        }
+
+        with CassandraAdapter() as db:
+            result = db.execute(query, parameters)
+
+        return Movie.objects.filter(movie_id__in=result)
+
+    def get_recommendations(self):
+        query = "SELECT movie, score FROM recommendations WHERE user = :user"
+        parameters = {
+            'user': self.id,
+        }
+
+        with CassandraAdapter() as db:
+            result = db.execute(query, parameters)
+
+        return Movie.objects.filter(movie_id__in=result)
