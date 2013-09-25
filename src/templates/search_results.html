@@ -1,0 +1,11 @@
+{% extends "results.html" %}
+{% load i18n %}
+
+{% block inner %}
+<div class="col-xs-12" id="rows_append">
+    <h1>{% trans 'Search results' %}</h1>
+    <p>{% trans 'Your query was' %} <strong>{{ query }}</strong>. {% trans 'Do you want better results?' %} <a href="/search/advanced/">{% trans 'Try advanced search' %}.</a></p>
+    <hr />
+    {% include page_template %}
+</div><!-- /.col-xs-12 -->
+{% endblock %}

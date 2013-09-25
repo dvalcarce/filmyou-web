@@ -1,0 +1,11 @@
+{% extends "results.html" %}
+{% load i18n %}
+
+{% block inner %}
+<div class="col-xs-12" id="rows_append">
+    <h1>{% trans 'Recommendations' %}</h1>
+    <p>{% trans 'These are personalized movies for you.' %}</p>
+    <hr />
+    {% include page_template %}
+</div><!-- /.col-xs-12 -->
+{% endblock %}

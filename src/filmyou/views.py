@@ -2,11 +2,15 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.http import Http404
 from django.utils.translation import ugettext as _
-
+from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 
 from pylucene.search import MovieReader
+
+from filmyou.models import Movie
+from filmyou.models import MyUser
+
 
 footer = "UDC"
 
@@ -37,8 +41,8 @@ def profile(request, username):
 
 
 @login_required
-def search(request, template='results.html', page_template='page_results.html',
-    extra_context=None):
+def search(request, template='search_results.html',
+    page_template='page_results.html', extra_context=None):
     """
     Renders search page
     """
@@ -89,7 +93,7 @@ def advanced_search(request):
         c = {
             'page_template': 'page_results.html'
         }
-        return render_to_response('results.html', c,
+        return render_to_response('search_results.html', c,
         context_instance=RequestContext(request))
 
     template = 'advanced_search.html'
@@ -133,13 +137,10 @@ def movie(request, movie_id):
     """
     Renders homepage
     """
-    reader = MovieReader()
-    results = reader.query('id', movie_id)
-
-    if results:
-        movie = results[0]
-    else:
-        raise Http404
+    try:
+        movie = Movie.objects.get(movie_id=movie_id)
+    except ObjectDoesNotExist:
+        raise Http404("Movie does not exist!")
 
     c = { 'movie': movie }
 
@@ -148,11 +149,21 @@ def movie(request, movie_id):
 
 
 @login_required
-def recommendations(request):
+def recommendations(request, template='rec_results.html',
+    page_template='page_results.html'):
     """
-    Renders homepage
+    Renders recommendations page
     """
-    raise Http404
+    user = MyUser.objects.get(username=request.user.username)
+
+    recommendations = user.get_recommendations()
+
+    c = {
+        'page_template': page_template,
+    }
+
+    return render_to_response(template, c,
+        context_instance=RequestContext(request))
 
 
 @login_required
