@@ -12,6 +12,7 @@ class CassandraAdapter(object):
         keyspace = settings.CASSANDRA['KEYSPACE']
         self.connection = cql.connect(host, port, keyspace, cql_version='3.0.0')
         self.cursor = self.connection.cursor()
+        return self
 
     def execute(self, query, parameters):
         """
@@ -25,6 +26,10 @@ class CassandraAdapter(object):
         """
         self.cursor.execute(query, parameters)
         return list(self.cursor)
+
+    def _cursor_generator(self):
+        for row in self.cursor:
+            yield row
 
     def __exit__(self, type, value, traceback):
         self.cursor.close()

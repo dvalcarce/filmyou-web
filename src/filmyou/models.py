@@ -54,7 +54,7 @@ class MyUser(User):
         with CassandraAdapter() as db:
             result = db.execute(query, parameters)
 
-        return result
+        return result[0] if result else None
 
     def get_movies_rated(self):
         query = "SELECT movie, score FROM ratings WHERE user = :user"
@@ -65,7 +65,9 @@ class MyUser(User):
         with CassandraAdapter() as db:
             result = db.execute(query, parameters)
 
-        return Movie.objects.filter(movie_id__in=result)
+        return [
+            (Movie.objects.get(movie_id=movie), score) for (movie, score) in result
+        ]
 
     def get_recommendations(self):
         query = "SELECT movie, score FROM recommendations WHERE user = :user"
@@ -76,4 +78,6 @@ class MyUser(User):
         with CassandraAdapter() as db:
             result = db.execute(query, parameters)
 
-        return Movie.objects.filter(movie_id__in=result)
+        return [
+            (Movie.objects.get(movie_id=movie), score) for (movie, score) in result
+        ]
