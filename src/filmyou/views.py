@@ -158,8 +158,11 @@ def recommendations(request, template='rec_results.html',
 
     recommendations = user.get_recommendations()
 
+    movies, scores = zip(*recommendations)
     c = {
         'page_template': page_template,
+        'results': movies,
+        'scores': scores,
     }
 
     return render_to_response(template, c,
