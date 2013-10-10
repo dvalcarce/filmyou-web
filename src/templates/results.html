@@ -26,9 +26,11 @@
             $.ajax({
                 url: $(settings.scrolling_more).attr('href'),
                 success: function(html) {
+                    loading.hide();
+                    $(settings.containerSelector).remove();
                     if(html) {
-                        $(settings.containerSelector).remove();
                         $(settings.rows_append).append(html);
+                        console.log(html);
                     }
                 }
             });

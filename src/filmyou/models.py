@@ -40,7 +40,7 @@ class Movie(models.Model):
     fullplot = models.TextField(null=True)
     poster = models.URLField(null=True)
     n_votes = models.PositiveIntegerField(default=0)
-    sum_votes = models.PositiveIntegerField(default=0)
+    sum_votes = models.FloatField(default=0)
 
     director = models.ManyToManyField(Person, related_name="director")
     writer = models.ManyToManyField(Person, related_name="writer")
@@ -49,6 +49,10 @@ class Movie(models.Model):
 
     def __unicode__(self):
         return self.title
+
+    @property
+    def score(self):
+        return self.sum_votes / self.n_votes
 
     def rate(self, user, score):
         """
@@ -110,15 +114,20 @@ class MyUser(User):
 
         return zip(movies, rates)
 
-    def get_movies_rated(self):
+    def get_ratings(self, last=None, n_results=10):
         """
         Returns a list of rated movies by self:
             [(movie1, rate1), (movie2, rate2)...]
         """
-        query = "SELECT movie, score FROM ratings WHERE user = :user"
         parameters = {
             'user': self.id,
+            'limit': n_results
         }
+        if last:
+            query = "SELECT movie, score FROM ratings WHERE user = :user AND movie > :last LIMIT :limit"
+            parameters['last'] = last
+        else:
+            query = "SELECT movie, score FROM ratings WHERE user = :user LIMIT :limit"
 
         with CassandraAdapter() as db:
             result = db.execute(query, parameters)
@@ -127,14 +136,21 @@ class MyUser(User):
             (Movie.objects.get(movie_id=movie), score) for (movie, score) in result
         ]
 
-    def get_recommendations(self):
+    def get_recommendations(self, last=None, n_results=10):
         """
-        Get recommendations for self from Cassandra DB.
+        Get recommendations for self from Cassandra DB:
+            [(movie1, predicted_rate1), (movie2, predicted_rate2)...]
         """
-        query = "SELECT movie, score FROM recommendations WHERE user = :user"
         parameters = {
             'user': self.id,
+            'limit': n_results
         }
+
+        if last:
+            query = "SELECT movie, score FROM recommendations WHERE user = :user AND movie > :last LIMIT :limit"
+            parameters['last'] = last
+        else:
+            query = "SELECT movie, score FROM recommendations WHERE user = :user LIMIT :limit"
 
         with CassandraAdapter() as db:
             result = db.execute(query, parameters)
@@ -155,4 +171,4 @@ class MyUser(User):
         }
 
         with CassandraAdapter() as db:
-            result = db.execute(query, parameters)
+            db.execute(query, parameters)

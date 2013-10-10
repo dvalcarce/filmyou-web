@@ -19,7 +19,7 @@
             {% endif %}
         </div>
         <div class="pull-right">
-            <h1>{% widthratio movie.sum_votes movie.n_votes 1 %}</h1>
+            <h1>{{ movie.score|floatformat:1 }}</h1>
             <div id="star{{ movie.movie_id }}"></div>
         </div>
         <div class="col-xs-12 col-sm-9">

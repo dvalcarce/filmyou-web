@@ -51,8 +51,8 @@
                     <li class="{% navactive request 'filmyou.views.recommendations' %}"><a href="{% url 'filmyou.views.recommendations' %}">{% trans 'Recommendations' %}</a></li>
                     <li class="{% navactive request 'filmyou.views.advanced_search' %}"><a href="{% url 'filmyou.views.advanced_search' %}">{% trans 'Advanced Search' %}</a></li>
                     <li>Me</li>
+                    <li class="{% navactive request 'filmyou.views.ratings' %}"><a href="{% url 'filmyou.views.ratings' %}">{% trans 'My ratings' %}</a></li>
                     <li class="{% navactive request 'filmyou.views.profile' user %}"><a href="{% url 'filmyou.views.profile' user %}">{% trans 'My profile' %}</a></li>
-                    <li class="{% navactive request 'filmyou.views.friends' %}"><a href="{% url 'filmyou.views.friends' %}">{% trans 'My friends' %}</a></li>
                 </ul>
             </div><!--/.well -->
         </div><!--/sidebar-->

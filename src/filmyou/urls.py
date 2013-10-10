@@ -22,9 +22,9 @@ urlpatterns = patterns('',
 
     url(r'^movie/(?P<movie_id>[0-9]+)/$', 'filmyou.views.movie'),
     url(r'^recommendations/$', 'filmyou.views.recommendations'),
+    url(r'^ratings/$', 'filmyou.views.ratings'),
 
-    url(r'^rating/$', 'filmyou.views.rating'),
-
+    url(r'^rate/$', 'filmyou.views.rate'),
 
     url(r'^search/advanced/$', 'filmyou.views.advanced_search'),
     url(r'^search/$', 'filmyou.views.search'),

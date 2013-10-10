@@ -70,20 +70,25 @@ def search(request, template='search_results.html',
 
 
 def _search_ajax(request, template):
-    last_id = request.GET['last_id']
-    last_score = request.GET['last_score']
-    query = request.GET['query']
-    reader = MovieReader()
+    try:
+        last_id = request.GET['last_id']
+        last_score = request.GET['last_score']
+        query = request.GET['query']
+        reader = MovieReader()
+    except:
+        return HttpResponse("")
 
     results = reader.search_after("title", query, last_id, last_score)
 
-    user = MyUser.objects.get(username=request.user.username)
-    movies = user.get_rate_for_movies(results)
-
-    c = {
-        'query': query,
-        'results': movies
-    }
+    if results:
+        user = MyUser.objects.get(username=request.user.username)
+        movies = user.get_rate_for_movies(results)
+        c = {
+            'query': query,
+            'results': movies
+        }
+    else:
+        return HttpResponse("")
 
     return render_to_response(template, c,
         context_instance=RequestContext(request))
@@ -138,9 +143,50 @@ def advanced_search(request):
 
 
 @login_required
-def rating(request):
+def ratings(request, template='rating_results.html',
+    page_template='page_rating_results.html'):
     """
-    Renders advanced search settings page
+    Renders ratings page
+    """
+    if request.is_ajax():
+        return _ratings_ajax(request, page_template)
+    user = MyUser.objects.get(username=request.user.username)
+
+    ratings = user.get_ratings()
+
+    c = {
+        'page_template': page_template,
+        'results': ratings,
+    }
+
+    return render_to_response(template, c,
+        context_instance=RequestContext(request))
+
+
+def _ratings_ajax(request, template):
+    try:
+        last = int(request.GET['last'])
+    except:
+        return HttpResponse("")
+
+    user = MyUser.objects.get(username=request.user.username)
+
+    ratings = user.get_ratings(last)
+    if ratings:
+        c = {
+            'results': ratings,
+        }
+
+        return render_to_response(template, c,
+            context_instance=RequestContext(request))
+    else:
+        return HttpResponse("")
+
+
+@login_required
+def rate(request):
+    """
+    Rate a movie via AJAX.
     """
     if request.is_ajax():
         movie_id = int(request.GET['movie'])
@@ -186,6 +232,8 @@ def recommendations(request, template='rec_results.html',
     """
     Renders recommendations page
     """
+    if request.is_ajax():
+        return _recommendations_ajax(request, page_template)
     user = MyUser.objects.get(username=request.user.username)
 
     recommendations = user.get_recommendations()
@@ -198,6 +246,25 @@ def recommendations(request, template='rec_results.html',
     return render_to_response(template, c,
         context_instance=RequestContext(request))
 
+
+def _recommendations_ajax(request, template):
+    try:
+        last = int(request.GET['last'])
+    except:
+        return HttpResponse("")
+
+    user = MyUser.objects.get(username=request.user.username)
+
+    recommendations = user.get_recommendations(last)
+    if recommendations:
+        c = {
+            'results': recommendations,
+        }
+
+        return render_to_response(template, c,
+            context_instance=RequestContext(request))
+    else:
+        return HttpResponse("")
 
 @login_required
 def friends(request):
