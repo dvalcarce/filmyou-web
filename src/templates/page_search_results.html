@@ -1,0 +1,61 @@
+{% load i18n %}
+
+{% for movie, score in results %}
+<div class="row">
+    <div class="col-xs-12">
+        <h4><a href="/movie/{{ movie.movie_id }}">{{ movie.title }}</a></h4>
+        <div class="col-xs-4 col-sm-1 col-md-1">
+            <p>
+                {% if movie.poster %}
+                <img src="{{ movie.poster }}" width=60 />
+                {% else %}
+                <img src="{{ STATIC_URL }}img/noposter60.png" width=60 />
+                {% endif %}
+            </p>
+        </div>
+        <div class="col-xs-8 col-sm-8 col-md-8">
+            <dl class="dl-horizontal">
+                <dt>{% trans 'Year' %}</dt>
+                    <dd>{{ movie.year }}</dd>
+                <dt>{% trans 'Genre' %}</dt>
+                    <dd>{{ movie.genres|join:", " }}</dd>
+                <dt>{% trans 'Director' %}</dt>
+                    <dd>{{ movie.directors|join:", " }}</dd>
+                <dt class="hidden-xs">{% trans 'Cast' %}</dt>
+                    <dd class="hidden-xs">{{ movie.casts|join:", " }}</dd>
+            </dl>
+        </div>
+        <div class="col-xs-6 col-sm-1 col-md-1">
+            <h1 class="text-center">{% widthratio movie.sum_votes movie.n_votes 1 %}</h1>
+            <div id="star{{ movie.movie_id }}"></div>
+        </div>
+    </div>
+</div>
+<hr />
+
+<script type="text/javascript">
+$("#star{{ movie.movie_id }}").raty({
+    {% if score %}
+    score: {{ score }},
+    {% else %}
+    score: 0,
+    {% endif %}
+    starOff: '{{ STATIC_URL }}img/star-off.png',
+    starOn: '{{ STATIC_URL }}img/star-on.png',
+    click: function(score, evt) {
+        $.ajax({
+            url: "/rating/?movie={{ movie.movie_id }}&score=" + score,
+        });
+    }
+});
+</script>
+{% endfor %}
+
+<div id="scrolling_container">
+    {% with results|last|first as last_movie %}
+    <a id="scrolling_more" href="/search/?last_id={{ last_movie.doc_id }}&amp;last_score={{ last_movie.score }}&amp;query={{ query }}"></a>
+    {% endwith %}
+    <div id="scrolling_loading" style="display: none;">
+        <img src="{{ STATIC_URL }}img/ajax-loader.gif" />
+    </div>
+</div>

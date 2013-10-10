@@ -14,6 +14,8 @@ from org.apache.lucene.search import IndexSearcher, ScoreDoc
 from org.apache.lucene.store import SimpleFSDirectory
 from org.apache.lucene.util import Version
 
+from filmyou.models import Movie
+
 
 class MovieReader(object):
     """
@@ -104,6 +106,10 @@ class LuceneMovie(object):
         self.plot = reader.get_fields(movie, "plot")[0]
         self.fullplot = reader.get_fields(movie, "fullplot")[0]
         self.poster = reader.get_fields(movie, "poster")[0]
+
+        movie = Movie.objects.get(movie_id=self.movie_id)
+        self.n_votes = movie.n_votes
+        self.sum_votes = movie.sum_votes
 
     def __unicode__(self):
         return u"{id}: '{title}'".format(id=self.movie_id, title=self.title)

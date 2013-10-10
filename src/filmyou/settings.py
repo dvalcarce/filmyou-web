@@ -5,7 +5,7 @@ from django.conf.global_settings import TEMPLATE_CONTEXT_PROCESSORS
 
 
 DEBUG = True
-PRODUCTION = False
+PRODUCTION = True
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
@@ -159,6 +159,7 @@ INSTALLED_APPS = (
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
     'django_extensions',
+    'django_evolution',
     'filmyou',
 )
 

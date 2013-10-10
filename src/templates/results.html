@@ -1,6 +1,11 @@
 {% extends "page.html" %}
 {% load i18n %}
 
+{% block head %}
+    {{ block.super }}
+    <script src="{{ STATIC_URL }}js/jquery.raty.min.js"></script>
+{% endblock %}
+
 {% block script %}
     {{ block.super }}
     <script type="text/javascript">

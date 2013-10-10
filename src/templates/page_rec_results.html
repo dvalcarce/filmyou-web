@@ -1,33 +1,49 @@
 {% load i18n %}
 
-{% for movie in results %}
+{% for movie, score in results %}
 <div class="row">
     <div class="col-xs-12">
         <h4><a href="/movie/{{ movie.movie_id }}">{{ movie.title }}</a></h4>
-        <div class="col-xs-4 col-sm-2 col-md-1">
-            <p>
+        <div class="col-xs-4 col-sm-1 col-md-1">
+            <div class="container">
                 {% if movie.poster %}
                 <img src="{{ movie.poster }}" width=60 />
                 {% else %}
                 <img src="{{ STATIC_URL }}img/noposter60.png" width=60 />
                 {% endif %}
-            </p>
+            </div>
         </div>
-        <div class="col-xs-8 col-sm-10 col-md-11">
+        <div class="col-xs-8 col-sm-8 col-md-9">
             <dl class="dl-horizontal">
                 <dt>{% trans 'Year' %}</dt>
                     <dd>{{ movie.year }}</dd>
                 <dt>{% trans 'Genre' %}</dt>
-                    <dd>{{ movie.genres|join:", " }}</dd>
+                    <dd>{{ movie.genre.all|join:", " }}</dd>
                 <dt>{% trans 'Director' %}</dt>
-                    <dd>{{ movie.directors|join:", " }}</dd>
+                    <dd>{{ movie.director.all|join:", " }}</dd>
                 <dt class="hidden-xs">{% trans 'Cast' %}</dt>
-                    <dd class="hidden-xs">{{ movie.casts|join:", " }}</dd>
+                    <dd class="hidden-xs">{{ movie.cast.all|join:", " }}</dd>
             </dl>
+        </div>
+        <div class="col-xs-6 col-sm-2 col-md-2">
+            <h1 class="text-center">{{ score }}</h1>
+            <div id="star{{ movie.movie_id }}"></div>
         </div>
     </div>
 </div>
 <hr />
+
+<script type="text/javascript">
+$("#star{{ movie.movie_id }}").raty({
+    starOff: '{{ STATIC_URL }}img/star-off.png',
+    starOn: '{{ STATIC_URL }}img/star-on.png',
+    click: function(score, evt) {
+        $.ajax({
+            url: "/rating/?movie={{ movie.movie_id }}&score=" + score,
+        });
+    }
+});
+</script>
 {% endfor %}
 
 <div id="scrolling_container">

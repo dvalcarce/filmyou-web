@@ -1,8 +1,8 @@
 from django.shortcuts import render_to_response
 from django.template import RequestContext
-from django.http import Http404
+from django.http import Http404, HttpResponse
 from django.utils.translation import ugettext as _
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 
@@ -42,7 +42,7 @@ def profile(request, username):
 
 @login_required
 def search(request, template='search_results.html',
-    page_template='page_results.html', extra_context=None):
+    page_template='page_search_results.html'):
     """
     Renders search page
     """
@@ -56,14 +56,15 @@ def search(request, template='search_results.html',
     else:
         results = []
 
+    user = MyUser.objects.get(username=request.user.username)
+    movies = user.get_rate_for_movies(results)
+
     c = {
         'page_template': page_template,
         'query': query,
-        'results': results
+        'results': movies
     }
 
-    if extra_context is not None:
-        c.update(extra_context)
     return render_to_response(template, c,
         context_instance=RequestContext(request))
 
@@ -73,11 +74,15 @@ def _search_ajax(request, template):
     last_score = request.GET['last_score']
     query = request.GET['query']
     reader = MovieReader()
+
     results = reader.search_after("title", query, last_id, last_score)
+
+    user = MyUser.objects.get(username=request.user.username)
+    movies = user.get_rate_for_movies(results)
 
     c = {
         'query': query,
-        'results': results
+        'results': movies
     }
 
     return render_to_response(template, c,
@@ -91,7 +96,7 @@ def advanced_search(request):
     """
     if request.POST:
         c = {
-            'page_template': 'page_results.html'
+            'page_template': 'page_search_results.html'
         }
         return render_to_response('search_results.html', c,
         context_instance=RequestContext(request))
@@ -133,6 +138,24 @@ def advanced_search(request):
 
 
 @login_required
+def rating(request):
+    """
+    Renders advanced search settings page
+    """
+    if request.is_ajax():
+        movie_id = int(request.GET['movie'])
+        score = float(request.GET['score'])
+
+        user = MyUser.objects.get(username=request.user.username)
+        movie = Movie.objects.get(movie_id=movie_id)
+        movie.rate(user, score)
+
+        return HttpResponse("ok!")
+    else:
+        raise PermissionDenied
+
+
+@login_required
 def movie(request, movie_id):
     """
     Renders homepage
@@ -142,7 +165,16 @@ def movie(request, movie_id):
     except ObjectDoesNotExist:
         raise Http404("Movie does not exist!")
 
-    c = { 'movie': movie }
+    user = MyUser.objects.get(username=request.user.username)
+    recommendations = user.get_rate_for_movies([movie])
+    print recommendations
+
+    if recommendations:
+        movie, score = recommendations[0]
+    c = {
+        'movie': movie,
+        'score': score,
+    }
 
     return render_to_response('movie.html', c,
         context_instance=RequestContext(request))
@@ -150,7 +182,7 @@ def movie(request, movie_id):
 
 @login_required
 def recommendations(request, template='rec_results.html',
-    page_template='page_results.html'):
+    page_template='page_rec_results.html'):
     """
     Renders recommendations page
     """
@@ -158,11 +190,9 @@ def recommendations(request, template='rec_results.html',
 
     recommendations = user.get_recommendations()
 
-    movies, scores = zip(*recommendations)
     c = {
         'page_template': page_template,
-        'results': movies,
-        'scores': scores,
+        'results': recommendations,
     }
 
     return render_to_response(template, c,
