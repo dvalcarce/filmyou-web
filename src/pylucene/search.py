@@ -89,7 +89,7 @@ class LuceneMovie(object):
         LuceneMovie constructor.
         """
         self.doc_id = doc_id
-        self.score = score
+        self.doc_score = score
         self.movie_id = reader.get_fields(movie, "id")[0]
         self.title = reader.get_fields(movie, "title")[0]
         self.year = reader.get_fields(movie, "year", numeric=True)[0]
@@ -110,6 +110,7 @@ class LuceneMovie(object):
         movie = Movie.objects.get(movie_id=self.movie_id)
         self.n_votes = movie.n_votes
         self.sum_votes = movie.sum_votes
+        self.score = self.sum_votes / self.n_votes if self.n_votes != 0 else None
 
     def __unicode__(self):
         return u"{id}: '{title}'".format(id=self.movie_id, title=self.title)

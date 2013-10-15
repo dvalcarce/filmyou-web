@@ -19,7 +19,14 @@
             {% endif %}
         </div>
         <div class="pull-right">
-            <h1>{{ movie.score|floatformat:1 }}</h1>
+            <h1>
+                {% if movie.score %}
+                {{ movie.score|floatformat:1 }}
+                {% else %}
+                --
+                {% endif %}
+            </h1>
+            <p><span id="n_votes">{{ movie.n_votes}}</span> votes</p>
             <div id="star{{ movie.movie_id }}"></div>
         </div>
         <div class="col-xs-12 col-sm-9">
@@ -29,17 +36,17 @@
                 <dt>Year</dt>
                     <dd>{{ movie.year }}</dd>
                 <dt>Genre</dt>
-                    <dd>{{ movie.genres|join:", " }}</dd>
+                    <dd>{{ movie.genre.all|join:", " }}</dd>
                 <dt>Runtime</dt>
                     <dd>{{ movie.runtime }}</dd>
                 <dt>Rating</dt>
                     <dd>{{ movie.rating }}</dd>
                 <dt>Director</dt>
-                    <dd>{{ movie.directors|join:", " }}</dd>
+                    <dd>{{ movie.director.all|join:", " }}</dd>
                 <dt>Writer</dt>
-                    <dd>{{ movie.writers|join:", " }}</dd>
+                    <dd>{{ movie.writer.all|join:", " }}</dd>
                 <dt>Cast</dt>
-                    <dd>{{ movie.casts|join:", " }}</dd>
+                    <dd>{{ movie.cast.all|join:", " }}</dd>
                 <dt>Released</dt>
                     <dd>{{ movie.released|date }}</dd>
                 <dt>Plot</dt>
@@ -52,6 +59,11 @@
 </div><!-- /.col-xs-12 -->
 
 <script type="text/javascript">
+{% if not score %}
+var not_rated = true;
+{% else %}
+var not_rated = false;
+{% endif %}
 $("#star{{ movie.movie_id }}").raty({
     {% if score %}
     score: {{ score }},
@@ -61,8 +73,13 @@ $("#star{{ movie.movie_id }}").raty({
     starOff: '{{ STATIC_URL }}img/star-off.png',
     starOn: '{{ STATIC_URL }}img/star-on.png',
     click: function(score, evt) {
+        if (not_rated) {
+            n = parseInt($("#n_votes").text()) + 1;
+            $("#n_votes").text(n);
+            not_rated = false;
+        }
         $.ajax({
-            url: "/rating/?movie={{ movie.movie_id }}&score=" + score,
+            url: "/rate/?movie={{ movie.movie_id }}&score=" + score,
         });
     }
 });

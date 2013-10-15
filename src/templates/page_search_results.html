@@ -26,7 +26,13 @@
             </dl>
         </div>
         <div class="col-xs-6 col-sm-1 col-md-1">
-            <h1 class="text-center">{{ movie.score|floatformat:1 }}</h1>
+            <h1 class="text-center">
+                {% if movie.score %}
+                {{ movie.score|floatformat:1 }}
+                {% else %}
+                --
+                {% endif %}
+            </h1>
             <div id="star{{ movie.movie_id }}"></div>
         </div>
     </div>
@@ -53,7 +59,7 @@ $("#star{{ movie.movie_id }}").raty({
 
 <div id="scrolling_container">
     {% with results|last|first as last_movie %}
-    <a id="scrolling_more" href="/search/?last_id={{ last_movie.doc_id }}&amp;last_score={{ last_movie.score }}&amp;query={{ query }}"></a>
+    <a id="scrolling_more" href="/search/?last_id={{ last_movie.doc_id }}&amp;last_score={{ last_movie.doc_score }}&amp;query={{ query }}"></a>
     {% endwith %}
     <div id="scrolling_loading" style="display: none;">
         <img src="{{ STATIC_URL }}img/ajax-loader.gif" />

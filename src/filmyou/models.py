@@ -52,7 +52,7 @@ class Movie(models.Model):
 
     @property
     def score(self):
-        return self.sum_votes / self.n_votes
+        return self.sum_votes / self.n_votes if self.n_votes != 0 else None
 
     def rate(self, user, score):
         """

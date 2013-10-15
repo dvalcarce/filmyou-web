@@ -26,7 +26,13 @@
             </dl>
         </div>
         <div class="col-xs-6 col-sm-2 col-md-2">
-            <h1 class="text-center">{{ movie.score|floatformat:1 }}</h1>
+            <h1 class="text-center">
+                {% if movie.score %}
+                {{ movie.score|floatformat:1 }}
+                {% else %}
+                --
+                {% endif %}
+            </h1>
             <div id="star{{ movie.movie_id }}"></div>
         </div>
     </div>
