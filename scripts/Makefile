@@ -22,12 +22,12 @@ mapping: $(MOVIE_TITLES) $(LUCENE_INDEX)
 	python2 map_netflix_imdb.py $(MOVIE_TITLES)
 
 cql: $(LUCENE_INDEX)
-	@echo "Generate CQL statements for ratings"
+	@echo "Generate a CSV for Cassandra COPY command"
 	python2 to_cassandra.py $(NETFLIX_RATINGS)
 
 sql: $(LUCENE_INDEX)
-	@echo "Generate SQL statements for movie info"
-	python2 to_postgresql.py > $(SQL_STATEMENTS)
+	@echo "Generate TSV files for PostgreSQL \copy command"
+	python2 to_postgresql.py
 
 clean:
 	rm -rf $(NETFLIX_RATINGS) $(LUCENE_INDEX) $(CQL_STATEMENTS) $(SQL_STATEMENTS)
