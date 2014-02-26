@@ -1,137 +1,152 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2
 
-INDEX_DIR = "DB"
+INDEX_DIR = "Movies.index"
 
-import sys, os, time, re, csv, time, calendar, psycopg2
-from datetime import datetime
+import os, lucene, time, psycopg2, codecs
 
+from java.io import File
+from org.apache.lucene.analysis.standard import StandardAnalyzer
+from org.apache.lucene.index import IndexReader
+from org.apache.lucene.search import IndexSearcher
+from org.apache.lucene.store import SimpleFSDirectory
+from org.apache.lucene.util import Version
+from org.apache.lucene.document import Field
 
 """
-This script scans OMDB collection and builds CSV files for PostgreSQL.
+This script scans OMDB collection and builds TSV files for PostgreSQL.
 """
-class IndexMovies(object):
-    def __init__(self, root, storeDir):
+class OutputSQL(object):
 
-        if not os.path.exists(storeDir):
-            os.mkdir(storeDir)
-
+    def __init__(self, reader, store_dir):
         self.genres = {}
         self.people = {}
-        self.indexDocs(root, storeDir)
+        self.languages = {}
+        self.countries = {}
+        self.store_dir = store_dir
 
-    def indexDocs(self, root, storeDir):
-        with open(os.path.join(storeDir, "movie.csv"), "w") as movie_file, \
-            open(os.path.join(storeDir, "person.csv"), "w") as person_file, \
-            open(os.path.join(storeDir, "genre.csv"), "w") as genre_file, \
-            open(os.path.join(storeDir, "genre_movie.csv"), "w") as genre_movie_file, \
-            open(os.path.join(storeDir, "director.csv"), "w") as director_file, \
-            open(os.path.join(storeDir, "writer.csv"), "w") as writer_file, \
-            open(os.path.join(storeDir, "cast.csv"), "w") as cast_file, \
-            open(root, "r") as tsv:
+        if not os.path.exists(self.store_dir):
+            os.makedirs(store_dir)
 
-            for row in csv.reader(tsv, delimiter='\t'):
+        self.indexDocs(reader)
+
+    def indexDocs(self, reader):
+        with codecs.open(os.path.join(self.store_dir, "movie.tsv"), 'w', encoding='utf-8') as movie_file, \
+            codecs.open(os.path.join(self.store_dir, "person.tsv"), 'w', encoding='utf-8') as person_file, \
+            codecs.open(os.path.join(self.store_dir, "genre.tsv"), 'w', encoding='utf-8') as genre_file, \
+            codecs.open(os.path.join(self.store_dir, "genre_movie.tsv"), 'w', encoding='utf-8') as genre_movie_file, \
+            codecs.open(os.path.join(self.store_dir, "language.tsv"), 'w', encoding='utf-8') as language_file, \
+            codecs.open(os.path.join(self.store_dir, "language_movie.tsv"), 'w', encoding='utf-8') as language_movie_file, \
+            codecs.open(os.path.join(self.store_dir, "country.tsv"), 'w', encoding='utf-8') as country_file, \
+            codecs.open(os.path.join(self.store_dir, "country_movie.tsv"), 'w', encoding='utf-8') as country_movie_file, \
+            codecs.open(os.path.join(self.store_dir, "director.tsv"), 'w', encoding='utf-8') as director_file, \
+            codecs.open(os.path.join(self.store_dir, "writer.tsv"), 'w', encoding='utf-8') as writer_file, \
+            codecs.open(os.path.join(self.store_dir, "cast.tsv"), 'w', encoding='utf-8') as cast_file:
+
+            for i in xrange(reader.numDocs()):
+                doc = reader.document(i)
+
+                self.movie_id = doc.getField("id").stringValue()
+                imdb_id = doc.getField("imdb_id").stringValue()
                 try:
-                    self.movie_id = self.parse_int(row[0])
-                    title = self.check_or_null(row[2])
-                    year = self.parse_int(row[3])
-                    runtime = self.parse_runtime(row[5])
-                    rating = self.check_or_null(row[4])
+                    netflix_id = doc.getField("netflix_id").stringValue()
+                except AttributeError:
+                    netflix_id = "NULL"
 
-                    released = self.parse_date(row[7])
-                    plot = self.check_or_null(row[14])
-                    fullplot = self.check_or_null(row[15])
-                    poster = self.check_or_null(row[13])
+                title = self.parse_string(doc.getField("title").stringValue())
+                year = self.parse_positive(doc.getField("year").numericValue().intValue())
+                rating = self.parse_string(doc.getField("rating").stringValue())
+                runtime = self.parse_positive(doc.getField("runtime").numericValue().intValue())
+                released = self.parse_date(doc.getField("released").numericValue().longValue())
 
-                    self.parse_n_n(row[6], self.genres, genre_file, genre_movie_file)
-                    self.parse_n_n(row[8], self.people, person_file, director_file)
-                    self.parse_n_n(row[9], self.people, person_file, writer_file)
-                    self.parse_n_n(row[10], self.people, person_file, cast_file)
+                metascore = self.parse_positive(doc.getField("metascore").numericValue().intValue())
+                imdb_rating = self.parse_positive(doc.getField("imdb_rating").numericValue().doubleValue())
+                imdb_votes = self.parse_positive(doc.getField("imdb_votes").numericValue().intValue())
+                poster = self.parse_string(doc.getField("poster").stringValue())
+                plot = self.parse_string(doc.getField("plot").stringValue())
+                fullplot = self.parse_string(doc.getField("fullplot").stringValue())
 
-                    movie_file.write("{id}\t{title}\t{year}\t{runtime}\t{rating}\t{released}\t{plot}\t{fullplot}\t{poster}\n".format(
-                        id=self.movie_id,
-                        title=title,
-                        year=year,
-                        runtime=runtime,
-                        rating=rating,
-                        released=released,
-                        plot=plot,
-                        fullplot=fullplot,
-                        poster=poster)
-                    )
+                awards = self.parse_positive(doc.getField("awards").numericValue().intValue())
+                updated = self.parse_date(doc.getField("updated").numericValue().longValue())
 
-                except Exception as e:
-                    print repr(e)
-                    print "ROW ->", row
-                    print row[7]
-                    print
-                        
+                self.parse_n_n(doc.getFields("genre"), self.genres, genre_file, genre_movie_file)
+                self.parse_n_n(doc.getFields("director"), self.people, person_file, director_file)
+                self.parse_n_n(doc.getFields("writer"), self.people, person_file, writer_file)
+                self.parse_n_n(doc.getFields("cast"), self.people, person_file, cast_file)
+                self.parse_n_n(doc.getFields("language"), self.languages, language_file, language_movie_file)
+                self.parse_n_n(doc.getFields("country"), self.countries, country_file, country_movie_file)
 
-    def check_or_null(self, text):
+                movie_file.write(u"{id}\t{imdb_id}\t{netflix_id}\t{title}\t{year}\t{rating}\t" \
+                    "{runtime}\t{released}\t{metascore}\t{imdb_rating}\t{imdb_votes}\t" \
+                    "{poster}\t{plot}\t{fullplot}\t{awards}\t{updated}\n".format(
+                    id=self.movie_id,
+                    imdb_id=imdb_id,
+                    netflix_id=netflix_id,
+                    title=title,
+                    year=year,
+                    rating=rating,
+                    runtime=runtime,
+                    released=released,
+                    metascore=metascore,
+                    imdb_rating=imdb_rating,
+                    imdb_votes=imdb_votes,
+                    poster=poster,
+                    plot=plot,
+                    fullplot=fullplot,
+                    awards=awards,
+                    updated=updated)
+                )
+
+    def parse_string(self, text):
         if text == "" or text == "N/A":
             return "NULL"
         else:
-            return psycopg2.extensions.AsIs(text).getquoted()
+            try:
+                return unicode(psycopg2.extensions.QuotedString(text).getquoted().decode('latin-1'))
+            except Exception as e:
+                print repr(psycopg2.extensions.QuotedString(text).getquoted())
+                print psycopg2.extensions.QuotedString(text).getquoted()
+                raise e
 
+    def parse_positive(self, number):
+        if number < 0:
+            return "NULL"
+        else:
+            return unicode(number)
 
-    def parse_int(self, text):
-        try:
-            return int(text)
-        except ValueError:
+    def parse_date(self, value):
+        if value == -2**63:
             return "NULL"
 
-    def parse_n_n(self, text, entity, entity_f, relationship_f):
-        if text == "N/A" or text == "":
+        t = time.gmtime(value)
+        return u"{0}/{1}/{2}".format(t.tm_mday, t.tm_mon, t.tm_year)
+
+    def parse_n_n(self, fields, entity, entity_f, relationship_file):
+        if not fields:
             return
-        for element in text.split(", "):
+        for element in fields:
+            element = element.stringValue()
+            if not len(element):
+                continue
             try:
                 entity_id = entity[element]
             except KeyError:
                 entity_id = len(entity) + 1
                 entity[element] = entity_id
-                entity_f.write("{id}\t{name}\n".format(id=entity_id, name=element))
+                entity_f.write(u"{id}\t{name}\n".format(id=entity_id, name=element))
 
-            relationship_f.write("{m}\t{g}\n".format(m=self.movie_id, g=entity_id))
-
-    def parse_runtime(self, text):
-        regex = re.match(r"((?P<hours>[0-9]+)\s*h)?\s*((?P<minutes>[0-9]+)\s*min)?", text)
-        if not regex:
-            return "NULL"
-        hours = regex.group("hours")
-        minutes = regex.group("minutes")
-        if not minutes:
-            minutes = 0
-        else:
-            minutes = int(minutes)
-        if hours:
-            minutes += int(hours) * 60
-        return minutes
-
-    def parse_date(self, text):
-        if text == "N/A" or text == "":
-            return "NULL"
-        t = time.strptime(text, r"%Y-%m-%d")
-        ts = calendar.timegm(t)
-        return "'{d}/{m}/{y}'".format(m=t.tm_mon, d=t.tm_mday, y=t.tm_year)
-
-
-    def add_elements(self, doc, text, name, field):
-        if text == "N/A" or text == "":
-            return "NULL"
-        for element in text.split(", "):
-            doc.add(field(name, element, Field.Store.YES))
+            relationship_file.write(u"{m}\t{g}\n".format(m=self.movie_id, g=entity_id))
 
 
 if __name__ == '__main__':
-    if len(sys.argv) < 2:
-        print "{0} <movies file>".format(sys.argv[0])
-        sys.exit(1)
-    start = datetime.now()
-    try:
-        base_dir = os.path.abspath(os.path.curdir)
-        IndexMovies(sys.argv[1], os.path.join(base_dir, INDEX_DIR))
-        end = datetime.now()
-        print 'time elapsed', end - start
-    except Exception as e:
-        print "Failed: ", e
-        raise e
+    lucene.initVM()
 
+    base_dir = os.path.abspath(os.path.curdir)
+    index_file = os.path.join(base_dir, INDEX_DIR)
+    store = SimpleFSDirectory(File(index_file))
+
+    analyzer = StandardAnalyzer(Version.LUCENE_CURRENT)
+ 
+    reader = IndexReader.open(store)
+
+    store_dir = os.path.join(base_dir, "sql")
+    OutputSQL(reader, store_dir)
