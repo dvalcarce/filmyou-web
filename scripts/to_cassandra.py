@@ -17,23 +17,6 @@ from org.apache.lucene.document import Field, StringField
 """
 This scripts will prepare a CSV for Cassandra DB.
 """
-def output_cassandra(line):
-    regex = re.match(r"(?P<user_id>[0-9]+),(?P<movie_id>[0-9]+),(?P<score>.+)", line)
-    if not regex:
-        raise ValueError(line)
-    user_id = regex.group("user_id")
-    netflix_id = regex.group("movie_id")
-    score = regex.group("score")
-
-    query = QueryParser(Version.LUCENE_CURRENT, "netflix_id", analyzer).parse(netflix_id)
-
-    scoreDocs = searcher.search(query, 1).scoreDocs
-    if scoreDocs:
-        doc = searcher.doc(scoreDocs[0].doc)
-        movie_id = doc.getField("id").stringValue()
-        print "{0},{1},{2}".format(user_id, movie_id, score)
-
-
 if __name__ == '__main__':
     lucene.initVM()
     
@@ -46,8 +29,17 @@ if __name__ == '__main__':
     reader = IndexReader.open(store)
     searcher = IndexSearcher(reader)   
 
+    query_parser = QueryParser(Version.LUCENE_CURRENT, "netflix_id", analyzer)
+
     with open(sys.argv[1], 'r') as ratings:
-        print "USE recommender;"
         for line in ratings:
-            output_cassandra(line)
+            user_id, netflix_id, score = line.split(",")
+
+            query = query_parser.parse(netflix_id)
+
+            scoreDocs = searcher.search(query, 1).scoreDocs
+            if scoreDocs:
+                doc = searcher.doc(scoreDocs[0].doc)
+                movie_id = doc.getField("id").stringValue()
+                print "{0},{1},{2}".format(user_id, movie_id, score),
 
