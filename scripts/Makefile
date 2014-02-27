@@ -2,8 +2,7 @@
 MOVIE_TITLES=movie_titles.txt
 IMDB_TSV=omdb.tsv
 NETFLIX_RATINGS=netflix.csv
-MY_RATINGS=imdb.csv
-CQL_STATEMENTS=ratings.csv
+RATINGS=ratings.csv
 SQL_STATEMENTS=sql
 LUCENE_INDEX=Movies.Index
 
@@ -17,18 +16,18 @@ lucene: $(IMDB_TSV)
 	@echo "Build PyLucene Index with all IMDB info (Movies.Index)"
 	python2 build_index.py $(IMDB_TSV)
 
-mapping: $(MOVIE_TITLES) $(LUCENE_INDEX)
+mapping: $(MOVIE_TITLES)
 	@echo "Do mapping between netflix and IMDB id's using PyLucene Index"
 	python2 map_netflix_imdb.py $(MOVIE_TITLES)
 
-cql: $(LUCENE_INDEX)
+cql:
 	@echo "Generate a CSV for Cassandra COPY command"
-	python2 to_cassandra.py $(NETFLIX_RATINGS)
+	python2 to_cassandra.py $(NETFLIX_RATINGS) > $(RATINGS)
 
-sql: $(LUCENE_INDEX)
+sql:
 	@echo "Generate TSV files for PostgreSQL \copy command"
 	python2 to_postgresql.py
 
 clean:
-	rm -rf $(NETFLIX_RATINGS) $(LUCENE_INDEX) $(CQL_STATEMENTS) $(SQL_STATEMENTS)
+	rm -rf $(NETFLIX_RATINGS) $(LUCENE_INDEX) $(RATINGS) $(SQL_STATEMENTS)
 
