@@ -1,9 +1,10 @@
 #!/usr/bin/env python2
 
 import sys
-import names
 
 from django.contrib.auth.models import User
+
+import names
 
 
 """

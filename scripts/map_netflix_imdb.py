@@ -2,7 +2,11 @@
 
 INDEX_DIR = "Movies.index"
 
-import sys, os, lucene, re
+import sys
+import os
+import re
+
+import lucene
 
 from java.io import File
 from org.apache.lucene.analysis.standard import StandardAnalyzer
@@ -20,6 +24,8 @@ Mismatchings between IMDB and Netflix collection are ignored.
 A movie titles file is required.
 Lucene index will be updated with netflix ids.
 """
+
+
 def do_mapping(line):
     regex = re.match(r"(?P<netflix_id>[0-9]+),(?P<year>([0-9]+)|NULL),(?P<title>.+)", line)
     if not regex:
@@ -48,11 +54,11 @@ def do_mapping(line):
             doc_id = doc.getField("id").stringValue()
             doc.add(StringField("netflix_id", str(netflix_id), Field.Store.YES))
             writer.updateDocument(Term("id", doc_id), doc)
-    
+
 
 if __name__ == '__main__':
     lucene.initVM()
-    
+
     if len(sys.argv) < 2:
         print "{0} <titles_file>".format(sys.argv[0])
         sys.exit(0)
@@ -62,9 +68,9 @@ if __name__ == '__main__':
     store = SimpleFSDirectory(File(index_file))
 
     analyzer = StandardAnalyzer(Version.LUCENE_CURRENT)
- 
+
     reader = IndexReader.open(store)
-    searcher = IndexSearcher(reader)   
+    searcher = IndexSearcher(reader)
 
     writer_config = IndexWriterConfig(Version.LUCENE_CURRENT, analyzer)
     writer_config.setOpenMode(IndexWriterConfig.OpenMode.APPEND)

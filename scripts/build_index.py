@@ -2,11 +2,19 @@
 
 INDEX_DIR = "Movies.index"
 
-import sys, os, lucene, re, csv, time, calendar
+import sys
+import os
+import re
+import csv
+import time
+import calendar
+
+import lucene
 
 from java.io import File
 from org.apache.lucene.analysis.standard import StandardAnalyzer
-from org.apache.lucene.document import Document, Field, TextField, IntField, LongField, FloatField, StringField
+from org.apache.lucene.document import Document, Field, TextField, IntField, LongField, FloatField, \
+    StringField
 from org.apache.lucene.index import IndexWriter, IndexWriterConfig
 from org.apache.lucene.store import SimpleFSDirectory
 from org.apache.lucene.util import Version
@@ -23,6 +31,8 @@ The following format is assumed:
     lastUpdated
 
 """
+
+
 class IndexMovies(object):
     """Usage: python index.py <imdb_tsv>"""
 
@@ -56,7 +66,7 @@ class IndexMovies(object):
                     self.add_elements(doc, row[8], "director", TextField)
                     self.add_elements(doc, row[9], "writer", TextField)
                     self.add_elements(doc, row[10], "cast", TextField)
-                    doc.add(IntField("metascore", self.parse_int(row[11]), Field.Store.YES)) 
+                    doc.add(IntField("metascore", self.parse_int(row[11]), Field.Store.YES))
                     doc.add(FloatField("imdb_rating", self.parse_float(row[12]), Field.Store.YES))
                     doc.add(IntField("imdb_votes", self.parse_int(row[13]), Field.Store.YES))
                     doc.add(StringField("poster", self.parse_string(row[14]), Field.Store.YES))
@@ -115,7 +125,7 @@ class IndexMovies(object):
 
     def parse_date(self, text):
         if text == "N/A" or text == "":
-            return -2**63       # Java Long.MIN_VALUE
+            return -2 ** 63  # Java Long.MIN_VALUE
         t = time.strptime(text, r"%Y-%m-%d")
         return long(calendar.timegm(t))
 
@@ -132,5 +142,6 @@ if __name__ == '__main__':
         sys.exit(1)
     lucene.initVM()
     base_dir = os.path.abspath(os.path.curdir)
-    IndexMovies(sys.argv[1], os.path.join(base_dir, INDEX_DIR), StandardAnalyzer(Version.LUCENE_CURRENT))
+    IndexMovies(sys.argv[1], os.path.join(base_dir, INDEX_DIR),
+                StandardAnalyzer(Version.LUCENE_CURRENT))
 

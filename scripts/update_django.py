@@ -4,7 +4,6 @@ import sys
 
 MOVIE_TABLE = "filmyou_movie"
 
-
 """
 This script will prepare SQL UPDATE statements for Movie model in Django.
 This will add n_votes and sum_votes fields.

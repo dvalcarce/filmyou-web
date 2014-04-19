@@ -2,21 +2,25 @@
 
 INDEX_DIR = "Movies.index"
 
-import os, lucene, time, psycopg2, codecs
+import os
+import time
+import codecs
+
+import lucene
+import psycopg2
 
 from java.io import File
 from org.apache.lucene.analysis.standard import StandardAnalyzer
 from org.apache.lucene.index import IndexReader
-from org.apache.lucene.search import IndexSearcher
 from org.apache.lucene.store import SimpleFSDirectory
 from org.apache.lucene.util import Version
-from org.apache.lucene.document import Field
 
 """
 This script scans OMDB collection and builds TSV files for PostgreSQL.
 """
-class OutputSQL(object):
 
+
+class OutputSQL(object):
     def __init__(self, reader, store_dir):
         self.genres = {}
         self.people = {}
@@ -30,17 +34,28 @@ class OutputSQL(object):
         self.indexDocs(reader)
 
     def indexDocs(self, reader):
-        with codecs.open(os.path.join(self.store_dir, "movie.tsv"), 'w', encoding='utf-8') as movie_file, \
-            codecs.open(os.path.join(self.store_dir, "person.tsv"), 'w', encoding='utf-8') as person_file, \
-            codecs.open(os.path.join(self.store_dir, "genre.tsv"), 'w', encoding='utf-8') as genre_file, \
-            codecs.open(os.path.join(self.store_dir, "genre_movie.tsv"), 'w', encoding='utf-8') as genre_movie_file, \
-            codecs.open(os.path.join(self.store_dir, "language.tsv"), 'w', encoding='utf-8') as language_file, \
-            codecs.open(os.path.join(self.store_dir, "language_movie.tsv"), 'w', encoding='utf-8') as language_movie_file, \
-            codecs.open(os.path.join(self.store_dir, "country.tsv"), 'w', encoding='utf-8') as country_file, \
-            codecs.open(os.path.join(self.store_dir, "country_movie.tsv"), 'w', encoding='utf-8') as country_movie_file, \
-            codecs.open(os.path.join(self.store_dir, "director.tsv"), 'w', encoding='utf-8') as director_file, \
-            codecs.open(os.path.join(self.store_dir, "writer.tsv"), 'w', encoding='utf-8') as writer_file, \
-            codecs.open(os.path.join(self.store_dir, "cast.tsv"), 'w', encoding='utf-8') as cast_file:
+        with codecs.open(os.path.join(self.store_dir, "movie.tsv"), 'w',
+                         encoding='utf-8') as movie_file, \
+                codecs.open(os.path.join(self.store_dir, "person.tsv"), 'w',
+                            encoding='utf-8') as person_file, \
+                codecs.open(os.path.join(self.store_dir, "genre.tsv"), 'w',
+                            encoding='utf-8') as genre_file, \
+                codecs.open(os.path.join(self.store_dir, "genre_movie.tsv"), 'w',
+                            encoding='utf-8') as genre_movie_file, \
+                codecs.open(os.path.join(self.store_dir, "language.tsv"), 'w',
+                            encoding='utf-8') as language_file, \
+                codecs.open(os.path.join(self.store_dir, "language_movie.tsv"), 'w',
+                            encoding='utf-8') as language_movie_file, \
+                codecs.open(os.path.join(self.store_dir, "country.tsv"), 'w',
+                            encoding='utf-8') as country_file, \
+                codecs.open(os.path.join(self.store_dir, "country_movie.tsv"), 'w',
+                            encoding='utf-8') as country_movie_file, \
+                codecs.open(os.path.join(self.store_dir, "director.tsv"), 'w',
+                            encoding='utf-8') as director_file, \
+                codecs.open(os.path.join(self.store_dir, "writer.tsv"), 'w',
+                            encoding='utf-8') as writer_file, \
+                codecs.open(os.path.join(self.store_dir, "cast.tsv"), 'w',
+                            encoding='utf-8') as cast_file:
 
             for i in xrange(reader.numDocs()):
                 doc = reader.document(i)
@@ -59,8 +74,10 @@ class OutputSQL(object):
                 released = self.parse_date(doc.getField("released").numericValue().longValue())
 
                 metascore = self.parse_positive(doc.getField("metascore").numericValue().intValue())
-                imdb_rating = self.parse_positive(doc.getField("imdb_rating").numericValue().doubleValue())
-                imdb_votes = self.parse_positive(doc.getField("imdb_votes").numericValue().intValue())
+                imdb_rating = self.parse_positive(
+                    doc.getField("imdb_rating").numericValue().doubleValue())
+                imdb_votes = self.parse_positive(
+                    doc.getField("imdb_votes").numericValue().intValue())
                 poster = self.parse_string(doc.getField("poster").stringValue())
                 plot = self.parse_string(doc.getField("plot").stringValue())
                 fullplot = self.parse_string(doc.getField("fullplot").stringValue())
@@ -72,12 +89,14 @@ class OutputSQL(object):
                 self.parse_n_n(doc.getFields("director"), self.people, person_file, director_file)
                 self.parse_n_n(doc.getFields("writer"), self.people, person_file, writer_file)
                 self.parse_n_n(doc.getFields("cast"), self.people, person_file, cast_file)
-                self.parse_n_n(doc.getFields("language"), self.languages, language_file, language_movie_file)
-                self.parse_n_n(doc.getFields("country"), self.countries, country_file, country_movie_file)
+                self.parse_n_n(doc.getFields("language"), self.languages, language_file,
+                               language_movie_file)
+                self.parse_n_n(doc.getFields("country"), self.countries, country_file,
+                               country_movie_file)
 
                 movie_file.write(u"{id}\t{imdb_id}\t{netflix_id}\t{title}\t{year}\t{rating}\t" \
-                    "{runtime}\t{released}\t{metascore}\t{imdb_rating}\t{imdb_votes}\t" \
-                    "{poster}\t{plot}\t{fullplot}\t{awards}\t{updated}\n".format(
+                                 "{runtime}\t{released}\t{metascore}\t{imdb_rating}\t{imdb_votes}\t" \
+                                 "{poster}\t{plot}\t{fullplot}\t{awards}\t{updated}\n".format(
                     id=self.movie_id,
                     imdb_id=imdb_id,
                     netflix_id=netflix_id,
@@ -114,7 +133,7 @@ class OutputSQL(object):
             return unicode(number)
 
     def parse_date(self, value):
-        if value == -2**63:
+        if value == -2 ** 63:
             return "NULL"
 
         t = time.gmtime(value)
@@ -145,7 +164,7 @@ if __name__ == '__main__':
     store = SimpleFSDirectory(File(index_file))
 
     analyzer = StandardAnalyzer(Version.LUCENE_CURRENT)
- 
+
     reader = IndexReader.open(store)
 
     store_dir = os.path.join(base_dir, "sql")
