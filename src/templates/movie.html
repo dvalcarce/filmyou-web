@@ -7,82 +7,85 @@
 {% endblock %}
 
 {% block inner %}
-<div class="col-xs-12">
-    <h1>{{ movie.title }}</h1>
-    <hr />
-    <div class="row">
-        <div class="col-xs-12 col-sm-3">
-            {% if movie.poster %}
-                <img src="{{ movie.poster }}" class="img-responsive" />
-            {% else %}
-                <img src="{{ STATIC_URL }}img/noposter200.png" class="img-responsive" />
-            {% endif %}
-        </div>
-        <div class="pull-right">
-            <h1>
-                {% if movie.score %}
-                {{ movie.score|floatformat:1 }}
+    <div class="col-xs-12">
+        <h1>{{ movie.title }}</h1>
+        <hr/>
+        <div class="row">
+            <div class="col-xs-12 col-sm-3">
+                {% if movie.poster %}
+                    <img src="{{ movie.poster }}" class="img-responsive"/>
                 {% else %}
-                --
+                    <img src="{{ STATIC_URL }}img/noposter200.png" class="img-responsive"/>
                 {% endif %}
-            </h1>
-            <p><span id="n_votes">{{ movie.n_votes}}</span> votes</p>
-            <div id="star{{ movie.movie_id }}"></div>
-        </div>
-        <div class="col-xs-12 col-sm-9">
-            <dl class="dl-horizontal">
-                <dt>Id</dt>
-                    <dd>{{ movie.movie_id }}</dd>
-                <dt>Year</dt>
-                    <dd>{{ movie.year }}</dd>
-                <dt>Genre</dt>
-                    <dd>{{ movie.genre.all|join:", " }}</dd>
-                <dt>Runtime</dt>
-                    <dd>{{ movie.runtime }}</dd>
-                <dt>Rating</dt>
-                    <dd>{{ movie.rating }}</dd>
-                <dt>Director</dt>
-                    <dd>{{ movie.director.all|join:", " }}</dd>
-                <dt>Writer</dt>
-                    <dd>{{ movie.writer.all|join:", " }}</dd>
-                <dt>Cast</dt>
-                    <dd>{{ movie.cast.all|join:", " }}</dd>
-                <dt>Released</dt>
-                    <dd>{{ movie.released|date }}</dd>
-                <dt>Plot</dt>
-                    <dd class="justify">{{ movie.plot }}</dd>
-                <dt>Fullplot</dt>
-                    <dd class="justify">{{ movie.fullplot }}</dd>
-            </dl>
-        </div>
-    </div><!-- /.row -->
-</div><!-- /.col-xs-12 -->
+            </div>
+            <div class="pull-right">
+                <h1>
+                    {% if movie.score %}
+                        {{ movie.score|floatformat:1 }}
+                    {% else %}
+                        --
+                    {% endif %}
+                </h1>
 
-<script type="text/javascript">
-{% if not score %}
-var not_rated = true;
-{% else %}
-var not_rated = false;
-{% endif %}
-$("#star{{ movie.movie_id }}").raty({
-    {% if score %}
-    score: {{ score }},
-    {% else %}
-    score: 0,
-    {% endif %}
-    starOff: '{{ STATIC_URL }}img/star-off.png',
-    starOn: '{{ STATIC_URL }}img/star-on.png',
-    click: function(score, evt) {
-        if (not_rated) {
-            n = parseInt($("#n_votes").text()) + 1;
-            $("#n_votes").text(n);
-            not_rated = false;
-        }
-        $.ajax({
-            url: "/rate/?movie={{ movie.movie_id }}&score=" + score,
+                <p><span id="n_votes">{{ movie.n_votes }}</span> votes</p>
+
+                <div id="star{{ movie.movie_id }}"></div>
+            </div>
+            <div class="col-xs-12 col-sm-9">
+                <dl class="dl-horizontal">
+                    <dt>Id</dt>
+                    <dd>{{ movie.movie_id }}</dd>
+                    <dt>Year</dt>
+                    <dd>{{ movie.year }}</dd>
+                    <dt>Genre</dt>
+                    <dd>{{ movie.genre.all|join:", " }}</dd>
+                    <dt>Runtime</dt>
+                    <dd>{{ movie.runtime }}</dd>
+                    <dt>Rating</dt>
+                    <dd>{{ movie.rating }}</dd>
+                    <dt>Director</dt>
+                    <dd>{{ movie.director.all|join:", " }}</dd>
+                    <dt>Writer</dt>
+                    <dd>{{ movie.writer.all|join:", " }}</dd>
+                    <dt>Cast</dt>
+                    <dd>{{ movie.cast.all|join:", " }}</dd>
+                    <dt>Released</dt>
+                    <dd>{{ movie.released|date }}</dd>
+                    <dt>Plot</dt>
+                    <dd class="justify">{{ movie.plot }}</dd>
+                    <dt>Fullplot</dt>
+                    <dd class="justify">{{ movie.fullplot }}</dd>
+                </dl>
+            </div>
+        </div>
+        <!-- /.row -->
+    </div><!-- /.col-xs-12 -->
+
+    <script type="text/javascript">
+        {% if not score %}
+            var not_rated = true;
+        {% else %}
+            var not_rated = false;
+        {% endif %}
+        $("#star{{ movie.movie_id }}").raty({
+            {% if score %}
+                score: {{ score }},
+            {% else %}
+                score: 0,
+            {% endif %}
+            starOff: '{{ STATIC_URL }}img/star-off.png',
+            starOn: '{{ STATIC_URL }}img/star-on.png',
+            click: function (score, evt) {
+                if (not_rated) {
+                    n = parseInt($("#n_votes").text()) + 1;
+                    $("#n_votes").text(n);
+                    not_rated = false;
+                }
+                $.ajax({
+                    url: "/rate/?movie={{ movie.movie_id }}&score=" + score,
+                });
+            }
         });
-    }
-});
-</script>
+    </script>
 
 {% endblock %}

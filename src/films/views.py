@@ -1,3 +1,7 @@
+# -*- coding: utf-8 -*-
+
+from __future__ import absolute_import
+
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.http import Http404, HttpResponse
@@ -6,25 +10,23 @@ from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 
-from pylucene.search import MovieReader
+from libs.search import MovieReader
+from .models import Movie
+from .models import MyUser
 
-from filmyou.models import Movie
-from filmyou.models import MyUser
-
-
-footer = "UDC"
 
 def home(request):
     """
     Renders homepage
     """
+
     if request.user.is_authenticated():
         template = 'main.html'
     else:
         template = 'intro.html'
 
     return render_to_response(template, {},
-        context_instance=RequestContext(request))
+                              context_instance=RequestContext(request))
 
 
 @login_required
@@ -37,12 +39,12 @@ def profile(request, username):
     c = {'user': user}
 
     return render_to_response('profile.html', c,
-        context_instance=RequestContext(request))
+                              context_instance=RequestContext(request))
 
 
 @login_required
 def search(request, template='search_results.html',
-    page_template='page_search_results.html'):
+           page_template='page_search_results.html'):
     """
     Renders search page
     """
@@ -66,7 +68,7 @@ def search(request, template='search_results.html',
     }
 
     return render_to_response(template, c,
-        context_instance=RequestContext(request))
+                              context_instance=RequestContext(request))
 
 
 def _search_ajax(request, template):
@@ -91,7 +93,7 @@ def _search_ajax(request, template):
         return HttpResponse("")
 
     return render_to_response(template, c,
-        context_instance=RequestContext(request))
+                              context_instance=RequestContext(request))
 
 
 @login_required
@@ -104,7 +106,7 @@ def advanced_search(request):
             'page_template': 'page_search_results.html'
         }
         return render_to_response('search_results.html', c,
-        context_instance=RequestContext(request))
+                                  context_instance=RequestContext(request))
 
     template = 'advanced_search.html'
     c = {
@@ -121,7 +123,7 @@ def advanced_search(request):
     }
 
     return render_to_response(template, c,
-        context_instance=RequestContext(request))
+                              context_instance=RequestContext(request))
 
     # query = request.POST.get('query', None)
     # if query:
@@ -144,7 +146,7 @@ def advanced_search(request):
 
 @login_required
 def ratings(request, template='rating_results.html',
-    page_template='page_rating_results.html'):
+            page_template='page_rating_results.html'):
     """
     Renders ratings page
     """
@@ -160,7 +162,7 @@ def ratings(request, template='rating_results.html',
     }
 
     return render_to_response(template, c,
-        context_instance=RequestContext(request))
+                              context_instance=RequestContext(request))
 
 
 def _ratings_ajax(request, template):
@@ -178,7 +180,7 @@ def _ratings_ajax(request, template):
         }
 
         return render_to_response(template, c,
-            context_instance=RequestContext(request))
+                                  context_instance=RequestContext(request))
     else:
         return HttpResponse("")
 
@@ -223,12 +225,12 @@ def movie(request, movie_id):
     }
 
     return render_to_response('movie.html', c,
-        context_instance=RequestContext(request))
+                              context_instance=RequestContext(request))
 
 
 @login_required
 def recommendations(request, template='rec_results.html',
-    page_template='page_rec_results.html'):
+                    page_template='page_rec_results.html'):
     """
     Renders recommendations page
     """
@@ -244,7 +246,7 @@ def recommendations(request, template='rec_results.html',
     }
 
     return render_to_response(template, c,
-        context_instance=RequestContext(request))
+                              context_instance=RequestContext(request))
 
 
 def _recommendations_ajax(request, template):
@@ -262,9 +264,10 @@ def _recommendations_ajax(request, template):
         }
 
         return render_to_response(template, c,
-            context_instance=RequestContext(request))
+                                  context_instance=RequestContext(request))
     else:
         return HttpResponse("")
+
 
 @login_required
 def friends(request):

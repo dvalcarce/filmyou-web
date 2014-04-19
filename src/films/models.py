@@ -1,7 +1,11 @@
+# -*- coding: utf-8 -*-
+
+from __future__ import absolute_import
+
 from django.db import models
 from django.contrib.auth.models import User
 
-from filmyou.cassandra import CassandraAdapter
+from libs.cassandra import CassandraAdapter
 
 
 class Person(models.Model):
@@ -57,6 +61,12 @@ class Movie(models.Model):
     def rate(self, user, score):
         """
         Updates movie model with a new rating.
+        :param user: user
+        :type user: MyUser
+        :param score: score
+        :type score: float
+        :return: nothing
+        :rtype: None
         """
         results = user.get_rate_for_movies([self])
         unused_movie, old_score = results[0]
@@ -71,7 +81,6 @@ class Movie(models.Model):
         self.save()
 
 
-
 class MyUser(User):
     class Meta:
         proxy = True
@@ -83,7 +92,7 @@ class MyUser(User):
         """
         rates = []
         for movie in movies:
-            query = "SELECT movie, score FROM ratings WHERE user = :user AND movie = :movie"
+            query = "SELECT movie, score FROM ratings WHERE user = %(user)s AND movie = %(movie)s"
             parameters = {
                 'user': self.id,
                 'movie': int(movie.movie_id),
@@ -124,16 +133,23 @@ class MyUser(User):
             'limit': n_results
         }
         if last:
-            query = "SELECT movie, score FROM ratings WHERE user = :user AND movie > :last LIMIT :limit"
+            query = "SELECT movie, score " \
+                    "FROM ratings " \
+                    "WHERE user = %(user)s AND movie > %(last)s " \
+                    "LIMIT %(limit)s"
             parameters['last'] = last
         else:
-            query = "SELECT movie, score FROM ratings WHERE user = :user LIMIT :limit"
+            query = "SELECT movie, score " \
+                    "FROM ratings " \
+                    "WHERE user = %(user)s " \
+                    "LIMIT %(limit)s"
 
         with CassandraAdapter() as db:
             result = db.execute(query, parameters)
 
         return [
-            (Movie.objects.get(movie_id=movie), score) for (movie, score) in result
+            (Movie.objects.get(movie_id=movie), score) for (movie, score) in
+            result
         ]
 
     def get_recommendations(self, last=None, n_results=10):
@@ -147,23 +163,31 @@ class MyUser(User):
         }
 
         if last:
-            query = "SELECT movie, score FROM recommendations WHERE user = :user AND movie > :last LIMIT :limit"
+            query = "SELECT movie, score " \
+                    "FROM recommendations " \
+                    "WHERE user = %(user)s AND movie > " \
+                    "%(last)s LIMIT %(limit)s"
             parameters['last'] = last
         else:
-            query = "SELECT movie, score FROM recommendations WHERE user = :user LIMIT :limit"
+            query = "SELECT movie, score " \
+                    "FROM recommendations " \
+                    "WHERE user = %(user)s " \
+                    "LIMIT %(limit)s"
 
         with CassandraAdapter() as db:
             result = db.execute(query, parameters)
 
         return [
-            (Movie.objects.get(movie_id=movie), score) for (movie, score) in result
+            (Movie.objects.get(movie_id=movie), score) for (movie, score) in
+            result
         ]
 
     def rate(self, movie, score):
         """
         Inserts new rating in Cassandra DB.
         """
-        query = "INSERT INTO ratings (user, movie, score) VALUES (:user, :movie, :score)"
+        query = "INSERT INTO ratings (user, movie, score) " \
+                "VALUES (:user, :movie, :score)"
         parameters = {
             'user': self.id,
             'movie': movie.movie_id,

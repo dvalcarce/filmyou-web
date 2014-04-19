@@ -2,81 +2,101 @@
 {% load i18n %}
 
 {% block head %}
-<style type="text/css">
-    .nav > li.active > a {
-        font-weight: bold;
-    }
-    @media screen and (max-width: 768px) {
-        .row-offcanvas {
-            position: relative;
-            -webkit-transition: all 0.25s ease-out;
-            -moz-transition: all 0.25s ease-out;
-            transition: all 0.25s ease-out;
+    <style type="text/css">
+        .nav > li.active > a {
+            font-weight: bold;
         }
-        .row-offcanvas-right
-        .sidebar-offcanvas {
-            right: -50%; /* 6 columns */
+
+        @media screen and (max-width: 768px) {
+            .row-offcanvas {
+                position: relative;
+                -webkit-transition: all 0.25s ease-out;
+                -moz-transition: all 0.25s ease-out;
+                transition: all 0.25s ease-out;
+            }
+
+            .row-offcanvas-right
+            .sidebar-offcanvas {
+                right: -50%; /* 6 columns */
+            }
+
+            .row-offcanvas-left
+            .sidebar-offcanvas {
+                left: -50%; /* 6 columns */
+            }
+
+            .row-offcanvas-right.active {
+                right: 50%; /* 6 columns */
+            }
+
+            .row-offcanvas-left.active {
+                left: 50%; /* 6 columns */
+            }
+
+            .sidebar-offcanvas {
+                position: absolute;
+                top: 0;
+                width: 50%; /* 6 columns */
+            }
         }
-        .row-offcanvas-left
-        .sidebar-offcanvas {
-            left: -50%; /* 6 columns */
-        }
-        .row-offcanvas-right.active {
-            right: 50%; /* 6 columns */
-        }
-        .row-offcanvas-left.active {
-            left: 50%; /* 6 columns */
-        }
-        .sidebar-offcanvas {
-            position: absolute;
-            top: 0;
-            width: 50%; /* 6 columns */
-        }
-    }
-</style>
+    </style>
 
 {% endblock %}
 
 {% block content %}
     <div class="row row-offcanvas row-offcanvas-right">
 
-    {% load sidebar %}
+        {% load sidebar %}
 
         <!-- sidebar -->
         <div class="col-xs-6 col-sm-3 sidebar-offcanvas" id="sidebar" role="navigation">
             <div class="well sidebar-nav">
                 <ul class="nav">
                     <li>Movies</li>
-                    <li class="{% navactive request 'filmyou.views.home' %}"><a href="/">{% trans 'Top movies' %}</a></li>
-                    <li class="{% navactive request 'filmyou.views.recommendations' %}"><a href="{% url 'filmyou.views.recommendations' %}">{% trans 'Recommendations' %}</a></li>
-                    <li class="{% navactive request 'filmyou.views.advanced_search' %}"><a href="{% url 'filmyou.views.advanced_search' %}">{% trans 'Advanced Search' %}</a></li>
+                    <li class="{% navactive request 'films.views.home' %}"><a
+                            href="/">{% trans 'Top movies' %}</a></li>
+                    <li class="{% navactive request 'films.views.recommendations' %}"><a
+                            href="{% url 'films.views.recommendations' %}">{% trans 'Recommendations' %}</a>
+                    </li>
+                    <li class="{% navactive request 'films.views.advanced_search' %}"><a
+                            href="{% url 'films.views.advanced_search' %}">{% trans 'Advanced Search' %}</a>
+                    </li>
                     <li>Me</li>
-                    <li class="{% navactive request 'filmyou.views.ratings' %}"><a href="{% url 'filmyou.views.ratings' %}">{% trans 'My ratings' %}</a></li>
-                    <li class="{% navactive request 'filmyou.views.profile' user %}"><a href="{% url 'filmyou.views.profile' user %}">{% trans 'My profile' %}</a></li>
+                    <li class="{% navactive request 'films.views.ratings' %}"><a
+                            href="{% url 'films.views.ratings' %}">{% trans 'My ratings' %}</a>
+                    </li>
+                    <li class="{% navactive request 'films.views.profile' user %}"><a
+                            href="{% url 'films.views.profile' user %}">{% trans 'My profile' %}</a>
+                    </li>
                 </ul>
-            </div><!--/.well -->
-        </div><!--/sidebar-->
+            </div>
+            <!--/.well -->
+        </div>
+        <!--/sidebar-->
 
         <div class="col-xs-12 col-sm-9">
             <p class="pull-right visible-xs">
-                <button type="button" class="btn btn-primary btn-sm" data-toggle="offcanvas">{% trans 'Toggle nav' %}</button>
+                <button type="button" class="btn btn-primary btn-sm"
+                        data-toggle="offcanvas">{% trans 'Toggle nav' %}</button>
             </p>
             <div class="row">
                 {% block inner %}
                 {% endblock %}
-            </div><!-- /.row -->
-        </div><!-- /.col -->
+            </div>
+            <!-- /.row -->
+        </div>
+        <!-- /.col -->
 
     </div><!-- /.row -->
 {% endblock %}
 
 {% block script %}
-{{ block.super }}
-<script type="text/javascript">
-    $(document).ready(function() {
-        $('[data-toggle=offcanvas]').click(function() {
-            $('.row-offcanvas').toggleClass('active');
+    {{ block.super }}
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('[data-toggle=offcanvas]').click(function () {
+                $('.row-offcanvas').toggleClass('active');
+            });
         });
-    });
-</script>
+    </script>
 {% endblock %}

@@ -2,10 +2,11 @@
 {% load i18n %}
 
 {% block inner %}
-<div class="col-xs-12" id="rows_append">
-    <h1>{% trans 'Your ratings' %}</h1>
-    <p>{% trans 'These are the movies you have rated.' %}</p>
-    <hr />
-    {% include page_template %}
-</div><!-- /.col-xs-12 -->
+    <div class="col-xs-12" id="rows_append">
+        <h1>{% trans 'Your ratings' %}</h1>
+
+        <p>{% trans 'These are the movies you have rated.' %}</p>
+        <hr/>
+        {% include page_template %}
+    </div><!-- /.col-xs-12 -->
 {% endblock %}

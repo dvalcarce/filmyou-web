@@ -2,21 +2,25 @@
 {% load i18n %}
 
 {% block content %}
-<div class="col-xs-12">
-    <h1>{% trans 'Log in' %}</h1>
-    <hr />
-    {% if form.errors %}
-        <div class="alert alert-block">
-            <h4>{% trans 'Bad username or password' %}</h4>
-            <p>{% trans 'Please, check your data. Note that both fields are case-sensitive.' %}</p>
-        </div>
-    {% endif %}
-   <form action="{% url 'django.contrib.auth.views.login' %}" method="post" id="login-form">
-        {% csrf_token %}
+    <div class="col-xs-12">
+        <h1>{% trans 'Log in' %}</h1>
+        <hr/>
+        {% if form.errors %}
+            <div class="alert alert-block">
+                <h4>{% trans 'Bad username or password' %}</h4>
+
+                <p>{% trans 'Please, check your data. Note that both fields are case-sensitive.' %}</p>
+            </div>
+        {% endif %}
+        <form action="{% url 'django.contrib.auth.views.login' %}" method="post" id="login-form">
+            {% csrf_token %}
             {% for field in form %}
                 <div class="form-group {% if field.errors %} has-error{% endif %}">
-                    <label class="control-label" for="id_{{ field.html_name }}">{{ field.label }}</label>
-                    <input id="id_{{ field.html_name }}" type="{% if field.html_name == 'password' %}password{% else %}text{% endif %}" name="{{ field.html_name }}" class="form-control" >
+                    <label class="control-label"
+                           for="id_{{ field.html_name }}">{{ field.label }}</label>
+                    <input id="id_{{ field.html_name }}"
+                           type="{% if field.html_name == 'password' %}password{% else %}text{% endif %}"
+                           name="{{ field.html_name }}" class="form-control">
                     <span class="help-block">{{ field.errors.as_text }}</span>
                 </div>
             {% endfor %}
@@ -25,16 +29,19 @@
                     <input type="checkbox"> {% trans 'Remember me' %}
                 </label>
             </div>
-        <input type="hidden" name="next" value="{{ next }}" />
-        <input type="submit" value="{% trans 'Log in' %}" class="btn btn-primary btn-block" />
-        <input type="reset" value="{% trans 'Cancel' %}" class="btn btn-danger btn-block" />
-    </form>
-    <hr />
-    <p>{% trans 'Forgot password' %}? <a href="{% url 'auth_password_reset' %}">{% trans 'Reset it' %}</a></p>
-    <p>{% trans 'Not member' %}? <a href="{% url 'registration_register' %}">{% trans 'Register' %}</a></p>
+            <input type="hidden" name="next" value="{{ next }}"/>
+            <input type="submit" value="{% trans 'Log in' %}" class="btn btn-primary btn-block"/>
+            <input type="reset" value="{% trans 'Cancel' %}" class="btn btn-danger btn-block"/>
+        </form>
+        <hr/>
+        <p>{% trans 'Forgot password' %}? <a
+                href="{% url 'auth_password_reset' %}">{% trans 'Reset it' %}</a></p>
 
-    <script type="text/javascript">
-        document.getElementById('id_username').focus()
-    </script>
-</div>
+        <p>{% trans 'Not member' %}? <a
+                href="{% url 'registration_register' %}">{% trans 'Register' %}</a></p>
+
+        <script type="text/javascript">
+            document.getElementById('id_username').focus()
+        </script>
+    </div>
 {% endblock %}

@@ -1,10 +1,13 @@
-#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
-INDEX_DIR = "pylucene/Movies.index"
+from __future__ import absolute_import
 
-import os, lucene, functools
-
+import os
+import functools
 from datetime import datetime
+
+from django.conf import settings
+import lucene
 
 from java.io import File
 from org.apache.lucene.analysis.standard import StandardAnalyzer
@@ -13,8 +16,7 @@ from org.apache.lucene.queryparser.classic import QueryParser
 from org.apache.lucene.search import IndexSearcher, ScoreDoc
 from org.apache.lucene.store import SimpleFSDirectory
 from org.apache.lucene.util import Version
-
-from filmyou.models import Movie
+from films.models import Movie
 
 
 class MovieReader(object):
@@ -25,11 +27,14 @@ class MovieReader(object):
     def __init__(self):
         """
         Instantiates a MovieReader object capable of reading Lucene indexes contents.
+        :return: self
+        :rtype: MovieReader
         """
         vm_env = lucene.getVMEnv()
         vm_env.attachCurrentThread()
         self.searcher = searcher
         self.analyzer = analyzer
+
 
     def query(self, field, content, n_results=10, score=False):
         """
@@ -101,13 +106,16 @@ class LuceneMovie(object):
         self.casts = reader.get_fields(movie, "cast")
 
         ts = reader.get_fields(movie, "released", numeric=True)[0].longValue()
-        self.released = datetime.fromtimestamp(ts) if ts != -2**63 else None
+        self.released = datetime.fromtimestamp(ts) if ts != -2 ** 63 else None
 
         self.plot = reader.get_fields(movie, "plot")[0]
         self.fullplot = reader.get_fields(movie, "fullplot")[0]
         self.poster = reader.get_fields(movie, "poster")[0]
 
-        movie = Movie.objects.get(movie_id=self.movie_id)
+        try:
+            movie = Movie.objects.get(movie_id=self.movie_id)
+        except Movie.DoesNotExist:
+            return
         self.n_votes = movie.n_votes
         self.sum_votes = movie.sum_votes
         self.score = self.sum_votes / self.n_votes if self.n_votes != 0 else None
@@ -122,7 +130,7 @@ class LuceneMovie(object):
 # Initialize Lucene
 lucene.initVM()
 base_dir = os.path.abspath(os.path.curdir)
-index_file = os.path.join(base_dir, INDEX_DIR)
+index_file = os.path.join(base_dir, settings.LUCENE['PATH'])
 index = SimpleFSDirectory(File(index_file))
 reader = DirectoryReader.open(index)
 searcher = IndexSearcher(reader)

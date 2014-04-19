@@ -56,7 +56,7 @@ DATABASES = {
 
 CASSANDRA = {
     'HOST': environ.get("CASSANDRA_HOST", '127.0.0.1'),
-    'PORT': environ.get("CASSANDRA_PORT", '9160'),
+    'PORT': environ.get("CASSANDRA_PORT", '9042'),
     'KEYSPACE': environ.get("CASSANDRA_KEYSPACE", 'recommender'),
 }
 
@@ -195,6 +195,7 @@ DJANGO_APPS = (
     'django.contrib.admin',
     'registration',
     'django_extensions',
+    'films',
     'filmyou',
     # 'django.contrib.admindocs',
 )

@@ -9,32 +9,32 @@
 {% block script %}
     {{ block.super }}
     <script type="text/javascript">
-    var settings = {
-        containerSelector: '#scrolling_container',
-        loadingSelector: '#scrolling_loading',
-        scrolling_more: '#scrolling_more',
-        rows_append: '#rows_append'
-    };
+        var settings = {
+            containerSelector: '#scrolling_container',
+            loadingSelector: '#scrolling_loading',
+            scrolling_more: '#scrolling_more',
+            rows_append: '#rows_append'
+        };
 
-    $(window).scroll(function() {
-        if($(window).scrollTop() == $(document).height() - $(window).height()) {
-            var loading = $(settings.loadingSelector);
-            if (loading.is(':visible')) {
-                return false;
-            }
-            loading.show();
-            $.ajax({
-                url: $(settings.scrolling_more).attr('href'),
-                success: function(html) {
-                    loading.hide();
-                    $(settings.containerSelector).remove();
-                    if(html) {
-                        $(settings.rows_append).append(html);
-                        console.log(html);
-                    }
+        $(window).scroll(function () {
+            if ($(window).scrollTop() == $(document).height() - $(window).height()) {
+                var loading = $(settings.loadingSelector);
+                if (loading.is(':visible')) {
+                    return false;
                 }
-            });
-        }
-    });
+                loading.show();
+                $.ajax({
+                    url: $(settings.scrolling_more).attr('href'),
+                    success: function (html) {
+                        loading.hide();
+                        $(settings.containerSelector).remove();
+                        if (html) {
+                            $(settings.rows_append).append(html);
+                            console.log(html);
+                        }
+                    }
+                });
+            }
+        });
     </script>
 {% endblock %}
