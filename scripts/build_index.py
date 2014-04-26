@@ -1,6 +1,6 @@
 #!/usr/bin/env python2
 
-INDEX_DIR = "Movies.index"
+INDEX_DIR = "Films.index"
 
 import sys
 import os
@@ -33,7 +33,7 @@ The following format is assumed:
 """
 
 
-class IndexMovies(object):
+class Indexfilms(object):
     """Usage: python index.py <imdb_tsv>"""
 
     def __init__(self, root, storeDir, analyzer):
@@ -142,6 +142,6 @@ if __name__ == '__main__':
         sys.exit(1)
     lucene.initVM()
     base_dir = os.path.abspath(os.path.curdir)
-    IndexMovies(sys.argv[1], os.path.join(base_dir, INDEX_DIR),
+    Indexfilms(sys.argv[1], os.path.join(base_dir, INDEX_DIR),
                 StandardAnalyzer(Version.LUCENE_CURRENT))
 

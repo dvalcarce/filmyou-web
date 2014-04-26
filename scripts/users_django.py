@@ -26,7 +26,7 @@ if __name__ == '__main__':
     with open(sys.argv[1], 'r') as data:
         users = set([])
         for line in data:
-            user, movie, score = line[:-1].split(",")
+            user, film, score = line[:-1].split(",")
             users.add(int(user))
 
     for u in user:

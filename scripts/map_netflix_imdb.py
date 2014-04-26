@@ -1,6 +1,6 @@
 #!/usr/bin/env python2
 
-INDEX_DIR = "Movies.index"
+INDEX_DIR = "Films.index"
 
 import sys
 import os
@@ -21,7 +21,7 @@ from org.apache.lucene.document import Field, StringField
 """
 This script will try to map netflix id's to IMDB ones.
 Mismatchings between IMDB and Netflix collection are ignored.
-A movie titles file is required.
+A film titles file is required.
 Lucene index will be updated with netflix ids.
 """
 

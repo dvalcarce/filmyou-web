@@ -1,6 +1,6 @@
 #!/usr/bin/env python2
 
-INDEX_DIR = "Movies.index"
+INDEX_DIR = "films.index"
 
 import os
 import time
@@ -34,22 +34,22 @@ class OutputSQL(object):
         self.indexDocs(reader)
 
     def indexDocs(self, reader):
-        with codecs.open(os.path.join(self.store_dir, "movie.tsv"), 'w',
-                         encoding='utf-8') as movie_file, \
+        with codecs.open(os.path.join(self.store_dir, "film.tsv"), 'w',
+                         encoding='utf-8') as film_file, \
                 codecs.open(os.path.join(self.store_dir, "person.tsv"), 'w',
                             encoding='utf-8') as person_file, \
                 codecs.open(os.path.join(self.store_dir, "genre.tsv"), 'w',
                             encoding='utf-8') as genre_file, \
-                codecs.open(os.path.join(self.store_dir, "genre_movie.tsv"), 'w',
-                            encoding='utf-8') as genre_movie_file, \
+                codecs.open(os.path.join(self.store_dir, "genre_film.tsv"), 'w',
+                            encoding='utf-8') as genre_film_file, \
                 codecs.open(os.path.join(self.store_dir, "language.tsv"), 'w',
                             encoding='utf-8') as language_file, \
-                codecs.open(os.path.join(self.store_dir, "language_movie.tsv"), 'w',
-                            encoding='utf-8') as language_movie_file, \
+                codecs.open(os.path.join(self.store_dir, "language_film.tsv"), 'w',
+                            encoding='utf-8') as language_film_file, \
                 codecs.open(os.path.join(self.store_dir, "country.tsv"), 'w',
                             encoding='utf-8') as country_file, \
-                codecs.open(os.path.join(self.store_dir, "country_movie.tsv"), 'w',
-                            encoding='utf-8') as country_movie_file, \
+                codecs.open(os.path.join(self.store_dir, "country_film.tsv"), 'w',
+                            encoding='utf-8') as country_film_file, \
                 codecs.open(os.path.join(self.store_dir, "director.tsv"), 'w',
                             encoding='utf-8') as director_file, \
                 codecs.open(os.path.join(self.store_dir, "writer.tsv"), 'w',
@@ -60,7 +60,7 @@ class OutputSQL(object):
             for i in xrange(reader.numDocs()):
                 doc = reader.document(i)
 
-                self.movie_id = doc.getField("id").stringValue()
+                self.film_id = doc.getField("id").stringValue()
                 imdb_id = doc.getField("imdb_id").stringValue()
                 try:
                     netflix_id = doc.getField("netflix_id").stringValue()
@@ -85,19 +85,19 @@ class OutputSQL(object):
                 awards = self.parse_positive(doc.getField("awards").numericValue().intValue())
                 updated = self.parse_date(doc.getField("updated").numericValue().longValue())
 
-                self.parse_n_n(doc.getFields("genre"), self.genres, genre_file, genre_movie_file)
+                self.parse_n_n(doc.getFields("genre"), self.genres, genre_file, genre_film_file)
                 self.parse_n_n(doc.getFields("director"), self.people, person_file, director_file)
                 self.parse_n_n(doc.getFields("writer"), self.people, person_file, writer_file)
                 self.parse_n_n(doc.getFields("cast"), self.people, person_file, cast_file)
                 self.parse_n_n(doc.getFields("language"), self.languages, language_file,
-                               language_movie_file)
+                               language_film_file)
                 self.parse_n_n(doc.getFields("country"), self.countries, country_file,
-                               country_movie_file)
+                               country_film_file)
 
-                movie_file.write(u"{id}\t{imdb_id}\t{netflix_id}\t{title}\t{year}\t{rating}\t" \
+                film_file.write(u"{id}\t{imdb_id}\t{netflix_id}\t{title}\t{year}\t{rating}\t" \
                                  "{runtime}\t{released}\t{metascore}\t{imdb_rating}\t{imdb_votes}\t" \
                                  "{poster}\t{plot}\t{fullplot}\t{awards}\t{updated}\n".format(
-                    id=self.movie_id,
+                    id=self.film_id,
                     imdb_id=imdb_id,
                     netflix_id=netflix_id,
                     title=title,
@@ -153,7 +153,7 @@ class OutputSQL(object):
                 entity[element] = entity_id
                 entity_f.write(u"{id}\t{name}\n".format(id=entity_id, name=element))
 
-            relationship_file.write(u"{m}\t{g}\n".format(m=self.movie_id, g=entity_id))
+            relationship_file.write(u"{m}\t{g}\n".format(m=self.film_id, g=entity_id))
 
 
 if __name__ == '__main__':

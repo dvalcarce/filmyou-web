@@ -1,6 +1,6 @@
 #!/usr/bin/env python2
 
-INDEX_DIR = "Movies.index"
+INDEX_DIR = "films.index"
 
 import sys
 import os
@@ -41,6 +41,6 @@ if __name__ == '__main__':
             scoreDocs = searcher.search(query, 1).scoreDocs
             if scoreDocs:
                 doc = searcher.doc(scoreDocs[0].doc)
-                movie_id = doc.getField("id").stringValue()
-                print "{0},{1},{2}".format(user_id, movie_id, score),
+                film_id = doc.getField("id").stringValue()
+                print "{0},{1},{2}".format(user_id, film_id, score),
 
