@@ -5,9 +5,9 @@
     <div class="col-xs-12" id="rows_append">
         <h1>{% trans 'Advanced search' %}</h1>
 
-        <p>{% trans 'You can search movies by any filter you want.' %}</p>
+        <p>{% trans 'You can search films by any filter you want.' %}</p>
 
-        <form class="form-horizontal" action="{% url 'films.views.advanced_search' %}"
+        <form class="form-horizontal" action="{% url 'films:advanced_search' %}"
               method="post" role="form">
             {% csrf_token %}
             {% for field in fields %}

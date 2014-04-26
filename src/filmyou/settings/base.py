@@ -61,7 +61,7 @@ CASSANDRA = {
 }
 
 LUCENE = {
-    'PATH' : environ.get("LUCENE_PATH", 'Movies.index')
+    'PATH' : environ.get("LUCENE_PATH", 'Films.index')
 }
 ########## END DATABASE CONFIGURATION
 
@@ -195,8 +195,9 @@ DJANGO_APPS = (
     'django.contrib.admin',
     'registration',
     'django_extensions',
-    'films',
-    'filmyou',
+    'apps.films',
+    'apps.users',
+    'apps.utils',
     # 'django.contrib.admindocs',
 )
 

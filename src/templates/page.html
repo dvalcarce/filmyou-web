@@ -46,27 +46,27 @@
 {% block content %}
     <div class="row row-offcanvas row-offcanvas-right">
 
-        {% load sidebar %}
+        {% load filmyou_tags %}
 
         <!-- sidebar -->
         <div class="col-xs-6 col-sm-3 sidebar-offcanvas" id="sidebar" role="navigation">
             <div class="well sidebar-nav">
                 <ul class="nav">
-                    <li>Movies</li>
-                    <li class="{% navactive request 'films.views.home' %}"><a
-                            href="/">{% trans 'Top movies' %}</a></li>
-                    <li class="{% navactive request 'films.views.recommendations' %}"><a
-                            href="{% url 'films.views.recommendations' %}">{% trans 'Recommendations' %}</a>
+                    <li>films</li>
+                    <li class="{% navactive request 'home' %}"><a
+                            href="/">{% trans 'Top films' %}</a></li>
+                    <li class="{% navactive request 'films:recommendations' %}"><a
+                            href="{% url 'films:recommendations' %}">{% trans 'Recommendations' %}</a>
                     </li>
-                    <li class="{% navactive request 'films.views.advanced_search' %}"><a
-                            href="{% url 'films.views.advanced_search' %}">{% trans 'Advanced Search' %}</a>
+                    <li class="{% navactive request 'films:advanced_search' %}"><a
+                            href="{% url 'films:advanced_search' %}">{% trans 'Advanced Search' %}</a>
                     </li>
                     <li>Me</li>
-                    <li class="{% navactive request 'films.views.ratings' %}"><a
-                            href="{% url 'films.views.ratings' %}">{% trans 'My ratings' %}</a>
+                    <li class="{% navactive request 'films:ratings' %}"><a
+                            href="{% url 'films:ratings' %}">{% trans 'My ratings' %}</a>
                     </li>
-                    <li class="{% navactive request 'films.views.profile' user %}"><a
-                            href="{% url 'films.views.profile' user %}">{% trans 'My profile' %}</a>
+                    <li class="{% navactive request 'users:details' user %}"><a
+                            href="{% url 'users:details' user %}">{% trans 'My profile' %}</a>
                     </li>
                 </ul>
             </div>

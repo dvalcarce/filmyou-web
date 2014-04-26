@@ -1,14 +1,14 @@
 {% load i18n %}
 
-{% for movie, score in results %}
+{% for film, score in results %}
     <div class="row">
         <div class="col-xs-12">
-            <h4><a href="/movie/{{ movie.movie_id }}">{{ movie.title }}</a></h4>
+            <h4><a href="{% url 'films:details' film.film_id %}">{{ film.title }}</a></h4>
 
             <div class="col-xs-4 col-sm-1 col-md-1">
                 <p>
-                    {% if movie.poster %}
-                        <img src="{{ movie.poster }}" width=60/>
+                    {% if film.poster %}
+                        <img src="{{ film.poster }}" width=60/>
                     {% else %}
                         <img src="{{ STATIC_URL }}img/noposter60.png" width=60/>
                     {% endif %}
@@ -17,32 +17,32 @@
             <div class="col-xs-8 col-sm-8 col-md-8">
                 <dl class="dl-horizontal">
                     <dt>{% trans 'Year' %}</dt>
-                    <dd>{{ movie.year }}</dd>
+                    <dd>{{ film.year }}</dd>
                     <dt>{% trans 'Genre' %}</dt>
-                    <dd>{{ movie.genres|join:", " }}</dd>
+                    <dd>{{ film.genres|join:", " }}</dd>
                     <dt>{% trans 'Director' %}</dt>
-                    <dd>{{ movie.directors|join:", " }}</dd>
+                    <dd>{{ film.directors|join:", " }}</dd>
                     <dt class="hidden-xs">{% trans 'Cast' %}</dt>
-                    <dd class="hidden-xs">{{ movie.casts|join:", " }}</dd>
+                    <dd class="hidden-xs">{{ film.casts|join:", " }}</dd>
                 </dl>
             </div>
             <div class="col-xs-6 col-sm-1 col-md-1">
                 <h1 class="text-center">
-                    {% if movie.score %}
-                        {{ movie.score|floatformat:1 }}
+                    {% if film.score %}
+                        {{ film.score|floatformat:1 }}
                     {% else %}
                         --
                     {% endif %}
                 </h1>
 
-                <div id="star{{ movie.movie_id }}"></div>
+                <div id="star{{ film.film_id }}"></div>
             </div>
         </div>
     </div>
     <hr/>
 
     <script type="text/javascript">
-        $("#star{{ movie.movie_id }}").raty({
+        $("#star{{ film.film_id }}").raty({
             {% if score %}
                 score: {{ score }},
             {% else %}
@@ -52,7 +52,7 @@
             starOn: '{{ STATIC_URL }}img/star-on.png',
             click: function (score, evt) {
                 $.ajax({
-                    url: "/rate/?movie={{ movie.movie_id }}&score=" + score,
+                    url: "{% url 'films:ratings' %}?film={{ film.film_id }}&score=" + score,
                 });
             }
         });
@@ -60,9 +60,9 @@
 {% endfor %}
 
 <div id="scrolling_container">
-    {% with results|last|first as last_movie %}
+    {% with results|last|first as last_film %}
         <a id="scrolling_more"
-           href="/search/?last_id={{ last_movie.doc_id }}&amp;last_score={{ last_movie.doc_score }}&amp;query={{ query }}"></a>
+           href="{% url 'films:search' %}?last_id={{ last_film.doc_id }}&amp;last_score={{ last_film.doc_score }}&amp;query={{ query }}"></a>
     {% endwith %}
     <div id="scrolling_loading" style="display: none;">
         <img src="{{ STATIC_URL }}img/ajax-loader.gif"/>

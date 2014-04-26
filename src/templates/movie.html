@@ -8,53 +8,53 @@
 
 {% block inner %}
     <div class="col-xs-12">
-        <h1>{{ movie.title }}</h1>
+        <h1>{{ film.title }}</h1>
         <hr/>
         <div class="row">
             <div class="col-xs-12 col-sm-3">
-                {% if movie.poster %}
-                    <img src="{{ movie.poster }}" class="img-responsive"/>
+                {% if film.poster %}
+                    <img src="{{ film.poster }}" class="img-responsive"/>
                 {% else %}
                     <img src="{{ STATIC_URL }}img/noposter200.png" class="img-responsive"/>
                 {% endif %}
             </div>
             <div class="pull-right">
                 <h1>
-                    {% if movie.score %}
-                        {{ movie.score|floatformat:1 }}
+                    {% if film.score %}
+                        {{ film.score|floatformat:1 }}
                     {% else %}
                         --
                     {% endif %}
                 </h1>
 
-                <p><span id="n_votes">{{ movie.n_votes }}</span> votes</p>
+                <p><span id="n_votes">{{ film.n_votes }}</span> votes</p>
 
-                <div id="star{{ movie.movie_id }}"></div>
+                <div id="star{{ film.film_id }}"></div>
             </div>
             <div class="col-xs-12 col-sm-9">
                 <dl class="dl-horizontal">
                     <dt>Id</dt>
-                    <dd>{{ movie.movie_id }}</dd>
+                    <dd>{{ film.film_id }}</dd>
                     <dt>Year</dt>
-                    <dd>{{ movie.year }}</dd>
+                    <dd>{{ film.year }}</dd>
                     <dt>Genre</dt>
-                    <dd>{{ movie.genre.all|join:", " }}</dd>
+                    <dd>{{ film.genre.all|join:", " }}</dd>
                     <dt>Runtime</dt>
-                    <dd>{{ movie.runtime }}</dd>
+                    <dd>{{ film.runtime }}</dd>
                     <dt>Rating</dt>
-                    <dd>{{ movie.rating }}</dd>
+                    <dd>{{ film.rating }}</dd>
                     <dt>Director</dt>
-                    <dd>{{ movie.director.all|join:", " }}</dd>
+                    <dd>{{ film.director.all|join:", " }}</dd>
                     <dt>Writer</dt>
-                    <dd>{{ movie.writer.all|join:", " }}</dd>
+                    <dd>{{ film.writer.all|join:", " }}</dd>
                     <dt>Cast</dt>
-                    <dd>{{ movie.cast.all|join:", " }}</dd>
+                    <dd>{{ film.cast.all|join:", " }}</dd>
                     <dt>Released</dt>
-                    <dd>{{ movie.released|date }}</dd>
+                    <dd>{{ film.released|date }}</dd>
                     <dt>Plot</dt>
-                    <dd class="justify">{{ movie.plot }}</dd>
+                    <dd class="justify">{{ film.plot }}</dd>
                     <dt>Fullplot</dt>
-                    <dd class="justify">{{ movie.fullplot }}</dd>
+                    <dd class="justify">{{ film.fullplot }}</dd>
                 </dl>
             </div>
         </div>
@@ -67,7 +67,7 @@
         {% else %}
             var not_rated = false;
         {% endif %}
-        $("#star{{ movie.movie_id }}").raty({
+        $("#star{{ film.film_id }}").raty({
             {% if score %}
                 score: {{ score }},
             {% else %}
@@ -82,7 +82,7 @@
                     not_rated = false;
                 }
                 $.ajax({
-                    url: "/rate/?movie={{ movie.movie_id }}&score=" + score,
+                    url: "/rate/?film={{ film.film_id }}&score=" + score,
                 });
             }
         });

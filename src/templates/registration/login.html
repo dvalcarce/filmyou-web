@@ -12,7 +12,7 @@
                 <p>{% trans 'Please, check your data. Note that both fields are case-sensitive.' %}</p>
             </div>
         {% endif %}
-        <form action="{% url 'django.contrib.auth.views.login' %}" method="post" id="login-form">
+        <form action="{% url 'registration:auth_login' %}" method="post" id="login-form">
             {% csrf_token %}
             {% for field in form %}
                 <div class="form-group {% if field.errors %} has-error{% endif %}">

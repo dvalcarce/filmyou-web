@@ -2,46 +2,51 @@
 
 from __future__ import absolute_import
 
-from django.conf import settings
 from django.conf.urls import patterns, include, url
-from django.conf.urls.static import static
 
 from django.contrib import admin
+from django.contrib.auth import views as auth_views
 
 
 admin.autodiscover()
 
-urlpatterns = \
-    patterns('',
-             # Examples:
-             url(r'^$', 'films.views.home', name='home'),
-             # url(r'^filmyou/', include('filmyou.foo.urls')),
+registration_patterns = patterns(
+    '',
+    url(r'^password/change/$',
+        auth_views.password_change,
+        name='password_change'),
+    url(r'^password/change/done/$',
+        auth_views.password_change_done,
+        name='password_change_done'),
+    url(r'^password/reset/$',
+        auth_views.password_reset,
+        name='password_reset'),
+    url(r'^password/reset/done/$',
+        auth_views.password_reset_done,
+        name='password_reset_done'),
+    url(r'^password/reset/complete/$',
+        auth_views.password_reset_complete,
+        name='password_reset_complete'),
+    url(r'^password/reset/confirm/(?P<uidb64>[0-9A-Za-z]+)-(?P<token>.+)/$',
+        auth_views.password_reset_confirm,
+        name='password_reset_confirm'),
+    url(r'^logout/$', 'django.contrib.auth.views.logout',
+        {'next_page': '/'}),
+    # url(r'^reset/(?P<uidb36>[0-9A-Za-z]+)-(?P<token>.+)/$',
+    #     'django.contrib.auth.views.password_reset_confirm',
+    #     {'template_name': 'registration/password_reset.html',
+    #      'post_reset_redirect': '/accounts/logout/'})
+    url(r'', include('registration.backends.default.urls'))
+)
 
-             # Uncomment the admin/doc line below to enable admin documentation:
-             # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
+urlpatterns = patterns(
+    '',
+    url(r'^$', 'apps.films.views.home', name='home'),
+    url(r'^films/', include('apps.films.urls', namespace='films')),
+    url(r'^users/', include('apps.users.urls', namespace='users')),
+    url(r'^admin/', include(admin.site.urls)),
 
-             url(r'^admin/', include(admin.site.urls)),
+    url(r'^accounts/', include(registration_patterns, namespace='registration')),
+)
 
-             url(r'^profile/(?P<username>[0-9A-Za-z]+)/$',
-                 'films.views.profile'),
-             url(r'^friends/$', 'films.views.friends'),
-
-             url(r'^movie/(?P<movie_id>[0-9]+)/$', 'films.views.movie'),
-             url(r'^recommendations/$', 'films.views.recommendations'),
-             url(r'^ratings/$', 'films.views.ratings'),
-
-             url(r'^rate/$', 'films.views.rate'),
-
-             url(r'^search/advanced/$', 'films.views.advanced_search'),
-             url(r'^search/$', 'films.views.search'),
-
-             # Login
-             url(r'^login/$', 'django.contrib.auth.views.login'),
-             url(r'^accounts/logout/$', 'django.contrib.auth.views.logout',
-                 {'next_page': '/'}),
-             url(r'^accounts/', include('registration.backends.simple.urls')),
-             url(r'^reset/(?P<uidb36>[0-9A-Za-z]+)-(?P<token>.+)/$',
-                 'django.contrib.auth.views.password_reset_confirm',
-                 {'template_name': 'registration/password_reset.html',
-                  'post_reset_redirect': '/accounts/logout/'}),
-    ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+# urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

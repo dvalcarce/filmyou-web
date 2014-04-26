@@ -16,19 +16,19 @@ from org.apache.lucene.queryparser.classic import QueryParser
 from org.apache.lucene.search import IndexSearcher, ScoreDoc
 from org.apache.lucene.store import SimpleFSDirectory
 from org.apache.lucene.util import Version
-from films.models import Movie
+from apps.films.models import Film
 
 
-class MovieReader(object):
+class filmReader(object):
     """
-    This is an utility class designed for querying Lucene indexes about movies.
+    This is an utility class designed for querying Lucene indexes about films.
     """
 
     def __init__(self):
         """
-        Instantiates a MovieReader object capable of reading Lucene indexes contents.
+        Instantiates a filmReader object capable of reading Lucene indexes contents.
         :return: self
-        :rtype: MovieReader
+        :rtype: filmReader
         """
         vm_env = lucene.getVMEnv()
         vm_env.attachCurrentThread()
@@ -44,7 +44,7 @@ class MovieReader(object):
         topDocs = self.searcher.search(query, n_results)
         scoreDocs = topDocs.scoreDocs
 
-        f = functools.partial(LuceneMovie.init_args, self)
+        f = functools.partial(Lucenefilm.init_args, self)
         return map(f, scoreDocs)
 
     def search_after(self, field, content, last_id, last_score, n_results=10):
@@ -58,17 +58,17 @@ class MovieReader(object):
         topDocs = self.searcher.searchAfter(after, query, n_results)
         scoreDocs = topDocs.scoreDocs
 
-        f = functools.partial(LuceneMovie.init_args, self)
+        f = functools.partial(Lucenefilm.init_args, self)
         return map(f, scoreDocs)
 
-    def get_fields(self, movie, field, numeric=False):
+    def get_fields(self, film, field, numeric=False):
         """
         Returns a list with the contents of the fields with the given name
-        in the movie.
+        in the film.
         If numeric is set to True, a numeric representation of the data is
         returned instead of a string one.
         """
-        content = movie.getFields(field)
+        content = film.getFields(field)
         if numeric:
             f = lambda x: x.numericValue()
         else:
@@ -76,52 +76,52 @@ class MovieReader(object):
         return map(f, content)
 
 
-class LuceneMovie(object):
+class Lucenefilm(object):
     """
-    This class encapsulates a movie stored in a Lucene index
+    This class encapsulates a film stored in a Lucene index
     """
 
     @classmethod
     def init_args(self, reader, x):
         """
-        This method instantiates a valid LuceneMovie object given a
-        MovieReader and a ScoreDoc.
+        This method instantiates a valid Lucenefilm object given a
+        filmReader and a ScoreDoc.
         """
-        return LuceneMovie(reader, x.doc, x.score, reader.searcher.doc(x.doc))
+        return Lucenefilm(reader, x.doc, x.score, reader.searcher.doc(x.doc))
 
-    def __init__(self, reader, doc_id, score, movie):
+    def __init__(self, reader, doc_id, score, film):
         """
-        LuceneMovie constructor.
+        Lucenefilm constructor.
         """
         self.doc_id = doc_id
         self.doc_score = score
-        self.movie_id = reader.get_fields(movie, "id")[0]
-        self.title = reader.get_fields(movie, "title")[0]
-        self.year = reader.get_fields(movie, "year", numeric=True)[0]
-        self.genres = reader.get_fields(movie, "genre")
-        self.runtime = reader.get_fields(movie, "runtime")[0]
-        self.rating = reader.get_fields(movie, "rating")[0]
-        self.directors = reader.get_fields(movie, "director")
-        self.writers = reader.get_fields(movie, "writer")
-        self.casts = reader.get_fields(movie, "cast")
+        self.film_id = reader.get_fields(film, "id")[0]
+        self.title = reader.get_fields(film, "title")[0]
+        self.year = reader.get_fields(film, "year", numeric=True)[0]
+        self.genres = reader.get_fields(film, "genre")
+        self.runtime = reader.get_fields(film, "runtime")[0]
+        self.rating = reader.get_fields(film, "rating")[0]
+        self.directors = reader.get_fields(film, "director")
+        self.writers = reader.get_fields(film, "writer")
+        self.casts = reader.get_fields(film, "cast")
 
-        ts = reader.get_fields(movie, "released", numeric=True)[0].longValue()
+        ts = reader.get_fields(film, "released", numeric=True)[0].longValue()
         self.released = datetime.fromtimestamp(ts) if ts != -2 ** 63 else None
 
-        self.plot = reader.get_fields(movie, "plot")[0]
-        self.fullplot = reader.get_fields(movie, "fullplot")[0]
-        self.poster = reader.get_fields(movie, "poster")[0]
+        self.plot = reader.get_fields(film, "plot")[0]
+        self.fullplot = reader.get_fields(film, "fullplot")[0]
+        self.poster = reader.get_fields(film, "poster")[0]
 
         try:
-            movie = Movie.objects.get(movie_id=self.movie_id)
-        except Movie.DoesNotExist:
+            film = Film.objects.get(film_id=self.film_id)
+        except Film.DoesNotExist:
             return
-        self.n_votes = movie.n_votes
-        self.sum_votes = movie.sum_votes
+        self.n_votes = film.n_votes
+        self.sum_votes = film.sum_votes
         self.score = self.sum_votes / self.n_votes if self.n_votes != 0 else None
 
     def __unicode__(self):
-        return u"{id}: '{title}'".format(id=self.movie_id, title=self.title)
+        return u"{id}: '{title}'".format(id=self.film_id, title=self.title)
 
     def __repr__(self):
         return self.__unicode__()

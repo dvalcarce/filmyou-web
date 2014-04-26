@@ -8,11 +8,11 @@ from django.http import Http404, HttpResponse
 from django.utils.translation import ugettext as _
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
 
-from libs.search import MovieReader
-from .models import Movie
-from .models import MyUser
+from apps.users.models import MyUser
+
+from libs.search import filmReader
+from .models import Film
 
 
 def home(request):
@@ -30,19 +30,6 @@ def home(request):
 
 
 @login_required
-def profile(request, username):
-    """
-    Renders page for user profiles
-    """
-    user = User.objects.get(username__exact=username)
-
-    c = {'user': user}
-
-    return render_to_response('profile.html', c,
-                              context_instance=RequestContext(request))
-
-
-@login_required
 def search(request, template='search_results.html',
            page_template='page_search_results.html'):
     """
@@ -53,18 +40,18 @@ def search(request, template='search_results.html',
 
     query = request.POST.get('query', None)
     if query:
-        reader = MovieReader()
+        reader = filmReader()
         results = reader.query('title', query)
     else:
         results = []
 
     user = MyUser.objects.get(username=request.user.username)
-    movies = user.get_rate_for_movies(results)
+    films = user.get_rate_for_films(results)
 
     c = {
         'page_template': page_template,
         'query': query,
-        'results': movies
+        'results': films
     }
 
     return render_to_response(template, c,
@@ -76,7 +63,7 @@ def _search_ajax(request, template):
         last_id = request.GET['last_id']
         last_score = request.GET['last_score']
         query = request.GET['query']
-        reader = MovieReader()
+        reader = filmReader()
     except:
         return HttpResponse("")
 
@@ -84,10 +71,10 @@ def _search_ajax(request, template):
 
     if results:
         user = MyUser.objects.get(username=request.user.username)
-        movies = user.get_rate_for_movies(results)
+        films = user.get_rate_for_films(results)
         c = {
             'query': query,
-            'results': movies
+            'results': films
         }
     else:
         return HttpResponse("")
@@ -127,7 +114,7 @@ def advanced_search(request):
 
     # query = request.POST.get('query', None)
     # if query:
-    #     reader = MovieReader()
+    #     reader = filmReader()
     #     results = reader.query('title', query)
     # else:
     #     results = []
@@ -188,15 +175,15 @@ def _ratings_ajax(request, template):
 @login_required
 def rate(request):
     """
-    Rate a movie via AJAX.
+    Rate a film via AJAX.
     """
     if request.is_ajax():
-        movie_id = int(request.GET['movie'])
+        film_id = int(request.GET['film'])
         score = float(request.GET['score'])
 
         user = MyUser.objects.get(username=request.user.username)
-        movie = Movie.objects.get(movie_id=movie_id)
-        movie.rate(user, score)
+        film = Film.objects.get(film_id=film_id)
+        film.rate(user, score)
 
         return HttpResponse("ok!")
     else:
@@ -204,27 +191,27 @@ def rate(request):
 
 
 @login_required
-def movie(request, movie_id):
+def details(request, film_id):
     """
     Renders homepage
     """
     try:
-        movie = Movie.objects.get(movie_id=movie_id)
+        film = Film.objects.get(film_id=film_id)
     except ObjectDoesNotExist:
-        raise Http404("Movie does not exist!")
+        raise Http404("film does not exist!")
 
     user = MyUser.objects.get(username=request.user.username)
-    recommendations = user.get_rate_for_movies([movie])
+    recommendations = user.get_rate_for_films([film])
     print recommendations
 
     if recommendations:
-        movie, score = recommendations[0]
+        film, score = recommendations[0]
     c = {
-        'movie': movie,
+        'film': film,
         'score': score,
     }
 
-    return render_to_response('movie.html', c,
+    return render_to_response('film.html', c,
                               context_instance=RequestContext(request))
 
 
@@ -267,11 +254,3 @@ def _recommendations_ajax(request, template):
                                   context_instance=RequestContext(request))
     else:
         return HttpResponse("")
-
-
-@login_required
-def friends(request):
-    """
-    Renders homepage
-    """
-    raise Http404
