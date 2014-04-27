@@ -1,4 +1,5 @@
 (function ($) {
+
     'use strict';
 
     $.fn.endlessPaginate = function (options) {
@@ -8,7 +9,7 @@
             loadingSelector: '#scrolling_loading',
             moreSelector: '#more_results',
             // If paginate-on-scroll is on, this margin will be used.
-            magin: 20,
+            margin: 20
         }
 
         return this.each(function () {
@@ -38,21 +39,17 @@
             // On scroll pagination.
             var win = $(window),
                 doc = $(document);
+            
             win.scroll(function () {
-                if (doc.height() - win.height() - win.scrollTop()
-                    <= settings.magin) {
+                if (doc.height() - win.height() - win.scrollTop() <= settings.magin) {
                     element.find(settings.moreSelector).click();
                 }
-            }
+            });
         });
     }
-    )
-    ;
-};
 
-$.endlessPaginate = function (options) {
-    return $('body').endlessPaginate(options);
-};
+    $.endlessPaginate = function (options) {
+        return $('body').endlessPaginate(options);
+    }
 
-})
-(jQuery);
+})(jQuery);
