@@ -6,5 +6,5 @@ from django.conf.urls import patterns, url
 
 urlpatterns = patterns(
     'apps.users.views',
-    url(r'^(?P<username>[0-9A-Za-z]+)/$', 'details', name='details'),
+    url(r'^profile/(?P<username>[0-9A-Za-z]+)/$', 'details', name='details'),
 )

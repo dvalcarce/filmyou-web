@@ -61,7 +61,7 @@ CASSANDRA = {
 }
 
 LUCENE = {
-    'PATH' : environ.get("LUCENE_PATH", 'Films.index')
+    'PATH': environ.get("LUCENE_PATH", 'Films.index')
 }
 ########## END DATABASE CONFIGURATION
 

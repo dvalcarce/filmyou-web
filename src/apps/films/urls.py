@@ -7,7 +7,7 @@ from django.conf.urls import patterns, url
 
 urlpatterns = patterns(
     'apps.films.views',
-    url(r'^(?P<film_id>[0-9]+)/$', 'details', name='details'),
+    url(r'^details/(?P<film_id>[0-9]+)/$', 'details', name='details'),
     url(r'^recommendations/$', 'recommendations', name='recommendations'),
     url(r'^ratings/$', 'ratings', name='ratings'),
 

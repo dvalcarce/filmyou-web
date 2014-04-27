@@ -18,7 +18,7 @@ class MyUser(User):
         """
         rates = []
         for film in films:
-            query = "SELECT movie, score FROM ratings WHERE user = %(user)s AND movie = %(film)s"
+            query = "SELECT item, score FROM ratings WHERE user = %(user)s AND item = %(film)s"
             parameters = {
                 'user': self.id,
                 'film': int(film.film_id),
@@ -32,7 +32,7 @@ class MyUser(User):
 
         # Commentend until bug CASSANDRA-6137 is resolved
 
-        # query = "SELECT movie, score FROM ratings WHERE user = :user AND movie IN :films"
+        # query = "SELECT item, score FROM ratings WHERE user = :user AND item IN :films"
         # parameters = {
         #     'user': self.id,
         #     'films': tuple(sorted(tuple(int(film.film_id) for film in films))),
@@ -59,14 +59,14 @@ class MyUser(User):
             'limit': n_results
         }
         if last:
-            query = "SELECT movie, score " \
+            query = "SELECT item, score " \
                     "FROM ratings " \
-                    "WHERE user = %(user)s AND film > %(last)s " \
+                    "WHERE user = %(user)s AND item > %(last)s " \
                     "LIMIT " \
                     "%(limit)s"
             parameters['last'] = last
         else:
-            query = "SELECT movie, score " \
+            query = "SELECT item, score " \
                     "FROM ratings " \
                     "WHERE user = %(user)s " \
                     "LIMIT %(limit)s"
@@ -90,14 +90,14 @@ class MyUser(User):
         }
 
         if last:
-            query = "SELECT movie, score " \
+            query = "SELECT item, relevance " \
                     "FROM recommendations " \
-                    "WHERE user = %(user)s AND film > " \
+                    "WHERE user = %(user)s AND item > " \
                     "%(last)s LIMIT " \
                     "%(limit)s"
             parameters['last'] = last
         else:
-            query = "SELECT movie, score " \
+            query = "SELECT item, relevance " \
                     "FROM recommendations " \
                     "WHERE user = %(user)s " \
                     "LIMIT %(limit)s"
@@ -114,11 +114,11 @@ class MyUser(User):
         """
         Inserts new rating in Cassandra DB.
         """
-        query = "INSERT INTO ratings (user, movie, score) " \
-                "VALUES (:user, :movie, :score)"
+        query = "INSERT INTO ratings (user, item, score) " \
+                "VALUES (:user, :item, :score)"
         parameters = {
             'user': self.id,
-            'movie': film.film_id,
+            'item': film.film_id,
             'score': float(score)
         }
 

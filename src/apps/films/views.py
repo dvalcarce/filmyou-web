@@ -10,7 +10,6 @@ from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.contrib.auth.decorators import login_required
 
 from apps.users.models import MyUser
-
 from libs.search import filmReader
 from .models import Film
 
