@@ -1,12 +1,13 @@
 
-FILM_TITLES=movie_titles.txt
+FILM_TITLES=film_titles.txt
 IMDB_TSV=omdb.tsv
 NETFLIX_RATINGS=netflix.csv
 RATINGS=ratings.csv
 SQL_STATEMENTS=sql
 LUCENE_INDEX=Films.Index
+VOTES=update_votes.sql
 
-all: netflix pylucene mapping cql sql
+all: netflix lucene mapping cql sql votes
 
 netflix:
 	@echo "Merge all netflix ratings in one file (netflix.csv)"
@@ -27,6 +28,10 @@ cql:
 sql:
 	@echo "Generate TSV files for PostgreSQL \copy command"
 	python2 to_postgresql.py
+
+votes:
+	@echo "Generate SQL update statements for films votes"
+	python2 udpate_votes.py > $(VOTES)
 
 clean:
 	rm -rf $(NETFLIX_RATINGS) $(LUCENE_INDEX) $(RATINGS) $(SQL_STATEMENTS)

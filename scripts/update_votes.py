@@ -1,8 +1,10 @@
 #!/usr/bin/env python2
 
+# -*- coding: utf-8 -*-
+
 import sys
 
-film_TABLE = "filmyou_film"
+FILM_TABLE = "films_film"
 
 """
 This script will prepare SQL UPDATE statements for film model in Django.
@@ -17,16 +19,16 @@ if __name__ == '__main__':
         films = {}
         for line in data:
             user, film, score = line[:-1].split(",")
-            user = int(user)
-            film = int(film)
-            score = float(score)
             n_votes, sum_votes = films.get(film, (0, 0.0))
-            films[film] = (n_votes + 1, sum_votes + score)
+            films[film] = (n_votes + 1, sum_votes + float(score))
 
     for film in films:
         n_votes, sum_votes = films[film]
-        print "UPDATE {table} SET n_votes = {n_votes}, sum_votes = {sum_votes} WHERE film_id = {film};".format(
-            table=film_TABLE,
+        print "UPDATE {table} " \
+              "SET n_votes = {n_votes}, sum_votes = {sum_votes} " \
+              "WHERE film_id = {film};" \
+            .format(
+            table=FILM_TABLE,
             n_votes=n_votes,
             sum_votes=sum_votes,
             film=film

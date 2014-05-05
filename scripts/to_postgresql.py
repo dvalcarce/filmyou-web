@@ -1,6 +1,8 @@
 #!/usr/bin/env python2
 
-INDEX_DIR = "films.index"
+# -*- coding: utf-8 -*-
+
+INDEX_DIR = "Films.index"
 
 import os
 import time
@@ -14,6 +16,7 @@ from org.apache.lucene.analysis.standard import StandardAnalyzer
 from org.apache.lucene.index import IndexReader
 from org.apache.lucene.store import SimpleFSDirectory
 from org.apache.lucene.util import Version
+
 
 """
 This script scans OMDB collection and builds TSV files for PostgreSQL.
@@ -95,8 +98,8 @@ class OutputSQL(object):
                                country_film_file)
 
                 film_file.write(u"{id}\t{imdb_id}\t{netflix_id}\t{title}\t{year}\t{rating}\t" \
-                                 "{runtime}\t{released}\t{metascore}\t{imdb_rating}\t{imdb_votes}\t" \
-                                 "{poster}\t{plot}\t{fullplot}\t{awards}\t{updated}\n".format(
+                                "{runtime}\t{released}\t{metascore}\t{imdb_rating}\t{imdb_votes}\t" \
+                                "{poster}\t{plot}\t{fullplot}\t{awards}\t{updated}\n".format(
                     id=self.film_id,
                     imdb_id=imdb_id,
                     netflix_id=netflix_id,
@@ -120,10 +123,9 @@ class OutputSQL(object):
             return "NULL"
         else:
             try:
-                return unicode(psycopg2.extensions.QuotedString(text).getquoted().decode('latin-1'))
+                return unicode(text.replace("\t", " "))
             except Exception as e:
-                print repr(psycopg2.extensions.QuotedString(text).getquoted())
-                print psycopg2.extensions.QuotedString(text).getquoted()
+                print text
                 raise e
 
     def parse_positive(self, number):
