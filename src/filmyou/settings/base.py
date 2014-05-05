@@ -196,7 +196,6 @@ DJANGO_APPS = (
     'registration',
     'django_extensions',
     'apps.films',
-    'apps.users',
     'apps.utils',
     # 'django.contrib.admindocs',
 )

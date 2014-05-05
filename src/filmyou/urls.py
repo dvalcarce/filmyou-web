@@ -3,9 +3,10 @@
 from __future__ import absolute_import
 
 from django.conf.urls import patterns, include, url
-
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
+
+from . import views
 
 
 admin.autodiscover()
@@ -39,14 +40,22 @@ registration_patterns = patterns(
     url(r'', include('registration.backends.default.urls'))
 )
 
+user_patterns = patterns(
+    '',
+    url(
+        regex=r'^profile$',
+        view=views.UserDetails.as_view(),
+        name='details'
+    )
+)
+
 urlpatterns = patterns(
     '',
-    url(r'^$', 'apps.films.views.home', name='home'),
+    url(r'^$', views.HomeView.as_view(), name='home'),
     url(r'^films/', include('apps.films.urls', namespace='films')),
-    url(r'^users/', include('apps.users.urls', namespace='users')),
-    url(r'^admin/', include(admin.site.urls)),
-
+    url(r'^users/', include(user_patterns, namespace='users')),
     url(r'^accounts/', include(registration_patterns, namespace='registration')),
+    url(r'^admin/', include(admin.site.urls)),
 )
 
 # urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

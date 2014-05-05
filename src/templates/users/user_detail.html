@@ -10,32 +10,43 @@
     <dl class="dl-horizontal">
         <dt>{% trans 'Id' %}</dt>
         <dd>{{ user.id }}</dd>
+
         <dt>{% trans 'Username' %}</dt>
         <dd>{{ user.username }}</dd>
+
         <dt>{% trans 'First name' %}</dt>
         <dd>{{ user.first_name }}</dd>
+
         <dt>{% trans 'Last name' %}</dt>
         <dd>{{ user.last_name }}</dd>
+
         <dt>{% trans 'Email' %}</dt>
         <dd>{{ user.email }}</dd>
+
         <dt>{% trans 'Last login' %}</dt>
         <dd>{{ user.last_login }}</dd>
+
         <dt>{% trans 'Date joined' %}</dt>
         <dd>{{ user.date_joined }}</dd>
+
         <dt>{% trans 'Is active?' %}</dt>
         <dd>{{ user.is_active }}</dd>
+
         <dt>{% trans 'Is staff?' %}</dt>
         <dd>{{ user.is_staff }}</dd>
+
         <dt>{% trans 'Is superuser?' %}</dt>
         <dd>{{ user.is_superuser }}</dd>
+
         <dt>{% trans 'Groups' %}</dt>
         <dd>{{ user.groups }}</dd>
+
         <dt>{% trans 'User permissions' %}</dt>
         <dd>{{ user.user_permissions }}</dd>
     </dl>
 
     <p>
-        <a href="{% url 'registration:auth_password_change' %}"
+        <a class="btn btn-default" href="{% url 'registration:auth_password_change' %}"
                 >{% trans 'Change password' %}</a>
     </p>
 

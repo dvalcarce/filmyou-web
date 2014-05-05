@@ -6,6 +6,12 @@
     <script src="{{ STATIC_URL }}js/jquery.raty.min.js"></script>
 {% endblock %}
 
+{% block inner %}
+    <div class="col-xs-12" id="rows_append">
+        {% include page_template %}
+    </div><!-- /.col-xs-12 -->
+{% endblock %}
+
 {% block script %}
     {{ block.super }}
     <script type="text/javascript">
@@ -20,7 +26,7 @@
             if ($(window).scrollTop() == $(document).height() - $(window).height()) {
                 var loading = $(settings.loadingSelector);
                 if (loading.is(':visible')) {
-                    return false;
+                    return;
                 }
                 loading.show();
                 $.ajax({

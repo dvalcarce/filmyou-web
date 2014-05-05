@@ -4,15 +4,18 @@ from __future__ import absolute_import
 
 from django.conf.urls import patterns, url
 
+from . import views
 
 urlpatterns = patterns(
-    'apps.films.views',
-    url(r'^details/(?P<film_id>[0-9]+)/$', 'details', name='details'),
-    url(r'^recommendations/$', 'recommendations', name='recommendations'),
-    url(r'^ratings/$', 'ratings', name='ratings'),
+    '',
+    url(r'^details/(?P<pk>[0-9]+)/$', views.FilmDetails.as_view(), name='details'),
 
-    url(r'^rate/$', 'rate', name='rate'),
+    url(r'^search/$', views.Search.as_view(), name='search'),
+    url(r'^search/advanced/$', views.SearchForm.as_view(), name='advanced_search'),
 
-    url(r'^search/advanced/$', 'advanced_search', name='advanced_search'),
-    url(r'^search/$', 'search', name='search'),
+    url(r'^recommendations/$', views.Recommendations.as_view(), name='recommendations'),
+    url(r'^ratings/$', views.Ratings.as_view(), name='ratings'),
+
+    url(r'^rate/$', views.rate, name='rate'),
+
 )

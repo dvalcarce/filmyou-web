@@ -7,9 +7,9 @@ from django.conf import settings
 from cassandra.cluster import Cluster
 
 
-class CassandraAdapter(object):
+class CassandraConnection(object):
     """
-    This class allows to communicate easily with Cassandra DB.
+    Open a connection to Cassandra allowing query execution.
     """
 
     def __enter__(self):
@@ -26,17 +26,17 @@ class CassandraAdapter(object):
         Run a CQL query with the given parameters.
 
         Example:
-            query = "SELECT column FROM CF WHERE name = %(name)s"
+            query = "SELECT column FROM cf WHERE name = %(name)s"
             parameters = { 'name' = "Foo" }
         will run:
-            SELECT column FROM CF WHERE name = 'Foo'
+            SELECT column FROM cf WHERE name = 'Foo'
+
+        :param query: query
+        :param parameters: dict parameters
+        :return: a list of named tuples
         """
-        rows = self.session.execute(query, parameters)
-        return list(rows)
+        return self.session.execute(query, parameters)
 
     def __exit__(self, type, value, traceback):
         self.session.cluster.shutdown()
         self.session.shutdown()
-
-
-# Initialise cassandra

@@ -7,9 +7,8 @@
 
         <p>{% trans 'You can search films by any filter you want.' %}</p>
 
-        <form class="form-horizontal" action="{% url 'films:advanced_search' %}"
-              method="post" role="form">
-            {% csrf_token %}
+        <form class="form-horizontal" action="{% url 'films:search' %}"
+              method="get" role="form">
             {% for field in fields %}
                 <div class="form-group">
                     <label class="col-lg-2 control-label"
