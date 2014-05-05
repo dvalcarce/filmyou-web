@@ -1,15 +1,15 @@
 # Base dependencies
-Django==1.6.3
+Django==1.6.4
 JCC==2.19
 South==0.8.4
 blist==1.3.6
 cassandra-driver==1.1.1
-django-extensions==1.3.3
+django-extensions==1.3.5
 django-registration==1.0
 lucene==4.6.1
 futures==2.1.6
-nose==1.3.1
+nose==1.3.2
 psycopg2==2.5.2
 scales==1.0.5
-simplejson==3.4.0
+simplejson==3.4.1
 six==1.6.1
