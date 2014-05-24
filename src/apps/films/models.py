@@ -4,6 +4,7 @@ from __future__ import absolute_import
 
 from django.contrib.auth.models import User
 from django.db import models
+from userena.models import UserenaBaseProfile
 
 from apps.utils.db import retrieve_in_order_from_db
 from libs.cassandra import CassandraConnection
@@ -98,10 +99,10 @@ class Film(models.Model):
         :param user: user
         """
 
-        # query = "SELECT item, score FROM ratings WHERE user = %(user)s AND item IN %(films)s"
-        query = "SELECT score FROM ratings WHERE user = %(user)s AND item = %(item)s"
+        query = "SELECT score FROM ratings " \
+                "WHERE user = %(user)s AND item = %(item)s"
         parameters = {
-            'user': user.id,
+            'user': user.user.id,
             'item': self.film_id
         }
 
@@ -114,7 +115,7 @@ class Film(models.Model):
 
     def rate(self, user, score):
         """
-        Update film model with a new rating.
+        Update film model with a new rating and remove recommendation if exists.
 
         :param user: user
         :param score: score
@@ -122,17 +123,27 @@ class Film(models.Model):
         score = float(score)
         self.set_preference(user)
 
-        query = "INSERT INTO ratings (user, item, score) " \
-                "VALUES ( %(user)s, %(item)s, %(score)s )"
+        insert_query = "INSERT INTO ratings (user, item, score) " \
+                       "VALUES ( %(user)s, %(item)s, %(score)s )"
+        select_query = "SELECT relevance FROM recommendations " \
+                       "WHERE user = %(user)s AND item = %(item)s"
 
         parameters = {
-            'user': user.id,
+            'user': user.user.id,
             'item': self.film_id,
             'score': float(score)
         }
 
         with CassandraConnection() as db:
-            db.execute(query, parameters)
+            db.execute(insert_query, parameters)
+            result = db.execute(select_query, parameters)
+            if result:
+                delete_query = "DELETE FROM recommendations " \
+                               "WHERE user = %(user)s " \
+                               "AND relevance = %(relevance)s " \
+                               "AND item = %(item)s"
+                parameters['relevance'] = result[0].relevance
+                db.execute(delete_query, parameters)
 
         if self.preference:
             score -= self.preference
@@ -143,9 +154,8 @@ class Film(models.Model):
         self.save()
 
 
-class MyUser(User):
-    class Meta:
-        proxy = True
+class MyUser(UserenaBaseProfile):
+    user = models.OneToOneField(User, unique=True, related_name='profile')
 
     def get_preferences_for_films(self, films):
         """
@@ -157,7 +167,7 @@ class MyUser(User):
         # query = "SELECT item, score FROM ratings WHERE user = %(user)s AND item IN %(films)s"
         query = "SELECT item, score FROM ratings WHERE user = %(user)s AND item IN (" \
                 + ", ".join([str(film.film_id) for film in films]) + ")"
-        parameters = {'user': self.id}
+        parameters = {'user': self.user.id}
 
         # Retrieve ratings from Cassandra
         with CassandraConnection() as db:
@@ -179,7 +189,7 @@ class MyUser(User):
         :return: list of films with preference attribute set
         """
         parameters = {
-            'user': self.id,
+            'user': self.user.id,
             'limit': count
         }
         if last:
@@ -219,7 +229,7 @@ class MyUser(User):
         :return: list of films where relevance attribute is set
         """
         parameters = {
-            'user': self.id,
+            'user': self.user.id,
             'limit': count
         }
 

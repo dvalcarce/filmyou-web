@@ -2,15 +2,19 @@
 
 from __future__ import absolute_import
 
-from os import path
-
-from django.views.generic import TemplateView
-from braces.views import LoginRequiredMixin
+from django.views.generic import View
+from django.shortcuts import render
 
 
-class HomeView(TemplateView):
-    template_name = 'intro.html'
+class HomeView(View):
+    template_name = 'home.html'
+
+    def get(self, request, *args, **kwargs):
+        if request.user.is_authenticated():
+            template = 'home.html'
+        else:
+            template = 'intro.html'
+
+        return render(request, template)
 
 
-class UserDetails(LoginRequiredMixin, TemplateView):
-    template_name = path.join('users', 'user_detail.html')

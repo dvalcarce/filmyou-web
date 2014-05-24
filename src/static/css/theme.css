@@ -1,0 +1,158 @@
+/* custom template */
+html, body {
+    color: #1B1B1B;
+}
+
+.nav {
+    font-size: 16px;
+}
+
+.column {
+    height: 100%;
+    overflow: auto;
+    padding: 20px;
+}
+
+.wrapper, .row {
+    height: 100%;
+    margin-left: 0;
+    margin-right: 0;
+}
+
+.wrapper:before, .wrapper:after,
+.column:before, .column:after {
+    content: "";
+    display: table;
+}
+
+.wrapper:after,
+.column:after {
+    clear: both;
+}
+
+#content {
+    padding-top: 50px;
+}
+
+.box {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    top: 0;
+    width: 100%;
+    background-color: #444;
+}
+
+.top-navbar {
+    background-color: #AB3334;
+    color: #fff;
+    font-family: sans-serif;
+    padding-right: 15px;
+    border-bottom: 0;
+    margin-bottom: 0;
+}
+
+.top-navbar li > a, .navbar-toggle {
+    color: #331919;
+}
+
+.top-navbar .dropdown-menu li a {
+    color: #AB3334;
+}
+
+.top-navbar .dropdown-menu li > a {
+    padding-left: 30px;
+}
+
+.top-navbar li > a:hover, .top-navbar li > a:focus, .top-navbar .open, .top-navbar .open > a, .top-navbar .open > a:hover, .top-navbar .open > a:focus {
+    background-color: #331919;
+    color: #fff;
+}
+
+#main {
+    background-color: #e9eaed;
+    padding: 0 20px 0 20px;
+}
+
+#sidebar {
+    padding: 5px 5px 5px 5px;
+    height: 100%;
+}
+
+#sidebar, #sidebar a, #sidebar-footer a {
+    color: #ffffff;
+    background-color: transparent;
+    text-shadow: 0 0 5px #000;
+    padding-left: 5px;
+}
+
+#sidebar .nav li > a:hover {
+    background-color: #222;
+}
+
+.logo {
+    display: block;
+    padding: 3px;
+    background-color: #331919;
+    color: #fff;
+    height: 28px;
+    width: auto;
+    margin: 9px;
+    margin-right: 2px;
+    margin-left: 15px;
+    font-size: 20px;
+    font-weight: 700;
+    text-align: center;
+    text-decoration: none;
+    text-shadow: 0 0 1px;
+    border-radius: 2px;
+}
+
+.navbar-toggle, .close {
+    outline: 0;
+}
+
+.navbar-toggle .icon-bar {
+    background-color: #fff;
+}
+
+.panel textarea, .well textarea, textarea.form-control {
+    resize: none;
+}
+
+.label-default {
+    background-color: #dddddd;
+}
+
+@media (max-width: 768px) {
+    .top-navbar {
+        padding-right: 0;
+    }
+}
+
+/* off canvas sidebar */
+@media screen and (max-width: 768px) {
+    .row-offcanvas {
+        position: relative;
+        -webkit-transition: all 0.25s ease-out;
+        -moz-transition: all 0.25s ease-out;
+        transition: all 0.25s ease-out;
+    }
+
+    .row-offcanvas-left.active {
+        left: 33%;
+    }
+
+    .row-offcanvas-left.active .sidebar-offcanvas {
+        left: -33%;
+        position: absolute;
+        top: 0;
+        width: 33%;
+        margin-left: 5px;
+    }
+
+    #sidebar, #sidebar a, #sidebar-footer a {
+        padding-left: 3px;
+    }
+}

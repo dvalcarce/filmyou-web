@@ -10,7 +10,8 @@ import lucene
 
 from java.io import File
 from org.apache.lucene.analysis.standard import StandardAnalyzer
-from org.apache.lucene.index import DirectoryReader, Term
+
+from org.apache.lucene.index import DirectoryReader
 from org.apache.lucene.search import IndexSearcher, ScoreDoc
 from org.apache.lucene.queryparser.classic import QueryParser
 from org.apache.lucene.store import FSDirectory
@@ -90,6 +91,9 @@ logger.info('Initialising Lucene VM')
 base_dir = os.path.abspath(os.path.curdir)
 index_file = os.path.join(base_dir, settings.LUCENE['PATH'])
 index = FSDirectory.open(File(index_file))
-reader = DirectoryReader.open(index)
-searcher = IndexSearcher(reader)
-analyzer = StandardAnalyzer(Version.LUCENE_CURRENT)
+try:
+    reader = DirectoryReader.open(index)
+    searcher = IndexSearcher(reader)
+    analyzer = StandardAnalyzer(Version.LUCENE_CURRENT)
+except lucene.JavaError:
+    logger.error('Lucene not loaded')

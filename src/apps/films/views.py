@@ -5,8 +5,8 @@ from __future__ import absolute_import
 
 from os import path
 
-from django.shortcuts import render_to_response
-from django.template import RequestContext
+from django.contrib.auth.models import User
+from django.shortcuts import render
 from django.http import HttpResponse
 from django.utils.translation import ugettext as _
 from django.core.exceptions import PermissionDenied
@@ -16,7 +16,7 @@ from django.views.generic.detail import DetailView
 from braces.views import LoginRequiredMixin
 
 from libs.search import FilmSearcher
-from .models import Film, MyUser
+from .models import Film
 
 
 app_name = Film._meta.app_label
@@ -27,7 +27,7 @@ class FilmDetails(DetailView):
 
     def get_object(self, queryset=None):
         film = super(FilmDetails, self).get_object(queryset)
-        film.set_preference(self.request.user)
+        film.set_preference(self.request.user.profile)
 
         return film
 
@@ -47,8 +47,8 @@ class Search(View):
         else:
             films = []
 
-        user = MyUser.objects.get(username=self.request.user.username)
-        films = user.get_preferences_for_films(films)
+        if self.request.user.is_authenticated():
+            films = self.request.user.profile.get_preferences_for_films(films)
 
         c = {
             'page_template': self.page_template,
@@ -57,23 +57,23 @@ class Search(View):
             'films': films
         }
 
-        return render_to_response(self.template_name, c,
-                                  context_instance=RequestContext(self.request))
+        return render(self.request, self.template_name, c)
 
     def _search_ajax(self):
         try:
             last_id = self.request.GET['last_id']
             last_score = self.request.GET['last_score']
-            query = self.request.GET['query']
+            query = self.request.GET['title']
         except:
             return HttpResponse("")
 
         with FilmSearcher() as searcher:
-            results = searcher.query_after("title", query, last_id, last_score)
+            films = searcher.query_after("title", query, last_id, last_score)
 
-        if results:
-            user = MyUser.objects.get(username=self.request.user.username)
-            films = user.get_preferences_for_films(results)
+        if films:
+            if self.request.user.is_authenticated():
+                user = User.objects.get(username=self.request.user.username)
+                films = user.profile.get_preferences_for_films(films)
             c = {
                 'query': query,
                 'films': films,
@@ -82,8 +82,7 @@ class Search(View):
         else:
             return HttpResponse("")
 
-        return render_to_response(self.page_template, c,
-                                  context_instance=RequestContext(self.request))
+        return render(self.request, self.page_template, c)
 
 
 class SearchForm(View):
@@ -103,8 +102,7 @@ class SearchForm(View):
             ]
         }
 
-        return render_to_response(self.template_name, c,
-                                  context_instance=RequestContext(self.request))
+        return render(self.request, self.template_name, c)
 
 
 class Ratings(LoginRequiredMixin, View):
@@ -115,8 +113,7 @@ class Ratings(LoginRequiredMixin, View):
         if self.request.is_ajax():
             return self._ratings_ajax()
 
-        user = MyUser.objects.get(username=self.request.user.username)
-        ratings = user.get_rated_films()
+        ratings = self.request.user.profile.get_rated_films()
 
         c = {
             'page_template': self.page_template,
@@ -124,8 +121,7 @@ class Ratings(LoginRequiredMixin, View):
             'ratings': True
         }
 
-        return render_to_response(self.template_name, c,
-                                  context_instance=RequestContext(self.request))
+        return render(self.request, self.template_name, c)
 
     def _ratings_ajax(self):
         try:
@@ -133,8 +129,7 @@ class Ratings(LoginRequiredMixin, View):
         except:
             return HttpResponse("")
 
-        user = MyUser.objects.get(username=self.request.user.username)
-        ratings = user.get_rated_films(last)
+        ratings = self.request.user.profile.get_rated_films(last)
 
         if ratings:
             c = {
@@ -142,10 +137,9 @@ class Ratings(LoginRequiredMixin, View):
                 'ratings': True
             }
 
-            return render_to_response(self.page_template, c,
-                                      context_instance=RequestContext(self.request))
+            return render(self.request, self.page_template, c)
         else:
-            return HttpResponse("")
+            return HttpResponse()
 
 
 @login_required
@@ -157,11 +151,10 @@ def rate(request):
         film_id = int(request.GET['film'])
         score = float(request.GET['score'])
 
-        user = MyUser.objects.get(username=request.user.username)
         film = Film.objects.get(film_id=film_id)
-        film.rate(user, score)
+        film.rate(request.user.profile, score)
 
-        return HttpResponse("ok!")
+        return HttpResponse()
     else:
         raise PermissionDenied
 
@@ -174,8 +167,7 @@ class Recommendations(LoginRequiredMixin, View):
         if self.request.is_ajax():
             return self._recommendations_ajax()
 
-        user = MyUser.objects.get(username=self.request.user.username)
-        recommendations = user.get_recommendations()
+        recommendations = self.request.user.profile.get_recommendations()
 
         c = {
             'page_template': self.page_template,
@@ -183,8 +175,7 @@ class Recommendations(LoginRequiredMixin, View):
             'recommendations': True
         }
 
-        return render_to_response(self.template, c,
-                                  context_instance=RequestContext(self.request))
+        return render(self.request, self.template, c)
 
     def _recommendations_ajax(self):
         try:
@@ -192,8 +183,7 @@ class Recommendations(LoginRequiredMixin, View):
         except:
             return HttpResponse("")
 
-        user = MyUser.objects.get(username=self.request.user.username)
-        recommendations = user.get_recommendations(last)
+        recommendations = self.request.user.profile.get_recommendations(last)
 
         if recommendations:
             c = {
@@ -201,7 +191,6 @@ class Recommendations(LoginRequiredMixin, View):
                 'recommendations': True
             }
 
-            return render_to_response(self.page_template, c,
-                                      context_instance=RequestContext(self.request))
+            return render(self.request, self.page_template, c)
         else:
-            return HttpResponse("")
+            return HttpResponse()

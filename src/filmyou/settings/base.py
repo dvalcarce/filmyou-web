@@ -113,6 +113,10 @@ STATICFILES_FINDERS = (
 )
 ########## END STATIC FILE CONFIGURATION
 
+########## EMAIL CONFIGURATION
+# See: https://docs.djangoproject.com/en/dev/ref/settings/#email-backend
+EMAIL_BACKEND = 'django.core.mail.backends.dummy.EmailBackend'
+########## END EMAIL CONFIGURATION
 
 ########## SECRET CONFIGURATION
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#secret-key
@@ -188,36 +192,58 @@ DJANGO_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
-    # 'django.contrib.sites',
+    'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.humanize',
     'django.contrib.admin',
-    'registration',
+    'userena',
+    'guardian',
+    'easy_thumbnails',
+    'userena.contrib.umessages',
+    'crispy_forms',
     'django_extensions',
-    'apps.films',
-    'apps.utils',
     # 'django.contrib.admindocs',
 )
 
 # Apps specific for this project go here.
 LOCAL_APPS = (
+    'apps.films',
+    'apps.utils',
 )
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
 INSTALLED_APPS = DJANGO_APPS + LOCAL_APPS
 ########## END APP CONFIGURATION
 
-########## REGISTRATION CONFIGURATION
-# This is the number of days users will have to activate
-# their accounts after registering.
-ACCOUNT_ACTIVATION_DAYS = 7
+SITE_ID = 1
 
-# The URL where requests are redirected after login
-# when there is no next parameter.
-LOGIN_REDIRECT_URL = '/'
+########## REGISTRATION CONFIGURATION
+AUTHENTICATION_BACKENDS = (
+    'userena.backends.UserenaAuthenticationBackend',
+    'guardian.backends.ObjectPermissionBackend',
+    'django.contrib.auth.backends.ModelBackend',
+)
+
+ANONYMOUS_USER_ID = -1
+
+# Set the AUTH_PROFILE_MODULE to your custom defined profile.
+AUTH_PROFILE_MODULE = 'films.MyUser'
+
+# To integrate Django with userena
+LOGIN_REDIRECT_URL = '/accounts/%(username)s/'
+LOGIN_URL = '/accounts/signin/'
+LOGOUT_URL = '/accounts/signout/'
+
+USERENA_REDIRECT_ON_SIGNOUT = '/'
+USERENA_SIGNIN_REDIRECT_URL = '/'
+USERENA_ACTIVATION_REQUIRED = False
+USERENA_HIDE_EMAIL = True
 ########## END REGISTRATION CONFIGURATION
 
+########## FORMS CONFIGURATION
+CRISPY_TEMPLATE_PACK = 'bootstrap3'
+########## END FORMS CONFIGURATION
 
 ########## LOGGING CONFIGURATION
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#logging
@@ -266,4 +292,8 @@ INSTALLED_APPS += (
 )
 # Don't need to use South when setting up a test database.
 SOUTH_TESTS_MIGRATE = False
+
+SOUTH_MIGRATION_MODULES = {
+    'easy_thumbnails': 'easy_thumbnails.south_migrations',
+}
 ########## END SOUTH CONFIGURATION
