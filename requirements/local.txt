@@ -1,11 +1,11 @@
 # Local development dependencies
 -r base.txt
 Jinja2==2.7.2
-MarkupSafe==0.21
+MarkupSafe==0.23
 Pygments==1.6
 Sphinx==1.2.2
 coverage==3.7.1
-django-debug-toolbar==1.2
+django-debug-toolbar==1.2.1
 docutils==0.11
 pygraphviz==1.2
 sqlparse==0.1.11
