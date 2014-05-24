@@ -1,101 +1,115 @@
 {% extends "base.html" %}
 {% load i18n %}
 
-{% block head %}
-    <style type="text/css">
-        .nav > li.active > a {
-            font-weight: bold;
-        }
+{% block main %}
+    <!-- sidebar -->
+    <div class="column col-lg-2 col-sm-3 col-xs-1 sidebar-offcanvas" id="sidebar">
 
-        @media screen and (max-width: 768px) {
-            .row-offcanvas {
-                position: relative;
-                -webkit-transition: all 0.25s ease-out;
-                -moz-transition: all 0.25s ease-out;
-                transition: all 0.25s ease-out;
-            }
-
-            .row-offcanvas-right
-            .sidebar-offcanvas {
-                right: -50%; /* 6 columns */
-            }
-
-            .row-offcanvas-left
-            .sidebar-offcanvas {
-                left: -50%; /* 6 columns */
-            }
-
-            .row-offcanvas-right.active {
-                right: 50%; /* 6 columns */
-            }
-
-            .row-offcanvas-left.active {
-                left: 50%; /* 6 columns */
-            }
-
-            .sidebar-offcanvas {
-                position: absolute;
-                top: 0;
-                width: 50%; /* 6 columns */
-            }
-        }
-    </style>
-
-{% endblock %}
-
-{% block content %}
-    <div class="row row-offcanvas row-offcanvas-right">
+        <ul class="nav">
+            <li><a href="#" data-toggle="offcanvas" class="visible-xs text-center"><i
+                    class="glyphicon glyphicon-chevron-right"></i></a></li>
+        </ul>
 
         {% load filmyou_tags %}
 
-        <!-- sidebar -->
-        <div class="col-xs-6 col-sm-3 sidebar-offcanvas" id="sidebar" role="navigation">
-            <div class="well sidebar-nav">
-                <ul class="nav">
-                    <li>films</li>
-                    <li class="{% navactive request 'home' %}"><a
-                            href="/">{% trans 'Top films' %}</a></li>
-                    <li class="{% navactive request 'films:recommendations' %}"><a
-                            href="{% url 'films:recommendations' %}">{% trans 'Recommendations' %}</a>
-                    </li>
-                    <li class="{% navactive request 'films:advanced_search' %}"><a
-                            href="{% url 'films:advanced_search' %}">{% trans 'Advanced Search' %}</a>
-                    </li>
-                    <li>Me</li>
-                    <li class="{% navactive request 'films:ratings' %}"><a
-                            href="{% url 'films:ratings' %}">{% trans 'My ratings' %}</a>
-                    </li>
-                    <li class="{% navactive request 'users:details' %}"><a
-                            href="{% url 'users:details' %}">{% trans 'My profile' %}</a>
-                    </li>
-                </ul>
-            </div>
-            <!--/.well -->
-        </div>
-        <!--/sidebar-->
+        <ul class="nav hidden-xs" id="lg-menu">
+            <li class="{% navactive request 'home' %}">
+                <a href="{% url 'home' %}">
+                    <i class="glyphicon glyphicon-home"></i> {% trans 'Home' %}
+                </a>
+            </li>
+            <li class="{% navactive request 'films:recommendations' %}">
+                <a href="{% url 'films:recommendations' %}">
+                    <i class="glyphicon glyphicon-list-alt"></i> {% trans 'Recommendations' %}
+                </a>
+            </li>
+            <li class="{% navactive request 'films:ratings' %}">
+                <a href="{% url 'films:ratings' %}">
+                    <i class="glyphicon glyphicon-list"></i> {% trans 'My ratings' %}
+                </a>
+            </li>
+            <li class="{% navactive request 'films:advanced_search' %}">
+                <a href="{% url 'films:advanced_search' %}">
+                    <i class="glyphicon glyphicon-search"></i> {% trans 'Advanced Search' %}
+                </a>
+            </li>
+            {% if user.is_authenticated %}
+                <li class="{% navactive request 'userena_profile_detail' user.username %}">
+                    <a href="{% url 'userena_profile_detail' user.username %}">
+                        <i class="glyphicon glyphicon-user"></i> {% trans 'My profile' %}
+                    </a>
+                </li>
+            {% else %}
+                <li>
+                    <a href="{% url 'userena_signup' %}">
+                        <i class="glyphicon glyphicon-user"></i> {% trans 'My profile' %}
+                    </a>
+                </li>
+            {% endif %}
+        </ul>
 
-        <div class="col-xs-12 col-sm-9">
-            <p class="pull-right visible-xs">
-                <button type="button" class="btn btn-primary btn-sm"
-                        data-toggle="offcanvas">{% trans 'Toggle nav' %}</button>
-            </p>
-            <div class="row">
-                {% block inner %}
-                {% endblock %}
-            </div>
-            <!-- /.row -->
-        </div>
-        <!-- /.col -->
+        <!-- tiny only nav-->
+        <ul class="nav visible-xs" id="xs-menu">
+            <li class="{% navactive request 'home' %}">
+                <a href="{% url 'home' %}" class="text-center">
+                    <i class="glyphicon glyphicon-home"></i>
+                </a>
+            </li>
+            <li class="{% navactive request 'films:recommendations' %}">
+                <a href="{% url 'films:recommendations' %}" class="text-center">
+                    <i class="glyphicon glyphicon-list-alt"></i>
+                </a>
+            </li>
+            <li class="{% navactive request 'films:ratings' %}">
+                <a href="{% url 'films:ratings' %}" class="text-center">
+                    <i class="glyphicon glyphicon-list"></i>
+                </a>
+            </li>
+            <li class="{% navactive request 'films:advanced_search' %}">
+                <a href="{% url 'films:advanced_search' %}" class="text-center">
+                    <i class="glyphicon glyphicon-search"></i>
+                </a>
+            </li>
+            {% if user.is_authenticated %}
+                <li class="{% navactive request 'userena_profile_detail' user.username %}">
+                    <a href="{% url 'userena_profile_detail' user.username %}"
+                       class="text-center">
+                        <i class="glyphicon glyphicon-user"></i>
+                    </a>
+                </li>
+            {% else %}
+                <li>
+                    <a href="{% url 'userena_signup' %}" class="text-center">
+                        <i class="glyphicon glyphicon-user"></i>
+                    </a>
+                </li>
+            {% endif %}
+        </ul>
+    </div>
+    <!-- /sidebar -->
 
-    </div><!-- /.row -->
+    <!-- main column -->
+    <div class="column col-lg-10 col-sm-9 col-xs-11" id="main">
+        <div class="row">
+            {% block content_title %}
+            {% endblock %}
+            <br/>
+            {% block content %}
+            {% endblock %}
+        </div>
+    </div>
+    <!-- /main column -->
 {% endblock %}
 
 {% block script %}
-    {{ block.super }}
-    <script type="text/javascript">
+    <script type='text/javascript'>
         $(document).ready(function () {
             $('[data-toggle=offcanvas]').click(function () {
+                $(this).toggleClass('visible-xs text-center');
+                $(this).find('i').toggleClass('glyphicon-chevron-right glyphicon-chevron-left');
                 $('.row-offcanvas').toggleClass('active');
+                $('#lg-menu').toggleClass('hidden-xs').toggleClass('visible-xs');
+                $('#xs-menu').toggleClass('visible-xs').toggleClass('hidden-xs');
             });
         });
     </script>

@@ -6,7 +6,7 @@
     <script src="{{ STATIC_URL }}js/jquery.raty.min.js"></script>
 {% endblock %}
 
-{% block inner %}
+{% block content %}
     <div class="col-xs-12" id="rows_append">
         {% include page_template %}
     </div><!-- /.col-xs-12 -->
@@ -16,14 +16,14 @@
     {{ block.super }}
     <script type="text/javascript">
         var settings = {
-            containerSelector: '#scrolling_container',
-            loadingSelector: '#scrolling_loading',
-            scrolling_more: '#scrolling_more',
-            rows_append: '#rows_append'
+            containerSelector: "#scrolling_container",
+            loadingSelector: "#scrolling_loading",
+            scrolling_more: "#scrolling_more",
+            rows_append: "#rows_append"
         };
 
-        $(window).scroll(function () {
-            if ($(window).scrollTop() == $(document).height() - $(window).height()) {
+        $("#main").scroll(function () {
+            if ($("#main").scrollTop() > ($("#rows_append").height() - $("#main").height())) {
                 var loading = $(settings.loadingSelector);
                 if (loading.is(':visible')) {
                     return;

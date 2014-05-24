@@ -1,26 +1,7 @@
 {% extends "base.html" %}
 {% load i18n %}
 
-{% block head %}
-    <style type="text/css">
-        /* Responsive: Portrait tablets and up */
-        @media screen and (min-width: 768px) {
-            /* Let the jumbotron breathe */
-            .jumbotron {
-                margin-top: 20px;
-            }
-
-            /* Remove padding from wrapping element since we kick in the grid classes here */
-            .body-content {
-                padding: 0;
-            }
-        }
-    </style>
-
-{% endblock %}
-
-{% block content %}
-
+{% block main %}
     <div id="myCarousel" class="carousel slide">
         <!-- Indicators -->
         <ol class="carousel-indicators">
@@ -37,8 +18,12 @@
                     <div class="carousel-caption">
                         <h1><strong>{% trans 'Discover new worlds' %}</strong></h1>
 
-                        <p><a class="btn btn-primary btn-lg"
-                              href="/accounts/register/">{% trans 'Sign up today' %}</a></p>
+                        <p>
+                            <a class="btn btn-primary btn-lg"
+                               href="{% url 'userena_signup' %}">
+                                {% trans 'Sign up today' %}
+                            </a>
+                        </p>
                     </div>
                 </div>
             </div>
@@ -49,8 +34,12 @@
                     <div class="carousel-caption">
                         <h1><strong>{% trans 'Personalized recommendations' %}</strong></h1>
 
-                        <p><a class="btn btn-primary btn-lg"
-                              href="/accounts/register/">{% trans 'Sign up Today' %}</a></p>
+                        <p>
+                            <a class="btn btn-primary btn-lg"
+                               href="{% url 'userena_signup' %}">
+                                {% trans 'Sign up today' %}
+                            </a>
+                        </p>
                     </div>
                 </div>
             </div>
@@ -61,8 +50,12 @@
                     <div class="carousel-caption">
                         <h1><strong>{% trans 'Try it' %}</strong></h1>
 
-                        <p><a class="btn btn-primary btn-lg"
-                              href="/accounts/register/">{% trans 'Sign up today' %}</a></p>
+                        <p>
+                            <a class="btn btn-primary btn-lg"
+                               href="{% url 'userena_signup' %}">
+                                {% trans 'Sign up today' %}
+                            </a>
+                        </p>
                     </div>
                 </div>
             </div>
@@ -75,7 +68,6 @@
             <span class="glyphicon glyphicon-chevron-right"></span>
         </a>
     </div><!-- /.carousel -->
-
 {% endblock %}
 
 {% block script %}

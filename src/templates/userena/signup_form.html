@@ -1,0 +1,39 @@
+{% extends 'page.html' %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+
+
+{% block title %}
+    {% trans 'Register' %}
+{% endblock %}
+
+{% block content_title %}
+    <h1 class="text-center">{% trans 'Register' %}</h1>
+{% endblock %}
+
+{% block content %}
+    <div class="col-xs-0 col-sm-1 col-md-2 col-lg-3"></div>
+    <div class="col-xs-12 col-sm-10 col-md-8 col-lg-6">
+        <form method="post" action="">
+            {% csrf_token %}
+            {{ form|crispy }}
+            {% if next %}<input type="hidden" name="next" value="{{ next }}"/>{% endif %}
+            <input type="submit" value="{% trans 'Submit' %}" class="btn btn-primary btn-block"/>
+            <input type="reset" value="{% trans 'Cancel' %}" class="btn btn-danger btn-block"/>
+        </form>
+        <br/>
+
+        <p>
+            <a href="{% url 'userena_signin' %}">
+                {% trans 'Already have an account? Sign in!' %}
+            </a>
+        </p>
+    </div>
+{% endblock %}
+
+{% block script %}
+    {{ block.super }}
+    <script type="text/javascript">
+        document.getElementById('id_username').focus()
+    </script>
+{% endblock %}

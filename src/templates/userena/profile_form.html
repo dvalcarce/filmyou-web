@@ -1,0 +1,60 @@
+{% extends 'page.html' %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+
+
+{% block title %}{% trans 'Edit profile' %}{% endblock %}
+
+{% block content_title %}
+    <h1 class="text-center">
+        {% blocktrans with profile.user.username as username %}
+            {{ username }} &raquo; edit profile
+        {% endblocktrans %}
+    </h1>
+{% endblock %}
+
+{% block content %}
+    {% if user.username == profile.user.username %}
+        <div>
+            <div class="row">
+                <div class="col-sm-0 col-lg-2"></div>
+                <div class="col-sm-12 col-lg-8">
+                    <ul class="nav nav-pills nav-justified">
+                        <li>
+                            <a href="{% url 'userena_profile_detail' user.username %}">
+                                {% trans "My profile" %}
+                            </a>
+                        </li>
+                        <li class="active">
+                            <a href="{% url 'userena_profile_edit' user.username %}">
+                                {% trans "Edit details" %}
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'userena_password_change' user.username %}">
+                                {% trans "Change password" %}
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'userena_email_change' user.username %}">
+                                {% trans "Change email" %}
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+    <br/>
+    <div class="row">
+        <div class="col-xs-0 col-sm-1 col-md-2 col-lg-3"></div>
+        <div class="col-xs-12 col-sm-10 col-md-8 col-lg-6">
+            <form action="" enctype="multipart/form-data" method="post">
+                {% csrf_token %}
+                {{ form|crispy }}
+                <input type="submit" value="{% trans "Save changes" %}"
+                       class="btn btn-primary btn-block"/>
+            </form>
+        </div>
+    </div>
+{% endblock %}
