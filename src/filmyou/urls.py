@@ -16,7 +16,7 @@ urlpatterns = patterns(
     url('', include('apps.utils.urls')),
     url(r'^films/', include('apps.films.urls', namespace='films')),
     url(r'^accounts/', include('userena.urls')),
-    url(r'^messages/', include('userena.contrib.umessages.urls', namespace='messages')),
+    url(r'^messages/', include('userena.contrib.umessages.urls')),
     url(r'^admin/', include(admin.site.urls)),
 )
 

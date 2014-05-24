@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 {% load i18n %}
+{% load umessages_tags %}
+
 
 {% block main %}
     <!-- sidebar -->
@@ -46,6 +48,13 @@
                     </a>
                 </li>
             {% endif %}
+            <li class="{% navactive request 'userena_umessages_list' %}">
+                <a href="{% url 'userena_umessages_list' %}">
+                    <i class="glyphicon glyphicon-envelope"></i> {% trans 'My messages' %}
+                    {% get_unread_message_count_for user as unread_messages %}
+                    <span class="badge">{{ unread_messages }}</span>
+                </a>
+            </li>
         </ul>
 
         <!-- tiny only nav-->
@@ -84,6 +93,11 @@
                     </a>
                 </li>
             {% endif %}
+            <li class="{% navactive request 'userena_umessages_list' %}">
+                <a href="{% url 'userena_umessages_list' %}" class="text-center">
+                    <i class="glyphicon glyphicon-envelope"></i>
+                </a>
+            </li>
         </ul>
     </div>
     <!-- /sidebar -->

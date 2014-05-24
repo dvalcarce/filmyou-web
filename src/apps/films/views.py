@@ -54,7 +54,8 @@ class Search(View):
             'page_template': self.page_template,
             'query': query,
             'search': True,
-            'films': films
+            'films': films,
+            'title': "Search results"
         }
 
         return render(self.request, self.template_name, c)
@@ -118,7 +119,8 @@ class Ratings(LoginRequiredMixin, View):
         c = {
             'page_template': self.page_template,
             'films': ratings,
-            'ratings': True
+            'ratings': True,
+            'title': "My ratings"
         }
 
         return render(self.request, self.template_name, c)
@@ -172,7 +174,8 @@ class Recommendations(LoginRequiredMixin, View):
         c = {
             'page_template': self.page_template,
             'films': recommendations,
-            'recommendations': True
+            'recommendations': True,
+            'title': "Recommendations"
         }
 
         return render(self.request, self.template, c)

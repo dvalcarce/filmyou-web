@@ -1,0 +1,39 @@
+{% extends 'page.html' %}
+{% load i18n %}
+{% load umessages_tags %}
+
+
+{% block title %}Messages{% endblock %}
+
+{% block content_title %}
+    <h2>{% trans "Messages" %}</h2>
+{% endblock %}
+
+{% block content %}
+    <p>
+        <a href="{% url 'userena_umessages_compose' %}"
+           class="btn btn-default">{% trans "Compose" %}</a>
+    </p>
+
+    <ul class="list-group">
+        {% for message in message_list %}
+            <li class="list-group-item">
+                {% if message.um_from_user == user %}
+                    {% get_unread_message_count_between user and message.um_to_user as unread_between_count %}
+                    <a href="{% url 'userena_umessages_detail' message.um_to_user.username %}">
+                        {{ message.um_to_user }}
+                    </a>
+                {% else %}
+                    {% get_unread_message_count_between user and message.um_from_user as unread_between_count %}
+                    <a href="{% url 'userena_umessages_detail' message.um_from_user.username %}">
+                        {{ message.um_from_user }}
+                    </a>
+                {% endif %}
+                <span class="badge">{{ unread_between_count }}</span>
+                {% with message.latest_message as latest_message %}
+                    {{ latest_message }}
+                {% endwith %}
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}

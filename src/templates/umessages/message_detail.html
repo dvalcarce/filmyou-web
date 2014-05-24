@@ -1,0 +1,29 @@
+{% extends 'page.html' %}
+{% load i18n %}
+
+
+{% block title %}Conversation{% endblock %}
+
+{% block content_title %}
+    <h2>
+        {% blocktrans %}
+            Conversation with {{ recipient }}
+        {% endblocktrans %}
+    </h2>
+{% endblock %}
+
+{% block content %}
+    <ul class="list-group">
+        {% for message in message_list %}
+            <li class="list-group-item">
+                <p>{{ message }}</p>
+
+                <p class="text-right">
+                    {% blocktrans with message.sent_at as sent_at %}
+                        Received on {{ sent_at }}
+                    {% endblocktrans %}
+                </p>
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}

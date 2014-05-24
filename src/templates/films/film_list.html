@@ -6,9 +6,17 @@
     <script src="{{ STATIC_URL }}js/jquery.raty.min.js"></script>
 {% endblock %}
 
+{% block content_title %}
+    <h1>{{ title }}</h1>
+{% endblock %}
+
 {% block content %}
     <div class="col-xs-12" id="rows_append">
-        {% include page_template %}
+        {% if films %}
+            {% include page_template %}
+        {% else %}
+            {% trans 'No films found for you.' %}
+        {% endif %}
     </div><!-- /.col-xs-12 -->
 {% endblock %}
 
