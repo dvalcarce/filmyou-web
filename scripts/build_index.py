@@ -2,7 +2,7 @@
 
 # -*- coding: utf-8 -*-
 
-INDEX_DIR = "Films2.index"
+INDEX_DIR = "Films.index"
 
 import sys
 import os
@@ -78,10 +78,6 @@ class IndexFilms(object):
                 doc.add(IntField("awards", self.parse_awards(row[-2]), Field.Store.YES))
                 doc.add(LongField("updated", self.parse_datetime(row[-1]), Field.Store.YES))
                 writer.addDocument(doc)
-
-                print "metascore", row[11], self.parse_int(row[11])
-                print "imdb_rating", row[12], self.parse_float(row[12])
-                input()
 
                 my_id += 1
 
