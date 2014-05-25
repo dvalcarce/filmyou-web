@@ -23,11 +23,9 @@
                     {% if film.score %}
                         {{ film.score|floatformat:1 }}
                     {% else %}
-                        --
+                        {{ film.imdb_rating|floatformat:1 }}w
                     {% endif %}
                 </h1>
-
-                <p><span id="n_votes">{{ film.n_votes }}</span> votes</p>
 
                 <div id="star{{ film.film_id }}"></div>
             </div>

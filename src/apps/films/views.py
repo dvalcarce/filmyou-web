@@ -4,14 +4,17 @@
 from __future__ import absolute_import
 
 from os import path
+import urllib
 
 from django.contrib.auth.models import User
+
+from django.core.urlresolvers import reverse
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.utils.translation import ugettext as _
 from django.core.exceptions import PermissionDenied
 from django.contrib.auth.decorators import login_required
-from django.views.generic import View
+from django.views.generic import View, TemplateView
 from django.views.generic.detail import DetailView
 from braces.views import LoginRequiredMixin
 
@@ -36,24 +39,33 @@ class Search(View):
     template_name = path.join(app_name, "film_list.html")
     page_template = path.join(app_name, "film_page.html")
 
+    def _get_next(self, films):
+        if films:
+            url = "{base}?last_id={last_id}&last_score={last_score}&".format(
+                base=reverse('films:search'),
+                last_id=films[-1].doc_id,
+                last_score=films[-1].doc_score)
+
+            query = self.request.GET.dict()
+            query.pop('last_id', None)
+            query.pop('last_score', None)
+
+            return url + urllib.urlencode(self.request.GET)
+
     def get(self, *args, **kwargs):
         if self.request.is_ajax():
             return self._search_ajax()
 
-        query = self.request.GET.get('title', None)
-        if query:
-            with FilmSearcher() as searcher:
-                films = searcher.query('title', query)
-        else:
-            films = []
+        with FilmSearcher() as searcher:
+            films = searcher.query(self.request.GET)
 
-        if self.request.user.is_authenticated():
+        if films and self.request.user.is_authenticated():
             films = self.request.user.profile.get_preferences_for_films(films)
 
         c = {
             'page_template': self.page_template,
-            'query': query,
-            'search': True,
+            'query': self.request.GET,
+            'next': self._get_next(films),
             'films': films,
             'title': "Search results"
         }
@@ -61,54 +73,50 @@ class Search(View):
         return render(self.request, self.template_name, c)
 
     def _search_ajax(self):
-        try:
-            last_id = self.request.GET['last_id']
-            last_score = self.request.GET['last_score']
-            query = self.request.GET['title']
-        except:
-            return HttpResponse("")
-
         with FilmSearcher() as searcher:
-            films = searcher.query_after("title", query, last_id, last_score)
+            films = searcher.query_after(self.request.GET)
 
-        if films:
-            if self.request.user.is_authenticated():
-                user = User.objects.get(username=self.request.user.username)
-                films = user.profile.get_preferences_for_films(films)
-            c = {
-                'query': query,
-                'films': films,
-                'search': True
-            }
-        else:
-            return HttpResponse("")
+        if not films:
+            return HttpResponse()
+
+        if self.request.user.is_authenticated():
+            user = User.objects.get(username=self.request.user.username)
+            films = user.profile.get_preferences_for_films(films)
+
+        c = {
+            'films': films,
+            'next': self._get_next(films),
+        }
 
         return render(self.request, self.page_template, c)
 
 
-class SearchForm(View):
+class SearchForm(TemplateView):
     template_name = path.join(app_name, "advanced_search.html")
 
-    def get(self, request, *args, **kwargs):
-        c = {
-            'fields': [
-                _("title"),
-                _("genre"),
-                _("director"),
-                _("cast"),
-                _("writer"),
-                _("year"),
-                _("runtime"),
-                _("...")
-            ]
-        }
-
-        return render(self.request, self.template_name, c)
+    def get_context_data(self, **kwargs):
+        context = super(SearchForm, self).get_context_data(**kwargs)
+        context['facets'] = [
+            _("title"),
+            _("genre"),
+            _("runtime"),
+            _("language"),
+            _("country"),
+            _("director"),
+            _("writer"),
+            _("cast"),
+            _("year"),
+        ]
+        return context
 
 
 class Ratings(LoginRequiredMixin, View):
     template_name = path.join(app_name, "film_list.html")
     page_template = path.join(app_name, "film_page.html")
+
+    def _get_next(self, films):
+        if films:
+            return reverse('films:ratings') + '?last=' + str(films[-1].film_id)
 
     def get(self, *args, **kwargs):
         if self.request.is_ajax():
@@ -119,7 +127,7 @@ class Ratings(LoginRequiredMixin, View):
         c = {
             'page_template': self.page_template,
             'films': ratings,
-            'ratings': True,
+            'next': self._get_next(ratings),
             'title': "My ratings"
         }
 
@@ -136,7 +144,7 @@ class Ratings(LoginRequiredMixin, View):
         if ratings:
             c = {
                 'films': ratings,
-                'ratings': True
+                'next': self._get_next(ratings),
             }
 
             return render(self.request, self.page_template, c)
@@ -165,6 +173,10 @@ class Recommendations(LoginRequiredMixin, View):
     template = path.join(app_name, "film_list.html")
     page_template = path.join(app_name, "film_page.html")
 
+    def _get_next(self, films):
+        if films:
+            return reverse('films:recommendations') + '?last=' + str(films[-1].film_id)
+
     def get(self, *args, **kwargs):
         if self.request.is_ajax():
             return self._recommendations_ajax()
@@ -174,7 +186,7 @@ class Recommendations(LoginRequiredMixin, View):
         c = {
             'page_template': self.page_template,
             'films': recommendations,
-            'recommendations': True,
+            'next': self._get_next(recommendations),
             'title': "Recommendations"
         }
 
@@ -191,7 +203,7 @@ class Recommendations(LoginRequiredMixin, View):
         if recommendations:
             c = {
                 'films': recommendations,
-                'recommendations': True
+                'next': self._get_next(recommendations),
             }
 
             return render(self.request, self.page_template, c)

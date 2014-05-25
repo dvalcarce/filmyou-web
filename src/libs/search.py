@@ -10,7 +10,6 @@ import lucene
 
 from java.io import File
 from org.apache.lucene.analysis.standard import StandardAnalyzer
-
 from org.apache.lucene.index import DirectoryReader
 from org.apache.lucene.search import IndexSearcher, ScoreDoc
 from org.apache.lucene.queryparser.classic import QueryParser
@@ -54,7 +53,7 @@ class FilmSearcher(object):
         return films
 
 
-    def query(self, field, text, count=10):
+    def query(self, fields, count=10):
         """
         Searches for a list of films that matches the given query.
         :param field: searching field
@@ -62,12 +61,14 @@ class FilmSearcher(object):
         :param count: number of results
         :return: a list of films that match the query
         """
-        query = QueryParser(Version.LUCENE_CURRENT, field, self.analyzer).parse(text)
+        for (field, text) in fields.items():
+            if text:
+                query = QueryParser(Version.LUCENE_CURRENT, field, self.analyzer).parse(text)
         score_docs = self.searcher.search(query, count).scoreDocs
 
         return self._retrieve_in_order(score_docs)
 
-    def query_after(self, field, text, last_id, last_score, count=10):
+    def query_after(self, fields, count=10):
         """
         Searches for a list of films that matches the given query after the given last document.
         :param field: searching field
@@ -77,8 +78,13 @@ class FilmSearcher(object):
         :param count: number of results
         :return: a list of films that match the query
         """
-        query = QueryParser(Version.LUCENE_CURRENT, field, self.analyzer).parse(text)
-        last_doc = ScoreDoc(int(last_id), float(last_score))
+        fields = fields.dict()
+        last_id = int(fields.pop('last_id'))
+        last_score = float(fields.pop('last_score'))
+        for (field, text) in fields.items():
+            if text:
+                query = QueryParser(Version.LUCENE_CURRENT, field, self.analyzer).parse(text)
+        last_doc = ScoreDoc(last_id, last_score)
         score_docs = self.searcher.searchAfter(last_doc, query, count).scoreDocs
 
         return self._retrieve_in_order(score_docs)

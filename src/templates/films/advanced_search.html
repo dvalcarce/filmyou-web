@@ -1,27 +1,39 @@
 {% extends "page.html" %}
 {% load i18n %}
 
+
+{% block title %}{% trans 'Advanced search' %}{% endblock %}
+
+{% block content_title %}
+    <h1 class="text-center">{% trans 'Advanced search' %}</h1>
+{% endblock %}
+
 {% block content %}
-    <div class="col-xs-12" id="rows_append">
-        <h1>{% trans 'Advanced search' %}</h1>
 
+    <div class="col-xs-0 col-sm-1 col-md-2 col-lg-3"></div>
+    <div class="col-xs-12 col-sm-10 col-md-8 col-lg-6">
         <p>{% trans 'You can search films by any filter you want.' %}</p>
+        <br/>
 
-        <form class="form-horizontal" action="{% url 'films:search' %}"
-              method="get" role="form">
-            {% for field in fields %}
-                <div class="form-group">
-                    <label class="col-lg-2 control-label"
-                           for="{{ field }}">{{ field|capfirst }}</label>
+        <div class="row">
+            <form class="form-horizontal" action="{% url 'films:search' %}"
+                  method="get" role="search">
+                {% for facet in facets %}
+                    <div class="form-group">
+                        <label class="col-sm-3 col-lg-2 control-label" for="{{ field }}">
+                            {% trans facet|capfirst %}
+                        </label>
 
-                    <div class="col-lg-10">
-                        <input type="text" class="form-control" name="{{ field }}">
+                        <div class="col-sm-9 col-lg-10">
+                            <input type="text" class="form-control" name="{{ facet }}">
+                        </div>
                     </div>
-                </div>
-            {% endfor %}
-            <input type="submit" class="btn btn-primary btn-block" value="{% trans 'Search' %}"/>
-            <input type="reset" class="btn btn-danger btn-block" value="{% trans 'Cancel' %}"/>
-        </form>
+                {% endfor %}
+                <input type="submit" class="btn btn-primary btn-block"
+                       value="{% trans 'Search' %}"/>
+                <input type="reset" class="btn btn-danger btn-block" value="{% trans 'Cancel' %}"/>
+            </form>
+        </div>
+    </div>
 
-    </div> <!-- /.col-xs-12 -->
 {% endblock %}
