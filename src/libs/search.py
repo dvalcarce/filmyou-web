@@ -5,18 +5,20 @@ from __future__ import absolute_import
 import os
 import logging
 
-from django.conf import settings
 import lucene
+from django.conf import settings
 
-from java.io import File
-from org.apache.lucene.analysis.standard import StandardAnalyzer
-from org.apache.lucene.index import DirectoryReader
-from org.apache.lucene.search import IndexSearcher, ScoreDoc
-from org.apache.lucene.queryparser.classic import QueryParser
-from org.apache.lucene.store import FSDirectory
-from org.apache.lucene.util import Version
 from apps.films.models import Film
 from apps.utils.db import retrieve_in_order_from_db
+
+from java.io import File
+
+from org.apache.lucene.analysis.standard import StandardAnalyzer
+from org.apache.lucene.index import DirectoryReader, Term
+from org.apache.lucene.search import IndexSearcher, ScoreDoc
+from org.apache.lucene.search import TermQuery, FuzzyQuery, PhraseQuery, BooleanQuery, BooleanClause
+from org.apache.lucene.store import FSDirectory
+from org.apache.lucene.util import Version
 
 
 class FilmSearcher(object):
@@ -52,6 +54,26 @@ class FilmSearcher(object):
 
         return films
 
+    def _create_query(self, fields):
+        """
+        Build query with Term, Phrase and Fuzzy clauses.
+        :param fields: dictionary of (field, text) tuples
+        :return: boolean query
+        """
+        query = BooleanQuery()
+
+        for (field, text) in fields.items():
+            if text:
+                fuzzy_query = FuzzyQuery(Term(field, text))
+                term_query = TermQuery(Term(field, text))
+                phrase_query = PhraseQuery()
+                for word in text.split():
+                    phrase_query.add(Term(field, word))
+                query.add(BooleanClause(fuzzy_query, BooleanClause.Occur.SHOULD))
+                query.add(BooleanClause(term_query, BooleanClause.Occur.SHOULD))
+                query.add(BooleanClause(phrase_query, BooleanClause.Occur.SHOULD))
+
+        return query
 
     def query(self, fields, count=10):
         """
@@ -61,9 +83,7 @@ class FilmSearcher(object):
         :param count: number of results
         :return: a list of films that match the query
         """
-        for (field, text) in fields.items():
-            if text:
-                query = QueryParser(Version.LUCENE_CURRENT, field, self.analyzer).parse(text)
+        query = self._create_query(fields)
         score_docs = self.searcher.search(query, count).scoreDocs
 
         return self._retrieve_in_order(score_docs)
@@ -81,9 +101,8 @@ class FilmSearcher(object):
         fields = fields.dict()
         last_id = int(fields.pop('last_id'))
         last_score = float(fields.pop('last_score'))
-        for (field, text) in fields.items():
-            if text:
-                query = QueryParser(Version.LUCENE_CURRENT, field, self.analyzer).parse(text)
+
+        query = self._create_query(fields)
         last_doc = ScoreDoc(last_id, last_score)
         score_docs = self.searcher.searchAfter(last_doc, query, count).scoreDocs
 
