@@ -12,8 +12,8 @@ def write_ratings(film, user_mapping):
     This script runs over training_set folder of Netflix prize and
     builds a single CSV file with all the recommendations with the
     following format:
-    	user_id,film_netflix_id,rating
-    	<int,int,float>
+        user_id,film_netflix_id,rating
+        <int,int,float>
     user_id is rebuilt from scratch.
     """
     first = film.next()

@@ -2,7 +2,7 @@
 
 # -*- coding: utf-8 -*-
 
-INDEX_DIR = "Films.index"
+INDEX_DIR = "Films2.index"
 
 import sys
 import os
@@ -79,6 +79,10 @@ class IndexFilms(object):
                 doc.add(LongField("updated", self.parse_datetime(row[-1]), Field.Store.YES))
                 writer.addDocument(doc)
 
+                print "metascore", row[11], self.parse_int(row[11])
+                print "imdb_rating", row[12], self.parse_float(row[12])
+                input()
+
                 my_id += 1
 
 
@@ -90,7 +94,7 @@ class IndexFilms(object):
 
     def parse_float(self, text):
         try:
-            return int(text)
+            return float(text)
         except ValueError:
             return -1.0
 
