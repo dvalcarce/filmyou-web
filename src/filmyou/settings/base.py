@@ -47,7 +47,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'filmyou',
-        'USER': environ.get("RDBMS_USER", ''),
+        'USER': environ.get("RDBMS_USER", 'postgres'),
         'PASSWORD': environ.get("RDBMS_PASSWORD", ''),
         'HOST': environ.get("RDBMS_HOST", '127.0.0.1'),
         'PORT': environ.get("RDBMS_PORT", '5432'),

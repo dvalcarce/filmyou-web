@@ -51,7 +51,9 @@
             <li class="{% navactive request 'userena_umessages_list' %}">
                 <a href="{% url 'userena_umessages_list' %}">
                     <i class="glyphicon glyphicon-envelope"></i> {% trans 'My messages' %}
-                    {% get_unread_message_count_for user as unread_messages %}
+                    {% if user.is_authenticated %}
+                        {% get_unread_message_count_for user as unread_messages %}
+                    {% endif %}
                     <span class="badge">{{ unread_messages }}</span>
                 </a>
             </li>
