@@ -11,7 +11,7 @@ urlpatterns = patterns(
     url(r'^details/(?P<pk>[0-9]+)/$', views.FilmDetails.as_view(), name='details'),
 
     url(r'^search/$', views.Search.as_view(), name='search'),
-    url(r'^search/advanced/$', views.SearchForm.as_view(), name='advanced_search'),
+    url(r'^search/advanced/$', views.AdvancedSearch.as_view(), name='advanced_search'),
 
     url(r'^recommendations/$', views.Recommendations.as_view(), name='recommendations'),
     url(r'^ratings/$', views.Ratings.as_view(), name='ratings'),

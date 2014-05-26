@@ -202,6 +202,7 @@ DJANGO_APPS = (
     'easy_thumbnails',
     'userena.contrib.umessages',
     'crispy_forms',
+    'autocomplete_light',
     'django_extensions',
     # 'django.contrib.admindocs',
 )

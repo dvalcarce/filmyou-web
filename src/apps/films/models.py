@@ -15,7 +15,10 @@ class Person(models.Model):
     Person model.
     """
     person_id = models.PositiveIntegerField(primary_key=True)
-    name = models.CharField(max_length=150)
+    name = models.CharField(max_length=150, unique=True)
+
+    class Meta:
+        ordering = ['name']
 
     def __unicode__(self):
         return self.name
@@ -26,7 +29,10 @@ class Genre(models.Model):
     Film genre model.
     """
     genre_id = models.PositiveIntegerField(primary_key=True)
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=50, unique=True)
+
+    class Meta:
+        ordering = ['name']
 
     def __unicode__(self):
         return self.name
@@ -37,7 +43,10 @@ class Country(models.Model):
     Film country model.
     """
     country_id = models.PositiveIntegerField(primary_key=True)
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=50, unique=True)
+
+    class Meta:
+        ordering = ['name']
 
     def __unicode__(self):
         return self.name
@@ -48,7 +57,10 @@ class Language(models.Model):
     Film country model.
     """
     language_id = models.PositiveIntegerField(primary_key=True)
-    name = models.CharField(max_length=30)
+    name = models.CharField(max_length=30, unique=True)
+
+    class Meta:
+        ordering = ['name']
 
     def __unicode__(self):
         return self.name
@@ -59,8 +71,8 @@ class Film(models.Model):
     Film model
     """
     film_id = models.PositiveIntegerField(primary_key=True)
-    imdb_id = models.PositiveIntegerField()
-    netflix_id = models.PositiveIntegerField(null=True)
+    imdb_id = models.PositiveIntegerField(unique=True)
+    netflix_id = models.PositiveIntegerField(null=True, unique=True)
     title = models.CharField(max_length=300)
     year = models.PositiveSmallIntegerField(null=True)
     runtime = models.PositiveSmallIntegerField(null=True)
@@ -84,6 +96,9 @@ class Film(models.Model):
     genres = models.ManyToManyField(Genre)
     countries = models.ManyToManyField(Country)
     languages = models.ManyToManyField(Language)
+
+    class Meta:
+        ordering = ['title']
 
     def __unicode__(self):
         return self.title

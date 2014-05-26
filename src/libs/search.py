@@ -10,9 +10,7 @@ from django.conf import settings
 
 from apps.films.models import Film
 from apps.utils.db import retrieve_in_order_from_db
-
 from java.io import File
-
 from org.apache.lucene.analysis.standard import StandardAnalyzer
 from org.apache.lucene.index import DirectoryReader, Term
 from org.apache.lucene.search import IndexSearcher, ScoreDoc
@@ -64,6 +62,7 @@ class FilmSearcher(object):
 
         for (field, text) in fields.items():
             if text:
+                text = text.lower()
                 fuzzy_query = FuzzyQuery(Term(field, text))
                 term_query = TermQuery(Term(field, text))
                 phrase_query = PhraseQuery()

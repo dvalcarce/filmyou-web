@@ -1,5 +1,6 @@
 {% extends "page.html" %}
 {% load i18n %}
+{% load crispy_forms_tags %}
 
 
 {% block title %}{% trans 'Advanced search' %}{% endblock %}
@@ -18,21 +19,12 @@
         <div class="row">
             <form class="form-horizontal" action="{% url 'films:search' %}"
                   method="get" role="search">
-                {% for facet in facets %}
-                    <div class="form-group">
-                        <label class="col-sm-3 col-lg-2 control-label" for="{{ field }}">
-                            {% trans facet|capfirst %}
-                        </label>
-
-                        <div class="col-sm-9 col-lg-10">
-                            <input type="text" class="form-control" name="{{ facet }}">
-                        </div>
-                    </div>
-                {% endfor %}
+                {{ form|crispy }}
                 <input type="submit" class="btn btn-primary btn-block"
                        value="{% trans 'Search' %}"/>
                 <input type="reset" class="btn btn-danger btn-block" value="{% trans 'Cancel' %}"/>
             </form>
+            <br/>
         </div>
     </div>
 

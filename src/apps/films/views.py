@@ -1,25 +1,23 @@
 # -*- coding: utf-8 -*-
 
-
 from __future__ import absolute_import
 
 from os import path
 import urllib
 
 from django.contrib.auth.models import User
-
 from django.core.urlresolvers import reverse
 from django.shortcuts import render
 from django.http import HttpResponse
-from django.utils.translation import ugettext as _
 from django.core.exceptions import PermissionDenied
 from django.contrib.auth.decorators import login_required
-from django.views.generic import View, TemplateView
+from django.views.generic import View, FormView
 from django.views.generic.detail import DetailView
 from braces.views import LoginRequiredMixin
 
 from libs.search import FilmSearcher
 from .models import Film
+from .forms import SearchForm
 
 
 app_name = Film._meta.app_label
@@ -91,23 +89,9 @@ class Search(View):
         return render(self.request, self.page_template, c)
 
 
-class SearchForm(TemplateView):
+class AdvancedSearch(FormView):
     template_name = path.join(app_name, "advanced_search.html")
-
-    def get_context_data(self, **kwargs):
-        context = super(SearchForm, self).get_context_data(**kwargs)
-        context['facets'] = [
-            _("title"),
-            _("genre"),
-            _("runtime"),
-            _("language"),
-            _("country"),
-            _("director"),
-            _("writer"),
-            _("cast"),
-            _("year"),
-        ]
-        return context
+    form_class = SearchForm
 
 
 class Ratings(LoginRequiredMixin, View):
