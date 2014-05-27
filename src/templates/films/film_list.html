@@ -16,7 +16,7 @@
             {% trans 'Your query is:' %}
         </p>
         <h4 class="text-center">
-            {% for field, text in query.items %}
+            {% for field, text in query %}
                 {% if text %}
                     <span class="label label-primary">{% trans field %}: {{ text }}</span>
                 {% endif %}

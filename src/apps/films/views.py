@@ -37,33 +37,50 @@ class Search(View):
     template_name = path.join(app_name, "film_list.html")
     page_template = path.join(app_name, "film_page.html")
 
-    def _get_next(self, films):
+    def _get_next(self, query, films):
         if films:
             url = "{base}?last_id={last_id}&last_score={last_score}&".format(
                 base=reverse('films:search'),
                 last_id=films[-1].doc_id,
                 last_score=films[-1].doc_score)
 
-            query = self.request.GET.dict()
-            query.pop('last_id', None)
-            query.pop('last_score', None)
+            return url + urllib.urlencode(query)
 
-            return url + urllib.urlencode(self.request.GET)
+    def _get_query_terms(self):
+        query = self.request.GET.dict()
+        query.pop('last_id', None)
+        query.pop('last_score', None)
+
+        ending = "-autocomplete"
+
+        d = []
+        for (k, v) in query.items():
+            k = k.encode('utf-8')
+            v = v.encode('utf-8')
+            if k.endswith(ending):
+                k = k[:k.rindex(ending)]
+            if v:
+                d.append((k, v))
+
+        return d
 
     def get(self, *args, **kwargs):
+        self.query = self._get_query_terms()
+
         if self.request.is_ajax():
             return self._search_ajax()
 
         with FilmSearcher() as searcher:
-            films = searcher.query(self.request.GET)
+            films = searcher.query(self.query)
 
         if films and self.request.user.is_authenticated():
             films = self.request.user.profile.get_preferences_for_films(films)
 
+
         c = {
             'page_template': self.page_template,
-            'query': self.request.GET,
-            'next': self._get_next(films),
+            'query': self.query,
+            'next': self._get_next(self.query, films),
             'films': films,
             'title': "Search results"
         }
@@ -83,7 +100,7 @@ class Search(View):
 
         c = {
             'films': films,
-            'next': self._get_next(films),
+            'next': self._get_next(self.query, films),
         }
 
         return render(self.request, self.page_template, c)

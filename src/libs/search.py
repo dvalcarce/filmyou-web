@@ -17,6 +17,9 @@ from org.apache.lucene.search import IndexSearcher, ScoreDoc
 from org.apache.lucene.search import TermQuery, FuzzyQuery, PhraseQuery, BooleanQuery, BooleanClause
 from org.apache.lucene.store import FSDirectory
 from org.apache.lucene.util import Version
+from org.apache.lucene.queries import CustomScoreQuery
+from org.apache.lucene.queries.function import FunctionQuery
+from org.apache.lucene.queries.function.valuesource import LongFieldSource
 
 
 class FilmSearcher(object):
@@ -56,21 +59,23 @@ class FilmSearcher(object):
         """
         Build query with Term, Phrase and Fuzzy clauses.
         :param fields: dictionary of (field, text) tuples
-        :return: boolean query
+        :return: query
         """
         query = BooleanQuery()
 
-        for (field, text) in fields.items():
-            if text:
-                text = text.lower()
-                fuzzy_query = FuzzyQuery(Term(field, text))
-                term_query = TermQuery(Term(field, text))
-                phrase_query = PhraseQuery()
-                for word in text.split():
-                    phrase_query.add(Term(field, word))
-                query.add(BooleanClause(fuzzy_query, BooleanClause.Occur.SHOULD))
-                query.add(BooleanClause(term_query, BooleanClause.Occur.SHOULD))
-                query.add(BooleanClause(phrase_query, BooleanClause.Occur.SHOULD))
+        for (field, text) in fields:
+            text = text.lower()
+            fuzzy_query = FuzzyQuery(Term(field, text))
+            term_query = TermQuery(Term(field, text))
+            phrase_query = PhraseQuery()
+            for word in text.split():
+                phrase_query.add(Term(field, word))
+            query.add(BooleanClause(fuzzy_query, BooleanClause.Occur.SHOULD))
+            query.add(BooleanClause(term_query, BooleanClause.Occur.SHOULD))
+            query.add(BooleanClause(phrase_query, BooleanClause.Occur.SHOULD))
+
+        boost_query = FunctionQuery(LongFieldSource("imdb_votes"))
+        q = CustomScoreQuery(query, boost_query)
 
         return query
 
@@ -119,5 +124,6 @@ try:
     reader = DirectoryReader.open(index)
     searcher = IndexSearcher(reader)
     analyzer = StandardAnalyzer(Version.LUCENE_CURRENT)
-except lucene.JavaError:
+except lucene.JavaError as e:
     logger.error('Lucene not loaded')
+    #raise e
