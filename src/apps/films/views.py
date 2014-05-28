@@ -88,8 +88,10 @@ class Search(View):
         return render(self.request, self.template_name, c)
 
     def _search_ajax(self):
+        last_id = int(self.request.GET['last_id'])
+        last_score = float(self.request.GET['last_score'])
         with FilmSearcher() as searcher:
-            films = searcher.query_after(self.request.GET)
+            films = searcher.query_after(self.query, last_id, last_score)
 
         if not films:
             return HttpResponse()

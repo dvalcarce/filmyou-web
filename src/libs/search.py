@@ -12,14 +12,15 @@ from apps.films.models import Film
 from apps.utils.db import retrieve_in_order_from_db
 from java.io import File
 from org.apache.lucene.analysis.standard import StandardAnalyzer
+
 from org.apache.lucene.index import DirectoryReader, Term
 from org.apache.lucene.search import IndexSearcher, ScoreDoc
-from org.apache.lucene.search import TermQuery, FuzzyQuery, PhraseQuery, BooleanQuery, BooleanClause
+from org.apache.lucene.search import BooleanQuery, BooleanClause
+from org.apache.lucene.search.spans import SpanNearQuery, SpanTermQuery
 from org.apache.lucene.store import FSDirectory
 from org.apache.lucene.util import Version
+from org.apache.lucene.queryparser.classic import MultiFieldQueryParser
 from org.apache.lucene.queries import CustomScoreQuery
-from org.apache.lucene.queries.function import FunctionQuery
-from org.apache.lucene.queries.function.valuesource import LongFieldSource
 
 
 class FilmSearcher(object):
@@ -53,6 +54,8 @@ class FilmSearcher(object):
             films[-1].doc_id = score_docs[-1].doc
             films[-1].doc_score = score_docs[-1].score
 
+        print score_docs
+
         return films
 
     def _create_query(self, fields):
@@ -61,53 +64,67 @@ class FilmSearcher(object):
         :param fields: dictionary of (field, text) tuples
         :return: query
         """
+
         query = BooleanQuery()
-
         for (field, text) in fields:
-            text = text.lower()
-            fuzzy_query = FuzzyQuery(Term(field, text))
-            term_query = TermQuery(Term(field, text))
-            phrase_query = PhraseQuery()
-            for word in text.split():
-                phrase_query.add(Term(field, word))
-            query.add(BooleanClause(fuzzy_query, BooleanClause.Occur.SHOULD))
-            query.add(BooleanClause(term_query, BooleanClause.Occur.SHOULD))
-            query.add(BooleanClause(phrase_query, BooleanClause.Occur.SHOULD))
+            spans = []
+            for word in text.lower().split():
+                spans.append(SpanTermQuery(Term(field, word)))
+            query.add(BooleanClause(SpanNearQuery(spans, 3, True), BooleanClause.Occur.SHOULD))
 
-        boost_query = FunctionQuery(LongFieldSource("imdb_votes"))
-        q = CustomScoreQuery(query, boost_query)
+        field_names, field_texts = zip(*fields)
+        flags = [BooleanClause.Occur.SHOULD] * len(field_names)
+
+        query_parser_query = MultiFieldQueryParser.parse(
+            Version.LUCENE_CURRENT,
+            field_texts,
+            field_names,
+            flags,
+            StandardAnalyzer(Version.LUCENE_CURRENT))
+        query.add(BooleanClause(query_parser_query, BooleanClause.Occur.SHOULD))
+
+        fuzzify = lambda s: (s + " ").replace(" ", "~1 ")
+        fuzzy_field_texts = map(fuzzify, field_texts)
+
+        fuzzy_query_parser_query = MultiFieldQueryParser.parse(
+            Version.LUCENE_CURRENT,
+            fuzzy_field_texts,
+            field_names,
+            flags,
+            StandardAnalyzer(Version.LUCENE_CURRENT))
+        query.add(BooleanClause(fuzzy_query_parser_query, BooleanClause.Occur.SHOULD))
+
+        query = CustomScoreQuery(query)
 
         return query
+
 
     def query(self, fields, count=10):
         """
         Searches for a list of films that matches the given query.
-        :param field: searching field
-        :param text: content of the field
+        :param fields: a list of tuples (field_name, field_text)
         :param count: number of results
         :return: a list of films that match the query
         """
         query = self._create_query(fields)
+        # sort = self._get_sort()
+
         score_docs = self.searcher.search(query, count).scoreDocs
 
         return self._retrieve_in_order(score_docs)
 
-    def query_after(self, fields, count=10):
+    def query_after(self, fields, last_id, last_score, count=10):
         """
         Searches for a list of films that matches the given query after the given last document.
-        :param field: searching field
-        :param text: content of the field
+        :param fields: a list of tuples (field_name, field_text)
         :param last_id: id of the last retrieved film
         :param last_score: score of the last retrieved film
         :param count: number of results
         :return: a list of films that match the query
         """
-        fields = fields.dict()
-        last_id = int(fields.pop('last_id'))
-        last_score = float(fields.pop('last_score'))
-
         query = self._create_query(fields)
         last_doc = ScoreDoc(last_id, last_score)
+
         score_docs = self.searcher.searchAfter(last_doc, query, count).scoreDocs
 
         return self._retrieve_in_order(score_docs)
@@ -126,4 +143,3 @@ try:
     analyzer = StandardAnalyzer(Version.LUCENE_CURRENT)
 except lucene.JavaError as e:
     logger.error('Lucene not loaded')
-    #raise e

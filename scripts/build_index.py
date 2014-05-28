@@ -7,17 +7,15 @@ INDEX_DIR = "Films.index"
 import sys
 import os
 import re
-import csv
 import time
 import calendar
-import codecs
 
 import lucene
 
 from java.io import File
 from org.apache.lucene.analysis.standard import StandardAnalyzer
-from org.apache.lucene.document import Document, Field, TextField, IntField, LongField, FloatField, \
-    StringField
+from org.apache.lucene.document import Document, Field, TextField, IntField, LongField, FloatField
+from org.apache.lucene.document import StringField, NumericDocValuesField
 from org.apache.lucene.index import IndexWriter, IndexWriterConfig
 from org.apache.lucene.store import SimpleFSDirectory
 from org.apache.lucene.util import Version
@@ -70,6 +68,8 @@ class IndexFilms(object):
                 doc.add(IntField("metascore", self.parse_int(row[11]), Field.Store.YES))
                 doc.add(FloatField("imdb_rating", self.parse_float(row[12]), Field.Store.YES))
                 doc.add(IntField("imdb_votes", self.parse_int(row[13]), Field.Store.YES))
+                doc.add(NumericDocValuesField("imdb_votes_boost", self.parse_long(row[13])))
+                doc.add(NumericDocValuesField("imdb_rating_boost", self.parse_long(row[12])))
                 doc.add(StringField("poster", self.parse_string(row[14]), Field.Store.YES))
                 doc.add(TextField("plot", self.parse_string(row[15]), Field.Store.YES))
                 doc.add(TextField("fullplot", self.parse_string(row[-5]), Field.Store.YES))
@@ -87,6 +87,12 @@ class IndexFilms(object):
             return int(text)
         except ValueError:
             return -1
+
+    def parse_long(self, text):
+        try:
+            return long(text)
+        except ValueError:
+            return 0L
 
     def parse_float(self, text):
         try:
