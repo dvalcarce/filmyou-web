@@ -5,7 +5,7 @@
 
 {% block main %}
     <!-- sidebar -->
-    <div class="column col-lg-2 col-sm-3 col-xs-1 sidebar-offcanvas" id="sidebar">
+    <div class="column col-lg-2 col-sm-3 col-xs-2 sidebar-offcanvas" id="sidebar">
 
         <ul class="nav">
             <li><a href="#" data-toggle="offcanvas" class="visible-xs text-center"><i
@@ -22,7 +22,7 @@
             </li>
             <li class="{% navactive request 'films:recommendations' %}">
                 <a href="{% url 'films:recommendations' %}">
-                    <i class="glyphicon glyphicon-list-alt"></i> {% trans 'Recommendations' %}
+                    <i class="glyphicon glyphicon-list-alt"></i> {% trans 'Suggestions' %}
                 </a>
             </li>
             <li class="{% navactive request 'films:ratings' %}">
@@ -105,7 +105,7 @@
     <!-- /sidebar -->
 
     <!-- main column -->
-    <div class="column col-lg-10 col-sm-9 col-xs-11" id="main">
+    <div class="column col-lg-10 col-sm-9 col-xs-10" id="main">
         <div class="row">
             {% block content_title %}
             {% endblock %}
