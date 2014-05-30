@@ -64,10 +64,10 @@ CREATE INDEX "films_language_name_gin" ON "films_language" USING GIN ("name");
 ```
 
 We need to change Django ORM behaviour:
-- Replace 'LIKE UPPER(%s)' with 'ILIKE %s' in `/path/to/site-packages/django/db/backends/postgresql_psycopg2/base.py`.
+- Replace 'LIKE UPPER(%s)' with 'ILIKE %s' and `UPPER(%s)` with `ILIKE %s` in `/path/to/site-packages/django/db/backends/postgresql_psycopg2/base.py`.
 - Comment the following lines in `/path/to/site-packages/django/db/backends/postgresql_psycopg2/operations.py`:
 ```
-    if lookup_type in ('iexact', 'icontains', 'istartswith', 'iendswith'):
+    if lookup_type in ('iexact', 'icontains', 'istartswith', 'iendswith'):chr
         lookup = 'UPPER(%s)' % lookup
 ```
 
