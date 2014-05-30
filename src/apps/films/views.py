@@ -28,7 +28,8 @@ class FilmDetails(DetailView):
 
     def get_object(self, queryset=None):
         film = super(FilmDetails, self).get_object(queryset)
-        film.set_preference(self.request.user.profile)
+        if self.request.user.is_authenticated():
+            film.set_preference(self.request.user.profile)
 
         return film
 

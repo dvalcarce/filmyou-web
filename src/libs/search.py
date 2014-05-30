@@ -54,8 +54,6 @@ class FilmSearcher(object):
             films[-1].doc_id = score_docs[-1].doc
             films[-1].doc_score = score_docs[-1].score
 
-        print score_docs
-
         return films
 
     def _create_query(self, fields):
