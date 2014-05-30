@@ -10,7 +10,7 @@ class DirectorAutocomplete(autocomplete_light.AutocompleteModelBase):
     search_fields = ['name']
     order_by = ['name']
     choices = Person.objects.filter(director__isnull=False).distinct()
-    autocomplete_js_attributes = {'placeholder': '', }
+    attrs = {'placeholder': '', 'data-autocomplete-minimum-characters': 3}
 
     def choice_value(self, choice):
         return unicode(choice)
@@ -21,7 +21,7 @@ class WriterAutocomplete(autocomplete_light.AutocompleteModelBase):
     search_fields = ['name']
     order_by = ['name']
     choices = Person.objects.filter(writer__isnull=False).distinct()
-    autocomplete_js_attributes = {'placeholder': '', }
+    attrs = {'placeholder': '', 'data-autocomplete-minimum-characters': 3}
 
     def choice_value(self, choice):
         return unicode(choice)
@@ -32,7 +32,7 @@ class CastAutocomplete(autocomplete_light.AutocompleteModelBase):
     search_fields = ['name']
     order_by = ['name']
     choices = Person.objects.filter(cast__isnull=False).distinct()
-    autocomplete_js_attributes = {'placeholder': '', }
+    attrs = {'placeholder': '', 'data-autocomplete-minimum-characters': 3}
 
     def choice_value(self, choice):
         return unicode(choice)
@@ -43,7 +43,7 @@ class CountryAutocomplete(autocomplete_light.AutocompleteModelBase):
     choices = Country.objects.all()
     search_fields = ['name']
     order_by = ['name']
-    autocomplete_js_attributes = {'placeholder': '', }
+    attrs = {'placeholder': '', 'data-autocomplete-minimum-characters': 3}
 
     def choice_value(self, choice):
         return unicode(choice)
@@ -54,7 +54,7 @@ class GenreAutocomplete(autocomplete_light.AutocompleteModelBase):
     choices = Genre.objects.all()
     search_fields = ['name']
     order_by = ['name']
-    autocomplete_js_attributes = {'placeholder': '', }
+    attrs = {'placeholder': '', 'data-autocomplete-minimum-characters': 3}
 
     def choice_value(self, choice):
         return unicode(choice)
@@ -65,7 +65,7 @@ class LanguageAutocomplete(autocomplete_light.AutocompleteModelBase):
     choices = Language.objects.all()
     search_fields = ['name']
     order_by = ['name']
-    autocomplete_js_attributes = {'placeholder': '', }
+    attrs = {'placeholder': '', 'data-autocomplete-minimum-characters': 3}
 
     def choice_value(self, choice):
         return unicode(choice)
@@ -76,7 +76,7 @@ class FilmAutocomplete(autocomplete_light.AutocompleteModelBase):
     choices = Film.objects.all()
     order_by = ['title']
     search_fields = ['title']
-    autocomplete_js_attributes = {'placeholder': '', }
+    attrs = {'placeholder': '', 'data-autocomplete-minimum-characters': 3}
 
     def choice_value(self, choice):
         return unicode(choice)

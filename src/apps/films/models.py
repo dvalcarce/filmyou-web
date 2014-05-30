@@ -7,6 +7,7 @@ from django.db import models
 from userena.models import UserenaBaseProfile
 
 from apps.utils.db import retrieve_in_order_from_db
+from apps.utils import poster
 from libs.cassandra import CassandraConnection
 
 
@@ -15,10 +16,7 @@ class Person(models.Model):
     Person model.
     """
     person_id = models.PositiveIntegerField(primary_key=True)
-    name = models.CharField(max_length=150, unique=True)
-
-    class Meta:
-        ordering = ['name']
+    name = models.CharField(max_length=150)
 
     def __unicode__(self):
         return self.name
@@ -29,10 +27,7 @@ class Genre(models.Model):
     Film genre model.
     """
     genre_id = models.PositiveIntegerField(primary_key=True)
-    name = models.CharField(max_length=50, unique=True)
-
-    class Meta:
-        ordering = ['name']
+    name = models.CharField(max_length=50)
 
     def __unicode__(self):
         return self.name
@@ -43,10 +38,7 @@ class Country(models.Model):
     Film country model.
     """
     country_id = models.PositiveIntegerField(primary_key=True)
-    name = models.CharField(max_length=50, unique=True)
-
-    class Meta:
-        ordering = ['name']
+    name = models.CharField(max_length=50)
 
     def __unicode__(self):
         return self.name
@@ -57,10 +49,7 @@ class Language(models.Model):
     Film country model.
     """
     language_id = models.PositiveIntegerField(primary_key=True)
-    name = models.CharField(max_length=30, unique=True)
-
-    class Meta:
-        ordering = ['name']
+    name = models.CharField(max_length=50)
 
     def __unicode__(self):
         return self.name
@@ -86,6 +75,7 @@ class Film(models.Model):
     poster = models.URLField(null=True)
     awards = models.PositiveIntegerField(null=True)
     updated = models.DateField(null=True)
+    poster_file = models.ImageField(upload_to='posters', null=True)
 
     n_votes = models.PositiveIntegerField(default=0)
     sum_votes = models.FloatField(default=0)
@@ -97,11 +87,14 @@ class Film(models.Model):
     countries = models.ManyToManyField(Country)
     languages = models.ManyToManyField(Language)
 
-    class Meta:
-        ordering = ['title']
-
     def __unicode__(self):
         return self.title
+
+    def get_poster(self):
+        if not self.poster_file:
+            poster.retrieve(self)
+
+        return self.poster_file
 
     @property
     def score(self):

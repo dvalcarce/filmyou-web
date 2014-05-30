@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 import autocomplete_light
-
 from django import forms
+from django.core.validators import RegexValidator
 
 from .models import Person, Country, Genre, Language, Film
 
@@ -50,6 +50,4 @@ class SearchForm(forms.Form):
         required=False
     )
 
-    year = forms.IntegerField(required=False)
-
-    runtime = forms.IntegerField(required=False)
+    year = forms.IntegerField(required=False, widget=forms.widgets.TextInput, validators=[RegexValidator("\d+")])
