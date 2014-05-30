@@ -298,3 +298,9 @@ SOUTH_MIGRATION_MODULES = {
     'easy_thumbnails': 'easy_thumbnails.south_migrations',
 }
 ########## END SOUTH CONFIGURATION
+
+
+########## TRAKT CONFIGURATION
+# Demo API Key. Use yours.
+TRAKT_APIKEY = environ.get("TRAKT_APIKEY", "")
+########## END TRAKT CONFIGURATION

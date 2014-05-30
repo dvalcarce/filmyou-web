@@ -12,11 +12,7 @@
         <hr/>
         <div class="row">
             <div class="col-xs-12 col-sm-3">
-                {% if film.poster %}
-                    <img src="{{ film.poster }}" class="img-responsive"/>
-                {% else %}
-                    <img src="{{ STATIC_URL }}img/noposter200.png" class="img-responsive"/>
-                {% endif %}
+                <img src="{{ MEDIA_URL }}{{ film.get_poster }}" width="300" alt="{{ film.title }}" />
             </div>
             <div class="pull-right">
                 <h1>
@@ -33,6 +29,8 @@
                 <dl class="dl-horizontal">
                     <dt>Id</dt>
                     <dd>{{ film.film_id }}</dd>
+                    <dt>IMDB ID</dt>
+                    <dd>{{ film.imdb_id }}</dd>
                     <dt>Year</dt>
                     <dd>{{ film.year }}</dd>
                     <dt>Genre</dt>
@@ -62,8 +60,6 @@
         </div>
         <!-- /.row -->
     </div><!-- /.col-xs-12 -->
-
-    {{ film.preference }}
 
     <script type="text/javascript">
         {% if film.preference %}
