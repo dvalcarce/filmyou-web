@@ -13,7 +13,6 @@ import requests
 
 
 def _set_from_url(film, url):
-    print "Retrieving from", url
     request = requests.get(url, stream=True)
     if request.status_code != requests.codes.ok:
         raise KeyError(url)
@@ -40,7 +39,6 @@ def _get_trakt_url(imdb_id):
 
 
 def retrieve(film):
-    print film
     if film.poster:
         try:
             return _set_from_url(film, film.poster)
@@ -50,7 +48,6 @@ def retrieve(film):
     try:
         url = _get_trakt_url(film.imdb_id)
         _set_from_url(film, url)
-        print "\tBut in Trakt"
     except KeyError:
         film.poster_file = path.join('posters', 'noposter.png')
         film.save()
