@@ -1,0 +1,59 @@
+{% extends "page.html" %}
+{% load i18n %}
+{% load filmyou_tags %}
+
+
+{% block head %}
+    {{ block.super }}
+    <script src="{{ STATIC_URL }}js/jquery.raty.min.js"></script>
+{% endblock %}
+
+{% block content_title %}
+    <h1 class="text-center">{{ title }}</h1>
+{% endblock %}
+
+{% block content %}
+    <div id="rows_append" class="row">
+        {% if reviews %}
+            {% include page_template %}
+        {% else %}
+            <h4 class="text-center">
+                {% trans 'You have no reviews.' %}
+            </h4>
+        {% endif %}
+
+    </div><!-- /.col-xs-12 -->
+{% endblock %}
+
+{% block script %}
+    {{ block.super }}
+    <script type="text/javascript">
+        var settings = {
+            containerSelector: "#scrolling_container",
+            loadingSelector: "#scrolling_loading",
+            scrolling_more: "#scrolling_more",
+            rows_append: "#rows_append"
+        };
+
+        $("#main").scroll(function () {
+            if ($("#main").scrollTop() > ($("#rows_append").height() - $("#main").height())) {
+                var loading = $(settings.loadingSelector);
+                if (loading.is(':visible')) {
+                    return;
+                }
+                loading.show();
+                $.ajax({
+                    url: $(settings.scrolling_more).attr('href'),
+                    success: function (html) {
+                        loading.hide();
+                        $(settings.containerSelector).remove();
+                        if (html) {
+                            $(settings.rows_append).append(html);
+                            console.log(html);
+                        }
+                    }
+                });
+            }
+        });
+    </script>
+{% endblock %}

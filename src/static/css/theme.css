@@ -43,6 +43,10 @@ html, body {
     background-color: #444;
 }
 
+.panel textarea, textarea.form-control {
+    resize: none;
+}
+
 .top-navbar {
     background-color: #bbb;
     box-shadow: 0 0 1em #999;

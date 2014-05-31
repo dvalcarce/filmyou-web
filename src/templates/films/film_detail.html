@@ -10,10 +10,8 @@
 {% block content %}
     <div class="panel panel-default">
         <div class="panel-heading">
-            <h2 class="pull-right">{{ film.score|floatformat:1 }}</h2>
-
-
-            <h3>{{ film.title }}</h3>
+            <div class="pull-right" id="star{{ film.film_id }}"></div>
+            <h3>{{ film.title }} ({{ film.score|floatformat:1 }})</h3>
         </div>
         <div class="panel-body">
             <img src="{{ MEDIA_URL }}{{ film.get_poster }}"
@@ -22,32 +20,52 @@
 
             <div class="container-fluid">
                 <dl>
-                    <dt>Id</dt>
-                    <dd>{{ film.film_id }}</dd>
-                    <dt>IMDB ID</dt>
+                    <dt>{% trans 'IMDB ID' %}</dt>
                     <dd>{{ film.imdb_id }}</dd>
-                    <dt>Year</dt>
-                    <dd>{{ film.year }}</dd>
-                    <dt>Genre</dt>
-                    <dd>{{ film.genres.all|join:", " }}</dd>
-                    <dt>Runtime</dt>
-                    <dd>{{ film.runtime }}</dd>
-                    <dt>Rating</dt>
-                    <dd>{{ film.rating }}</dd>
-                    <dt>Director</dt>
-                    <dd>{{ film.directors.all|join:", " }}</dd>
-                    <dt>Writer</dt>
-                    <dd>{{ film.writers.all|join:", " }}</dd>
-                    <dt>Cast</dt>
-                    <dd>{{ film.casts.all|join:", " }}</dd>
-                    <dt>Country</dt>
-                    <dd>{{ film.countries.all|join:", " }}</dd>
-                    <dt>Language</dt>
-                    <dd>{{ film.languages.all|join:", " }}</dd>
-                    <dt>Released</dt>
-                    <dd>{{ film.released|date }}</dd>
-                    <dt>Fullplot</dt>
-                    <dd class="justify">{{ film.fullplot }}</dd>
+                    {% if film.year %}
+                        <dt>{% trans 'Year' %}</dt>
+                        <dd>{{ film.year }}</dd>
+                    {% endif %}
+                    {% if film.genres %}
+                        <dt>{% trans 'Genre' %}</dt>
+                        <dd>{{ film.genres.all|join:", " }}</dd>
+                    {% endif %}
+                    {% if film.runtime %}
+                        <dt>{% trans 'Runtime' %}</dt>
+                        <dd>{{ film.runtime }} {% trans 'minutes' %}</dd>
+                    {% endif %}
+                    {% if film.rating %}
+                        <dt>{% trans 'Rating' %}</dt>
+                        <dd>{{ film.rating }}</dd>
+                    {% endif %}
+                    {% if film.directors.all %}
+                        <dt>{% trans 'Director' %}</dt>
+                        <dd>{{ film.directors.all|join:", " }}</dd>
+                    {% endif %}
+                    {% if film.writers.all %}
+                        <dt>{% trans 'Writer' %}</dt>
+                        <dd>{{ film.writers.all|join:", " }}</dd>
+                    {% endif %}
+                    {% if film.casts.all %}
+                        <dt>{% trans 'Cast' %}</dt>
+                        <dd>{{ film.casts.all|join:", " }}</dd>
+                    {% endif %}
+                    {% if film.countries.all %}
+                        <dt>{% trans 'Country' %}</dt>
+                        <dd>{{ film.countries.all|join:", " }}</dd>
+                    {% endif %}
+                    {% if film.languages.all %}
+                        <dt>{% trans 'Language' %}</dt>
+                        <dd>{{ film.languages.all|join:", " }}</dd>
+                    {% endif %}
+                    {% if film.released %}
+                        <dt>{% trans 'Released' %}</dt>
+                        <dd>{{ film.released|date|default:"--" }}</dd>
+                    {% endif %}
+                    {% if film.fullplot %}
+                        <dt>{% trans 'Plot' %}</dt>
+                        <dd class="justify">{{ film.fullplot|default:"--" }}</dd>
+                    {% endif %}
                 </dl>
             </div>
 
@@ -59,12 +77,37 @@
                         <h5>{% trans 'Reviews' %}</h5>
                     </div>
                     <div class="panel-body">
-                        {% for review in film.reviews %}
-                            {{ review.text }}
+                        {% for review in film.review_set.all %}
+                            <p class="text-justify">
+                                {{ review.text }}
+                            </p>
+                            <p class="text-right">
+                                <small>
+                                    {% trans 'By' %}
+                                    <strong>{{ review.author.user.username }}</strong>
+                                    ({{ review.created|date:'DATETIME_FORMAT' }})
+                                </small>
+                                <br>
+                                <a class="label label-danger" href="#">
+                                    {% trans 'Remove' %} <span
+                                        class="glyphicon glyphicon-remove"></span>
+                                </a>
+                            </p>
                             <hr>
                         {% empty %}
                             {% trans 'No reviews' %}
                         {% endfor %}
+                        <hr>
+                        <form method="post" role="form" class="form"
+                              action="{% url 'reviews:create' film.film_id %}">
+                            <div class="form-group">
+                                {% csrf_token %}
+                                {{ form.text }}
+                            </div>
+                            <button type="input" class="btn btn-primary pull-right"
+                                    href="{% url 'home' %}">{% trans 'Send review' %}</button>
+                        </form>
+
                     </div>
                 </div>
             </div>

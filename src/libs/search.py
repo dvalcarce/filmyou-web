@@ -60,7 +60,6 @@ class FilmSearcher(object):
         :param fields: dictionary of (field, text) tuples
         :return: query
         """
-
         query = BooleanQuery()
         for (field, text) in fields:
             if field.startswith("year"):
@@ -106,6 +105,9 @@ class FilmSearcher(object):
         :param count: number of results
         :return: a list of films that match the query
         """
+        if not fields:
+            return []
+
         query = self._create_query(fields)
         # sort = self._get_sort()
 
@@ -122,6 +124,9 @@ class FilmSearcher(object):
         :param count: number of results
         :return: a list of films that match the query
         """
+        if not fields:
+            return []
+
         query = self._create_query(fields)
         last_doc = ScoreDoc(last_id, last_score)
 

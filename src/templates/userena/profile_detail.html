@@ -67,10 +67,10 @@
                 <dd>{{ user.last_name|default:"--" }}</dd>
 
                 <dt>{% trans 'Last login' %}</dt>
-                <dd>{{ user.last_login }}</dd>
+                <dd>{{ user.last_login|date:'DATETIME_FORMAT' }}</dd>
 
                 <dt>{% trans 'Date joined' %}</dt>
-                <dd>{{ user.date_joined }}</dd>
+                <dd>{{ user.date_joined|date:'DATETIME_FORMAT' }}</dd>
             </dl>
         </div>
     </div>

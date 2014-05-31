@@ -1,0 +1,51 @@
+{% load i18n %}
+
+<div class="panel-film col-xs-12 col-sm-6 col-md-4 col-lg-3">
+    <div class="panel panel-default">
+        <div class="panel-thumbnail">
+            <a href="{% url 'films:details' review.film.film_id %}">
+                <img class="img-responsive" src="{{ MEDIA_URL }}{{ review.film.get_poster }}"
+                     alt="{{ film.title }}"/>
+            </a>
+        </div>
+        <div class="panel-body">
+            <p class="lead">
+                <a href="{% url 'films:details' review.film.film_id %}">{{ review.film.title }}</a>
+            </p>
+
+            <h1>
+                <span id="star{{ review.review_id }}"></span>
+                {{ review.film.score|floatformat:1 }}
+            </h1>
+
+            <p class="text-justify">
+                {{ review.text }}
+            </p>
+
+            <p class="text-right">
+                <small>{{ review.created|date:'DATETIME_FORMAT' }}</small>
+                <br>
+                <a class="label label-danger" href="#">
+                    {% trans 'Remove' %} <span
+                        class="glyphicon glyphicon-remove"></span>
+                </a>
+            </p>
+
+
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+    $("#star{{ review.review_id }}").raty({
+        score: {{ review.film.preference|default:"0" }},
+        starOff: '{{ STATIC_URL }}img/star-off.png',
+        starOn: '{{ STATIC_URL }}img/star-on.png',
+        click: function (score, evt) {
+            $.ajax({
+                url: "{% url 'films:rate' %}?film={{ review.film.film_id }}&score=" + score
+            });
+        }
+    });
+</script>

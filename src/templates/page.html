@@ -29,6 +29,11 @@
                     <i class="glyphicon glyphicon-list"></i> {% trans 'My ratings' %}
                 </a>
             </li>
+            <li class="{% navactive request 'reviews:list' %}">
+                <a href="{% url 'reviews:list' %}">
+                    <i class="glyphicon glyphicon-list"></i> {% trans 'My reviews' %}
+                </a>
+            </li>
             <li class="{% navactive request 'films:advanced_search' %}">
                 <a href="{% url 'films:advanced_search' %}">
                     <i class="glyphicon glyphicon-search"></i> {% trans 'Advanced Search' %}
@@ -72,6 +77,11 @@
             </li>
             <li class="{% navactive request 'films:ratings' %}">
                 <a href="{% url 'films:ratings' %}" class="text-center">
+                    <i class="glyphicon glyphicon-list"></i>
+                </a>
+            </li>
+            <li class="{% navactive request 'reviews:list' %}">
+                <a href="{% url 'reviews:list' %}" class="text-center">
                     <i class="glyphicon glyphicon-list"></i>
                 </a>
             </li>

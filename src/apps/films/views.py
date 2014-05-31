@@ -5,16 +5,18 @@ from __future__ import absolute_import
 from os import path
 import urllib
 
+from django.conf import settings
+
 from django.utils.translation import ugettext as _
-from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.core.exceptions import PermissionDenied
-from django.contrib.auth.decorators import login_required
 from django.views.generic import View, FormView
 from django.views.generic.detail import DetailView
 from braces.views import LoginRequiredMixin
+
+from apps.reviews.forms import ReviewForm
 
 from libs.search import FilmSearcher
 from .models import Film
@@ -33,6 +35,11 @@ class FilmDetails(DetailView):
             film.set_preference(self.request.user.profile)
 
         return film
+
+    def get_context_data(self, **kwargs):
+        context = super(FilmDetails, self).get_context_data(**kwargs)
+        context['form'] = ReviewForm()
+        return context
 
 
 class Search(View):
@@ -113,8 +120,7 @@ class Search(View):
             return HttpResponse()
 
         if self.request.user.is_authenticated():
-            user = User.objects.get(username=self.request.user.username)
-            films = user.profile.get_preferences_for_films(films)
+            films = self.request.user.profile.get_preferences_for_films(films)
 
         c = {
             'films': films,
@@ -171,19 +177,23 @@ class Ratings(LoginRequiredMixin, View):
             return HttpResponse()
 
 
-@login_required
 def rate(request):
     """
     Rate a film via AJAX.
     """
     if request.is_ajax():
-        film_id = int(request.GET['film'])
-        score = float(request.GET['score'])
+        if request.user.is_authenticated():
+            film_id = int(request.GET['film'])
+            score = float(request.GET['score'])
 
-        film = Film.objects.get(film_id=film_id)
-        film.rate(request.user.profile, score)
+            film = Film.objects.get(film_id=film_id)
+            film.rate(request.user.profile, score)
 
-        return HttpResponse()
+            return HttpResponse()
+        else:
+            # TODO: redirect
+            return redirect(settings.LOGIN_URL)
+
     else:
         raise PermissionDenied
 
@@ -234,4 +244,4 @@ class Recommendations(LoginRequiredMixin, View):
 
 def render_homepage(request):
     template = path.join(app_name, 'home.html')
-    return HttpResponse()
+    return render(request, template, {})

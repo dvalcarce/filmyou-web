@@ -3,6 +3,7 @@
 from __future__ import absolute_import
 
 from django.contrib.auth.models import User
+from django.core.urlresolvers import reverse
 from django.db import models
 from userena.models import UserenaBaseProfile
 
@@ -89,6 +90,9 @@ class Film(models.Model):
 
     def __unicode__(self):
         return self.title
+
+    def get_absolute_url(self):
+        return reverse('films:details', args=[self.film_id])
 
     def get_poster(self):
         if not self.poster_file:

@@ -1,0 +1,23 @@
+{% load i18n %}
+
+
+{% for review in reviews %}
+    {% include 'reviews/review_panel.html' %}
+    {% if forloop.counter|divisibleby:4 %}
+        <div class="clearfix visible-lg"></div>
+    {% endif %}
+    {% if forloop.counter|divisibleby:3 %}
+        <div class="clearfix visible-md"></div>
+    {% endif %}
+    {% if forloop.counter|divisibleby:2 %}
+        <div class="clearfix visible-sm"></div>
+    {% endif %}
+{% endfor %}
+
+<div id="scrolling_container" class="row" aria-hidden="true">
+    <a id="scrolling_more" href="{{ next }}"></a>
+
+    <div id="scrolling_loading" class="text-center" style="display: none;" aria-hidden="true">
+        <img src="{{ STATIC_URL }}img/loading.gif" alt="{% trans 'Loading...' %}"/>
+    </div>
+</div>

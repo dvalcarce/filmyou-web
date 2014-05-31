@@ -17,5 +17,4 @@ urlpatterns = patterns(
     url(r'^ratings/$', views.Ratings.as_view(), name='ratings'),
 
     url(r'^rate/$', views.rate, name='rate'),
-
 )
