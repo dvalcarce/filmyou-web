@@ -12,15 +12,13 @@ from apps.films.models import Film
 from apps.utils.db import retrieve_in_order_from_db
 from java.io import File
 from org.apache.lucene.analysis.standard import StandardAnalyzer
-
 from org.apache.lucene.index import DirectoryReader, Term
 from org.apache.lucene.search import IndexSearcher, ScoreDoc
-from org.apache.lucene.search import BooleanQuery, BooleanClause
+from org.apache.lucene.search import BooleanQuery, BooleanClause, NumericRangeQuery
 from org.apache.lucene.search.spans import SpanNearQuery, SpanTermQuery
 from org.apache.lucene.store import FSDirectory
 from org.apache.lucene.util import Version
 from org.apache.lucene.queryparser.classic import MultiFieldQueryParser
-from org.apache.lucene.queries import CustomScoreQuery
 
 
 class FilmSearcher(object):
@@ -65,13 +63,19 @@ class FilmSearcher(object):
 
         query = BooleanQuery()
         for (field, text) in fields:
-            spans = []
-            for word in text.lower().split():
-                spans.append(SpanTermQuery(Term(field, word)))
-            query.add(BooleanClause(SpanNearQuery(spans, 3, True), BooleanClause.Occur.SHOULD))
+            if field.startswith("year"):
+                start, end = text.split(",")
+                numeric_query = NumericRangeQuery.newIntRange('year', int(start), int(end), True,
+                                                              True)
+                query.add(BooleanClause(numeric_query, BooleanClause.Occur.MUST))
+            if field == 'title':
+                spans = []
+                for word in text.lower().split():
+                    spans.append(SpanTermQuery(Term(field, word)))
+                query.add(BooleanClause(SpanNearQuery(spans, 2, True), BooleanClause.Occur.SHOULD))
 
         field_names, field_texts = zip(*fields)
-        flags = [BooleanClause.Occur.SHOULD] * len(field_names)
+        flags = [BooleanClause.Occur.MUST] * len(field_names)
 
         query_parser_query = MultiFieldQueryParser.parse(
             Version.LUCENE_CURRENT,
@@ -79,7 +83,7 @@ class FilmSearcher(object):
             field_names,
             flags,
             StandardAnalyzer(Version.LUCENE_CURRENT))
-        query.add(BooleanClause(query_parser_query, BooleanClause.Occur.SHOULD))
+        query.add(BooleanClause(query_parser_query, BooleanClause.Occur.MUST))
 
         fuzzify = lambda s: (s + " ").replace(" ", "~1 ")
         fuzzy_field_texts = map(fuzzify, field_texts)
@@ -90,14 +94,12 @@ class FilmSearcher(object):
             field_names,
             flags,
             StandardAnalyzer(Version.LUCENE_CURRENT))
-        query.add(BooleanClause(fuzzy_query_parser_query, BooleanClause.Occur.SHOULD))
-
-        query = CustomScoreQuery(query)
+        query.add(BooleanClause(fuzzy_query_parser_query, BooleanClause.Occur.MUST))
 
         return query
 
 
-    def query(self, fields, count=10):
+    def query(self, fields, count=12):
         """
         Searches for a list of films that matches the given query.
         :param fields: a list of tuples (field_name, field_text)
@@ -111,7 +113,7 @@ class FilmSearcher(object):
 
         return self._retrieve_in_order(score_docs)
 
-    def query_after(self, fields, last_id, last_score, count=10):
+    def query_after(self, fields, last_id, last_score, count=12):
         """
         Searches for a list of films that matches the given query after the given last document.
         :param fields: a list of tuples (field_name, field_text)

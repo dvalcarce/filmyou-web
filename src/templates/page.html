@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load i18n %}
 {% load umessages_tags %}
+{% load filmyou_tags %}
 
 
 {% block main %}
@@ -11,8 +12,6 @@
             <li><a href="#" data-toggle="offcanvas" class="visible-xs text-center"><i
                     class="glyphicon glyphicon-chevron-right"></i></a></li>
         </ul>
-
-        {% load filmyou_tags %}
 
         <ul class="nav hidden-xs" id="lg-menu">
             <li class="{% navactive request 'home' %}">
@@ -106,7 +105,7 @@
 
     <!-- main column -->
     <div class="column col-lg-10 col-sm-9 col-xs-10" id="main">
-        <div class="row">
+        <div class="container-fluid">
             {% block content_title %}
             {% endblock %}
             <br/>

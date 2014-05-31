@@ -1,32 +1,27 @@
 {% extends "page.html" %}
 {% load i18n %}
 
+
 {% block head %}
     {{ block.super }}
     <script src="{{ STATIC_URL }}js/jquery.raty.min.js"></script>
 {% endblock %}
 
 {% block content %}
-    <div class="col-xs-12">
-        <h1>{{ film.title }}</h1>
-        <hr/>
-        <div class="row">
-            <div class="col-xs-12 col-sm-3">
-                <img src="{{ MEDIA_URL }}{{ film.get_poster }}" width="300" alt="{{ film.title }}" />
-            </div>
-            <div class="pull-right">
-                <h1>
-                    {% if film.score %}
-                        {{ film.score|floatformat:1 }}
-                    {% else %}
-                        {{ film.imdb_rating|floatformat:1 }}
-                    {% endif %}
-                </h1>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h2 class="pull-right">{{ film.score|floatformat:1 }}</h2>
 
-                <div id="star{{ film.film_id }}"></div>
-            </div>
-            <div class="col-xs-12 col-sm-9">
-                <dl class="dl-horizontal">
+
+            <h3>{{ film.title }}</h3>
+        </div>
+        <div class="panel-body">
+            <img src="{{ MEDIA_URL }}{{ film.get_poster }}"
+                 class="big-poster img-responsive pull-right"
+                 alt="{{ film.title }}"/>
+
+            <div class="container-fluid">
+                <dl>
                     <dt>Id</dt>
                     <dd>{{ film.film_id }}</dd>
                     <dt>IMDB ID</dt>
@@ -51,15 +46,31 @@
                     <dd>{{ film.languages.all|join:", " }}</dd>
                     <dt>Released</dt>
                     <dd>{{ film.released|date }}</dd>
-                    <dt>Plot</dt>
-                    <dd class="justify">{{ film.plot }}</dd>
                     <dt>Fullplot</dt>
                     <dd class="justify">{{ film.fullplot }}</dd>
                 </dl>
             </div>
+
+            <div class="clearfix"></div>
+            <hr>
+            <div class="container-fluid">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h5>{% trans 'Reviews' %}</h5>
+                    </div>
+                    <div class="panel-body">
+                        {% for review in film.reviews %}
+                            {{ review.text }}
+                            <hr>
+                        {% empty %}
+                            {% trans 'No reviews' %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
         </div>
-        <!-- /.row -->
-    </div><!-- /.col-xs-12 -->
+    </div>
 
     <script type="text/javascript">
         {% if film.preference %}

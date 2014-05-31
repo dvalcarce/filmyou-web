@@ -1,6 +1,5 @@
-/* custom template */
 html, body {
-    color: #1B1B1B;
+    color: #222;
 }
 
 .nav {
@@ -45,20 +44,12 @@ html, body {
 }
 
 .top-navbar {
-    background-color: #AB3334;
-    color: #fff;
-    font-family: sans-serif;
-    padding-right: 15px;
-    border-bottom: 0;
-    margin-bottom: 0;
+    background-color: #bbb;
+    box-shadow: 0 0 1em #bbb;
 }
 
 .top-navbar li > a, .navbar-toggle {
-    color: #331919;
-}
-
-.top-navbar .dropdown-menu li a {
-    color: #AB3334;
+    color: #222;
 }
 
 .top-navbar .dropdown-menu li > a {
@@ -66,13 +57,13 @@ html, body {
 }
 
 .top-navbar li > a:hover, .top-navbar li > a:focus, .top-navbar .open, .top-navbar .open > a, .top-navbar .open > a:hover, .top-navbar .open > a:focus {
-    background-color: #331919;
+    background-color: #222;
     color: #fff;
 }
 
 #main {
-    background-color: #e9eaed;
-    padding: 0 20px 0 20px;
+    background-color: #dedede;
+    padding: 0;
 }
 
 #sidebar {
@@ -80,10 +71,14 @@ html, body {
     height: 100%;
 }
 
+#sidebar > ul > li.active {
+    background-color: #111;
+}
+
 #sidebar, #sidebar a, #sidebar-footer a {
-    color: #ffffff;
+    color: #fff;
     background-color: transparent;
-    text-shadow: 0 0 5px #000;
+    text-shadow: 0 0 1em #000;
 }
 
 #sidebar .nav li > a:hover {
@@ -113,8 +108,13 @@ html, body {
     background-color: #fff;
 }
 
-.panel textarea, .well textarea, textarea.form-control {
-    resize: none;
+.panel {
+    box-shadow: 0 0 1em #bbb;
+}
+
+.big-poster {
+    box-shadow: 0 0 1em #bbb;
+    margin: 1em;
 }
 
 .label-default {
@@ -149,4 +149,9 @@ html, body {
     #sidebar, #sidebar a, #sidebar-footer a {
         padding-left: 5px;
     }
+
+    .big-poster {
+        margin: 0;
+    }
+
 }

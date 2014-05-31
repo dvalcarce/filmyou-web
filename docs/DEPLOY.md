@@ -47,8 +47,10 @@ $ python manage.py check_permissions
 Add some default properties:
 
 ```
-ALTER TABLE ONLY films_film ALTER COLUMN n_votes SET DEFAULT 0;
-ALTER TABLE ONLY films_film ALTER COLUMN sum_votes SET DEFAULT 0.0;
+ALTER TABLE films_film ALTER COLUMN n_votes SET DEFAULT 0;
+ALTER TABLE films_film ALTER COLUMN sum_votes SET DEFAULT 0.0;
+ALTER TABLE films_film ALTER COLUMN imdb_votes SET DEFAULT 0;
+ALTER TABLE films_film ALTER COLUMN imdb_rating SET DEFAULT 0.0;
 ```
 
 #### Autocompletion Optimization

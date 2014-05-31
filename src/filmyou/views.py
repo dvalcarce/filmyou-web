@@ -5,16 +5,16 @@ from __future__ import absolute_import
 from django.views.generic import View
 from django.shortcuts import render
 
+from apps.films.views import render_homepage
+
 
 class HomeView(View):
-    template_name = 'home.html'
+    template_name = 'intro.html'
 
     def get(self, request, *args, **kwargs):
         if request.user.is_authenticated():
-            template = 'home.html'
+            return render_homepage(request)
         else:
-            template = 'intro.html'
-
-        return render(request, template)
+            return render(request, self.template_name)
 
 

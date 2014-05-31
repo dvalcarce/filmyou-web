@@ -5,6 +5,8 @@ from __future__ import absolute_import
 from os import path
 import urllib
 
+from django.utils.translation import ugettext as _
+
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.shortcuts import render
@@ -52,8 +54,14 @@ class Search(View):
         query.pop('last_id', None)
         query.pop('last_score', None)
 
-        ending = "-autocomplete"
+        if 'year_start' in query or 'year_end' in query:
+            year_start = query.pop('year_start', 0)
+            if year_start:
+                year_end = query.pop('year_end', int(year_start) + 50000)
+                if year_end:
+                    query['year'] = "{0},{1}".format(year_start, year_end)
 
+        ending = "-autocomplete"
         d = []
         for (k, v) in query.items():
             k = k.encode('utf-8')
@@ -77,13 +85,12 @@ class Search(View):
         if films and self.request.user.is_authenticated():
             films = self.request.user.profile.get_preferences_for_films(films)
 
-
         c = {
             'page_template': self.page_template,
             'query': self.query,
             'next': self._get_next(self.query, films),
             'films': films,
-            'title': "Search results"
+            'title': _("Search results")
         }
 
         return render(self.request, self.template_name, c)
@@ -132,7 +139,7 @@ class Ratings(LoginRequiredMixin, View):
             'page_template': self.page_template,
             'films': ratings,
             'next': self._get_next(ratings),
-            'title': "My ratings"
+            'title': _("My ratings")
         }
 
         return render(self.request, self.template_name, c)
@@ -174,12 +181,14 @@ def rate(request):
 
 
 class Recommendations(LoginRequiredMixin, View):
-    template = path.join(app_name, "film_list.html")
-    page_template = path.join(app_name, "film_page.html")
+    template = path.join(app_name, 'film_list.html')
+    page_template = path.join(app_name, 'film_page.html')
 
     def _get_next(self, films):
         if films:
-            return reverse('films:recommendations') + '?last=' + str(films[-1].film_id)
+            return reverse('films:recommendations') \
+                   + '?last_item=' + str(films[-1].film_id) \
+                   + '?last_relevance=' + str(films[-1].relevance)
 
     def get(self, *args, **kwargs):
         if self.request.is_ajax():
@@ -191,7 +200,7 @@ class Recommendations(LoginRequiredMixin, View):
             'page_template': self.page_template,
             'films': recommendations,
             'next': self._get_next(recommendations),
-            'title': "Recommendations"
+            'title': _("Suggestions")
         }
 
         return render(self.request, self.template, c)
@@ -213,3 +222,8 @@ class Recommendations(LoginRequiredMixin, View):
             return render(self.request, self.page_template, c)
         else:
             return HttpResponse()
+
+
+def render_homepage(request):
+    template = path.join(app_name, 'home.html')
+    return HttpResponse()

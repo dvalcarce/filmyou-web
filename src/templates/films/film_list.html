@@ -1,5 +1,7 @@
 {% extends "page.html" %}
 {% load i18n %}
+{% load filmyou_tags %}
+
 
 {% block head %}
     {{ block.super }}
@@ -11,20 +13,20 @@
 {% endblock %}
 
 {% block content %}
+
     {% if query %}
-        <p class="text-center">
-            {% trans 'Your query is:' %}
-        </p>
         <h4 class="text-center">
             {% for field, text in query %}
                 {% if text %}
-                    <span class="label label-primary">{% trans field %}: {{ text }}</span>
+                    <span class="label label-info">{% trans field|capfirst %}: {{ text }}
+                        <a href="{% query_without query field text %}"><span
+                                class="glyphicon glyphicon-remove"></span></a></span>
                 {% endif %}
             {% endfor %}
         </h4>
     {% endif %}
     <br/>
-    <div class="col-xs-12" id="rows_append">
+    <div id="rows_append" class="row">
         {% if films %}
             {% include page_template %}
         {% else %}

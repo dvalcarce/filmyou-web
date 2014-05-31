@@ -69,8 +69,8 @@ class Film(models.Model):
     released = models.DateField(null=True)
     plot = models.TextField(null=True)
     metascore = models.PositiveIntegerField(null=True)
-    imdb_rating = models.FloatField(null=True)
-    imdb_votes = models.PositiveIntegerField(null=True)
+    imdb_rating = models.FloatField(null=True, default=0)
+    imdb_votes = models.PositiveIntegerField(null=True, default=0)
     fullplot = models.TextField(null=True)
     poster = models.URLField(null=True)
     awards = models.PositiveIntegerField(null=True)
@@ -98,7 +98,20 @@ class Film(models.Model):
 
     @property
     def score(self):
-        return self.sum_votes / self.n_votes if self.n_votes != 0 else None
+        """
+        Calculate film score:
+            (1/2) imdb_votes                  sum_votes
+            ---------------- * imdb_rating + -----------
+              total_votes                    total_votes
+        :return:
+        """
+        total_votes = self.imdb_votes + self.n_votes
+        if total_votes:
+            score = (self.imdb_votes * self.imdb_rating / 2.0 + self.sum_votes) / total_votes
+        else:
+            score = 0.0
+
+        return score
 
     def set_preference(self, user):
         """
@@ -188,7 +201,7 @@ class MyUser(UserenaBaseProfile):
 
         return films
 
-    def get_rated_films(self, last=None, count=10):
+    def get_rated_films(self, last=None, count=12):
         """
         Gets a list of rated films by self.
 
@@ -228,7 +241,7 @@ class MyUser(UserenaBaseProfile):
 
         return films
 
-    def get_recommendations(self, last=None, count=10):
+    def get_recommendations(self, last=None, count=12):
         """
         Gets a list of recommended films for self.
 

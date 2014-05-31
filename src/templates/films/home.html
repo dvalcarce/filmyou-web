@@ -1,0 +1,55 @@
+{% extends "page.html" %}
+{% load i18n %}
+
+{% block head %}
+    <style type="text/css">
+
+    </style>
+
+{% endblock %}
+
+{% block content %}
+
+    <h1>Intro</h1>
+
+    {% for film in suggestions %}
+        {% include 'films/film_panel.html' %}
+        {% if forloop.counter|divisibleby:4 %}
+            <div class="clearfix visible-lg"></div>
+        {% endif %}
+        {% if forloop.counter|divisibleby:3 %}
+            <div class="clearfix visible-md"></div>
+        {% endif %}
+        {% if forloop.counter|divisibleby:2 %}
+            <div class="clearfix visible-sm"></div>
+        {% endif %}
+    {% endfor %}
+
+    {% for film in rated %}
+        {% include 'films/film_panel.html' %}
+        {% if forloop.counter|divisibleby:4 %}
+            <div class="clearfix visible-lg"></div>
+        {% endif %}
+        {% if forloop.counter|divisibleby:3 %}
+            <div class="clearfix visible-md"></div>
+        {% endif %}
+        {% if forloop.counter|divisibleby:2 %}
+            <div class="clearfix visible-sm"></div>
+        {% endif %}
+    {% endfor %}
+
+    {% for film in reviewed %}
+        {% include 'films/film_panel.html' %}
+        {% if forloop.counter|divisibleby:4 %}
+            <div class="clearfix visible-lg"></div>
+        {% endif %}
+        {% if forloop.counter|divisibleby:3 %}
+            <div class="clearfix visible-md"></div>
+        {% endif %}
+        {% if forloop.counter|divisibleby:2 %}
+            <div class="clearfix visible-sm"></div>
+        {% endif %}
+    {% endfor %}
+
+{% endblock %}
+

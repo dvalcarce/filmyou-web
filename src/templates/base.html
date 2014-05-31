@@ -27,79 +27,84 @@
     <div class="box">
         <!-- top nav -->
         <div class="navbar navbar-fixed-top top-navbar">
-            <div class="navbar-header">
-                <button class="navbar-toggle" type="button" data-toggle="collapse"
-                        data-target=".navbar-collapse">
-                    <span class="sr-only">Toggle</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a href="{% url 'home' %}" class="navbar-brand logo">
-                    <img src="{{ STATIC_URL }}/img/filmyou_mini.png" alt="FilmYou"/>
+            <div class="container">
+                <div class="navbar-header">
+                    <button class="navbar-toggle" type="button" data-toggle="collapse"
+                            data-target=".navbar-collapse">
+                        <span class="sr-only">Toggle</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a href="{% url 'home' %}" class="navbar-brand logo">
+                        <img src="{{ STATIC_URL }}/img/filmyou_mini.png" alt="FilmYou"/>
+                    </a>
+                </div>
+                <div class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav navbar-right">
+                        {% if user.is_authenticated %}
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                    <i class="glyphicon glyphicon-user"></i>
+                                    {{ user.username }}
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li class="first">
+                                        <a href="{% url 'userena_profile_detail' user.username %}">
+                                            {% trans 'View profile' %}
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="{% url 'userena_profile_edit' user.username %}">
+                                            {% trans "Edit profile" %}
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="{% url 'userena_password_change' user.username %}">
+                                            {% trans "Change password" %}
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="{% url 'userena_email_change' user.username %}">
+                                            {% trans "Change email" %}
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="{% url 'userena_signout' %}">
+                                            {% trans 'Log out' %}
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                        {% else %}
+                            <li>
+                                <a href="#login-modal" role="button" data-toggle="modal">
+                                    <i class="glyphicon glyphicon-plus"></i> {% trans 'Sign in' %}
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#register-modal" role="button" data-toggle="modal">
+                                    <i class="glyphicon glyphicon-plus"></i> {% trans 'Sign up' %}
+                                </a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                    <form class="navbar-form" action="{% url 'films:search' %}" method="get">
+                        <div class="form-group" style="display:inline;">
+                            <div class="input-group">
+                                <input class="form-control" name="title"
+                                       placeholder="{% trans 'Search' %}"
+                                       autofocus="autofocus" type="text">
 
-                </a>
-            </div>
-            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-
-                <form class="navbar-form navbar-left" action="{% url 'films:search' %}"
-                      method="get" role="search">
-                    <div class="form-group">
-                        <input type="text" class="form-control" placeholder="Search" name="title">
-
-                        <button class="btn btn-default" type="submit">
-                            <i class="glyphicon glyphicon-search"></i>
-                        </button>
-                    </div>
-                </form>
-                <ul class="nav navbar-nav navbar-right">
-                    {% if user.is_authenticated %}
-                        <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                                <i class="glyphicon glyphicon-user"></i>
-                                {{ user.username }}
-                            </a>
-                            <ul class="dropdown-menu">
-                                <li class="first">
-                                    <a href="{% url 'userena_profile_detail' user.username %}">
-                                        {% trans 'View profile' %}
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="{% url 'userena_profile_edit' user.username %}">
-                                        {% trans "Edit profile" %}
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="{% url 'userena_password_change' user.username %}">
-                                        {% trans "Change password" %}
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="{% url 'userena_email_change' user.username %}">
-                                        {% trans "Change email" %}
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="{% url 'userena_signout' %}">
-                                        {% trans 'Log out' %}
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-                    {% else %}
-                        <li>
-                            <a href="#login-modal" role="button" data-toggle="modal">
-                                <i class="glyphicon glyphicon-plus"></i> {% trans 'Sign in' %}
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#register-modal" role="button" data-toggle="modal">
-                                <i class="glyphicon glyphicon-plus"></i> {% trans 'Sign up' %}
-                            </a>
-                        </li>
-                    {% endif %}
-                </ul>
+                                <div class="input-group-btn">
+                                    <button class="btn btn-default" type="submit">
+                                        <i class="glyphicon glyphicon-search"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
         <!-- /top nav -->

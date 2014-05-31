@@ -1,53 +1,17 @@
 {% load i18n %}
 
+
 {% for film in films %}
-    <div class="row">
-        <div class="col-xs-12">
-            <h4><a href="{% url 'films:details' film.film_id %}">{{ film.title }}</a></h4>
-
-            <div class="col-xs-4 col-sm-1 col-md-1">
-                <img src="{{ MEDIA_URL }}{{ film.get_poster }}" width="100" alt="{{ film.title }}" />
-            </div>
-            <div class="col-xs-8 col-sm-8 col-md-9">
-                <dl class="dl-horizontal">
-                    <dt>{% trans 'Year' %}</dt>
-                    <dd>{{ film.year }}</dd>
-                    <dt>{% trans 'Genre' %}</dt>
-                    <dd>{{ film.genres.all|join:", " }}</dd>
-                    <dt>{% trans 'Director' %}</dt>
-                    <dd>{{ film.directors.all|join:", " }}</dd>
-                    <dt class="hidden-xs">{% trans 'Cast' %}</dt>
-                    <dd class="hidden-xs">{{ film.casts.all|join:", " }}</dd>
-                </dl>
-            </div>
-            <div class="col-xs-12 col-sm-2 col-md-2">
-                <h1 class="text-center">
-                    {% if film.score %}
-                        {{ film.score|floatformat:1 }}
-                    {% else %}
-                        {{ film.imdb_rating|floatformat:1 }}
-                    {% endif %}
-                </h1>
-
-                <div id="star{{ film.film_id }}"></div>
-            </div>
-        </div>
-    </div>
-
-    <hr/>
-
-    <script type="text/javascript">
-        $("#star{{ film.film_id }}").raty({
-            score: {{ film.preference|default:"0" }},
-            starOff: '{{ STATIC_URL }}img/star-off.png',
-            starOn: '{{ STATIC_URL }}img/star-on.png',
-            click: function (score, evt) {
-                $.ajax({
-                    url: "{% url 'films:rate' %}?film={{ film.film_id }}&score=" + score
-                });
-            }
-        });
-    </script>
+    {% include 'films/film_panel.html' %}
+    {% if forloop.counter|divisibleby:4 %}
+        <div class="clearfix visible-lg"></div>
+    {% endif %}
+    {% if forloop.counter|divisibleby:3 %}
+        <div class="clearfix visible-md"></div>
+    {% endif %}
+    {% if forloop.counter|divisibleby:2 %}
+        <div class="clearfix visible-sm"></div>
+    {% endif %}
 {% endfor %}
 
 <div id="scrolling_container" class="row" aria-hidden="true">
