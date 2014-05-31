@@ -45,7 +45,7 @@ html, body {
 
 .top-navbar {
     background-color: #bbb;
-    box-shadow: 0 0 1em #bbb;
+    box-shadow: 0 0 1em #999;
 }
 
 .top-navbar li > a, .navbar-toggle {
@@ -86,18 +86,9 @@ html, body {
 }
 
 .logo {
-    display: block;
     padding: 3px;
-    color: #fff;
-    width: auto;
     margin-right: 2px;
     margin-left: 15px;
-    font-size: 20px;
-    font-weight: 700;
-    text-align: center;
-    text-decoration: none;
-    text-shadow: 0 0 1px;
-    border-radius: 2px;
 }
 
 .navbar-toggle, .close {

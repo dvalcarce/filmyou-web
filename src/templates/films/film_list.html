@@ -13,7 +13,6 @@
 {% endblock %}
 
 {% block content %}
-
     {% if query %}
         <h4 class="text-center">
             {% for field, text in query %}
@@ -30,8 +29,11 @@
         {% if films %}
             {% include page_template %}
         {% else %}
-            {% trans 'No films found for you.' %}
+            <h4 class="text-center">
+                {% trans 'No films found for you.' %}
+            </h4>
         {% endif %}
+
     </div><!-- /.col-xs-12 -->
 {% endblock %}
 

@@ -33,7 +33,7 @@ def query_without(query, field, text):
     """
     new_query = []
     for (f, t) in query:
-        if f != field:
+        if f != field or t != text:
             if f == 'year':
                 start, end = t.split(",")
                 new_query.append(('year_start', start))

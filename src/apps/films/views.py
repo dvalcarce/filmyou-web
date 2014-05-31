@@ -6,7 +6,6 @@ from os import path
 import urllib
 
 from django.utils.translation import ugettext as _
-
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.shortcuts import render
@@ -40,6 +39,12 @@ class Search(View):
     template_name = path.join(app_name, "film_list.html")
     page_template = path.join(app_name, "film_page.html")
 
+    def _retrieve_int(self, querydict, key):
+        try:
+            return int(querydict.pop(key)[0])
+        except ValueError or KeyError:
+            return None
+
     def _get_next(self, query, films):
         if films:
             url = "{base}?last_id={last_id}&last_score={last_score}&".format(
@@ -50,26 +55,29 @@ class Search(View):
             return url + urllib.urlencode(query)
 
     def _get_query_terms(self):
-        query = self.request.GET.dict()
+        query = self.request.GET.copy()
         query.pop('last_id', None)
         query.pop('last_score', None)
 
         if 'year_start' in query or 'year_end' in query:
-            year_start = query.pop('year_start', 0)
-            if year_start:
-                year_end = query.pop('year_end', int(year_start) + 50000)
-                if year_end:
-                    query['year'] = "{0},{1}".format(year_start, year_end)
+            year_start = self._retrieve_int(query, 'year_start')
+            year_end = self._retrieve_int(query, 'year_end')
+
+            if year_start or year_end:
+                year_start = "0" if year_start is None else year_start
+                year_end = "50000" if year_end is None else year_end
+                query['year'] = "{0},{1}".format(year_start, year_end)
 
         ending = "-autocomplete"
         d = []
-        for (k, v) in query.items():
+        for (k, values) in query.lists():
             k = k.encode('utf-8')
-            v = v.encode('utf-8')
             if k.endswith(ending):
                 k = k[:k.rindex(ending)]
-            if v:
-                d.append((k, v))
+            for v in values:
+                v = v.encode('utf-8')
+                if v:
+                    d.append((k, v))
 
         return d
 

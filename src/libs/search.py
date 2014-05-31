@@ -83,7 +83,7 @@ class FilmSearcher(object):
             field_names,
             flags,
             StandardAnalyzer(Version.LUCENE_CURRENT))
-        query.add(BooleanClause(query_parser_query, BooleanClause.Occur.MUST))
+        query.add(BooleanClause(query_parser_query, BooleanClause.Occur.SHOULD))
 
         fuzzify = lambda s: (s + " ").replace(" ", "~1 ")
         fuzzy_field_texts = map(fuzzify, field_texts)
@@ -94,7 +94,7 @@ class FilmSearcher(object):
             field_names,
             flags,
             StandardAnalyzer(Version.LUCENE_CURRENT))
-        query.add(BooleanClause(fuzzy_query_parser_query, BooleanClause.Occur.MUST))
+        query.add(BooleanClause(fuzzy_query_parser_query, BooleanClause.Occur.SHOULD))
 
         return query
 
