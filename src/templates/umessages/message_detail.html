@@ -1,29 +1,75 @@
 {% extends 'page.html' %}
 {% load i18n %}
+{% load endless %}
 
 
 {% block title %}Conversation{% endblock %}
 
 {% block content_title %}
-    <h2>
+    <h1 class="text-center">
         {% blocktrans %}
             Conversation with {{ recipient }}
         {% endblocktrans %}
-    </h2>
+    </h1>
 {% endblock %}
 
 {% block content %}
-    <ul class="list-group">
-        {% for message in message_list %}
-            <li class="list-group-item">
-                <p>{{ message }}</p>
+    {% paginate message_list %}
 
-                <p class="text-right">
-                    {% blocktrans with message.sent_at as sent_at %}
-                        Received on {{ sent_at }}
-                    {% endblocktrans %}
-                </p>
-            </li>
+    <ul class="list-group">
+        {% show_pages %}
+        {% for message in message_list reversed %}
+            {% if message.sender == user %}
+                <li class="list-group-item">
+                    <p class="text-left">{{ message }}</p>
+
+                    <p class="text-right">
+                        <small>{{ message.sent_at|date:"DATETIME_FORMAT" }}</small>
+                        <span class="label label-primary">{{ message.sender }}</span>
+                    </p>
+                </li>
+            {% else %}
+                <li class="list-group-item list-group-item-success">
+                    <p class="text-right">{{ message }}</p>
+
+                    <p class="text-left">
+                        <span class="label label-primary">{{ message.sender }}</span>
+                        <small>{{ message.sent_at|date:"DATETIME_FORMAT" }}</small>
+                    </p>
+                </li>
+            {% endif %}
+
         {% endfor %}
+        {% show_pages %}
     </ul>
+
+    <div class="row">
+        <div class="col-xs-0 col-sm-1 col-md-2 col-lg-3"></div>
+        <div class="col-xs-12 col-sm-10 col-md-8 col-lg-6">
+            <form action="{% url 'userena_umessages_compose' %}" method="post"
+                  id="compose_message_form">
+                {% csrf_token %}
+
+                <input type="hidden" name="to" id="id_to" value="{{ recipient.id }}"></input>
+
+                <div id="div_id_body" class="form-group">
+                    <label for="id_body" class="control-label requiredField">
+                        {% trans 'Response' %}
+                    </label>
+
+                    <div class="controls ">
+                        <textarea id="id_body" name="body"
+                                  class="message textarea form-control form-control form-control form-control form-control form-control form-control"></textarea>
+                    </div>
+                </div>
+
+                <input class="btn btn-default pull-right" type="submit" name="send"
+                       value="{% trans "Send" %}"/>
+                <a href="{% url 'userena_umessages_list' %}" class="btn btn-default">
+                    <span class="glyphicon glyphicon-arrow-left"> {% trans "Return" %}</span>
+                </a>
+            </form>
+        </div>
+    </div>
+    <br/>
 {% endblock %}

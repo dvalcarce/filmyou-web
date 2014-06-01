@@ -14,6 +14,7 @@ from django.contrib import admin
 
 from . import views
 
+
 admin.autodiscover()
 
 urlpatterns = patterns(
@@ -22,6 +23,7 @@ urlpatterns = patterns(
     url('', include('apps.utils.urls')),
     url(r'^films/', include('apps.films.urls', namespace='films')),
     url(r'^reviews/', include('apps.reviews.urls', namespace='reviews')),
+    url(r'^messages/', include('apps.messages.urls')),
     url(r'^accounts/', include('userena.urls')),
     url(r'^messages/', include('userena.contrib.umessages.urls')),
     url(r'^admin/', include(admin.site.urls)),

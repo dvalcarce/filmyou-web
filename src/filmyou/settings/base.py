@@ -5,7 +5,7 @@ from os.path import abspath, basename, dirname, join, normpath
 from sys import path
 
 
-########## PATH CONFIGURATION
+# ######### PATH CONFIGURATION
 # Absolute filesystem path to the Django project directory:
 DJANGO_ROOT = dirname(dirname(abspath(__file__)))
 
@@ -18,10 +18,10 @@ SITE_NAME = basename(DJANGO_ROOT)
 # Add our project to our pythonpath, this way we don't need to type our project
 # name in our dotted import paths:
 path.append(DJANGO_ROOT)
-########## END PATH CONFIGURATION
+# ######### END PATH CONFIGURATION
 
 
-########## DEBUG CONFIGURATION
+# ######### DEBUG CONFIGURATION
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#debug
 DEBUG = False
 
@@ -204,6 +204,7 @@ DJANGO_APPS = (
     'crispy_forms',
     'autocomplete_light',
     'django_extensions',
+    'endless_pagination',
     # 'django.contrib.admindocs',
 )
 
@@ -211,6 +212,7 @@ DJANGO_APPS = (
 LOCAL_APPS = (
     'apps.films',
     'apps.reviews',
+    'apps.messages',
     'apps.utils',
 )
 
@@ -305,3 +307,13 @@ SOUTH_MIGRATION_MODULES = {
 # Demo API Key. Use yours.
 TRAKT_APIKEY = environ.get("TRAKT_APIKEY", "")
 ########## END TRAKT CONFIGURATION
+
+
+########## ENDLESS CONFIGURATION
+ENDLESS_PAGINATION_PREVIOUS_LABEL = '&laquo;'
+ENDLESS_PAGINATION_NEXT_LABEL = '&raquo;'
+ENDLESS_PAGINATION_PER_PAGE = 10
+ENDLESS_PAGINATION_DEFAULT_CALLABLE_EXTREMES = 1
+ENDLESS_PAGINATION_DEFAULT_CALLABLE_AROUNDS = 2
+ENDLESS_PAGINATION_DEFAULT_CALLABLE_ARROWS = False
+########## END ENDLESS CONFIGURATION

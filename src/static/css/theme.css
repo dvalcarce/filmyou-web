@@ -47,6 +47,15 @@ html, body {
     resize: none;
 }
 
+a.no-link {
+    color: #222;
+}
+
+a.no-link:hover, a.no-link:focus, a.no-link:hover:visited {
+    color: #222;
+    text-decoration: none;
+}
+
 .top-navbar {
     background-color: #bbb;
     box-shadow: 0 0 1em #999;
