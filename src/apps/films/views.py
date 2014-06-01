@@ -16,8 +16,9 @@ from django.views.generic.detail import DetailView
 from braces.views import LoginRequiredMixin
 
 from apps.reviews.forms import ReviewForm
+from apps.utils import search
 from apps.utils.db import retrieve_with_related_or_404
-from libs.search import FilmSearcher
+from libs.lucene import FilmSearcher
 from .models import Film
 from .forms import SearchForm
 
@@ -45,50 +46,17 @@ class Search(View):
     template_name = path.join(app_name, "film_list.html")
     page_template = path.join(app_name, "film_page.html")
 
-    def _retrieve_int(self, querydict, key):
-        try:
-            return int(querydict.pop(key)[0])
-        except ValueError or KeyError:
-            return None
-
-    def _get_next(self, query, films):
+    def _get_next(self, films):
         if films:
             url = "{base}?last_id={last_id}&last_score={last_score}&".format(
                 base=reverse('films:search'),
                 last_id=films[-1].doc_id,
                 last_score=films[-1].doc_score)
 
-            return url + urllib.urlencode(query)
-
-    def _get_query_terms(self):
-        query = self.request.GET.copy()
-        query.pop('last_id', None)
-        query.pop('last_score', None)
-
-        if 'year_start' in query or 'year_end' in query:
-            year_start = self._retrieve_int(query, 'year_start')
-            year_end = self._retrieve_int(query, 'year_end')
-
-            if year_start or year_end:
-                year_start = "0" if year_start is None else year_start
-                year_end = "50000" if year_end is None else year_end
-                query['year'] = "{0},{1}".format(year_start, year_end)
-
-        ending = "-autocomplete"
-        d = []
-        for (k, values) in query.lists():
-            k = k.encode('utf-8')
-            if k.endswith(ending):
-                k = k[:k.rindex(ending)]
-            for v in values:
-                v = v.encode('utf-8')
-                if v:
-                    d.append((k, v))
-
-        return d
+            return url + urllib.urlencode(self.query)
 
     def get(self, *args, **kwargs):
-        self.query = self._get_query_terms()
+        self.query = search.prepare_query(self.request)
 
         if self.request.is_ajax():
             return self._search_ajax()
@@ -102,7 +70,7 @@ class Search(View):
         c = {
             'page_template': self.page_template,
             'query': self.query,
-            'next': self._get_next(self.query, films),
+            'next': self._get_next(films),
             'films': films,
             'title': _("Search results")
         }
@@ -123,7 +91,7 @@ class Search(View):
 
         c = {
             'films': films,
-            'next': self._get_next(self.query, films),
+            'next': self._get_next(films),
         }
 
         return render(self.request, self.page_template, c)

@@ -84,10 +84,6 @@ a.no-link:hover, a.no-link:focus, a.no-link:hover:visited {
     height: 100%;
 }
 
-#sidebar > ul > li.active {
-    background-color: #111;
-}
-
 #sidebar, #sidebar a, #sidebar-footer a {
     color: #fff;
     background-color: transparent;
@@ -157,5 +153,14 @@ a.no-link:hover, a.no-link:focus, a.no-link:hover:visited {
     .big-poster {
         margin: 0;
     }
+
+    ul.dropdown-menu > li > a {
+        color: #fff;
+    }
+
+    ul.dropdown-menu > li > a:hover {
+    background-color: #fff;
+    color: #000;
+}
 
 }

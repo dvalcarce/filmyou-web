@@ -11,10 +11,12 @@
     <title>FilmYou - {% block title %}{% endblock %}</title>
 
     <link href="{{ STATIC_URL }}css/bootstrap.min.css" rel="stylesheet">
+    <link href="{{ STATIC_URL }}css/bootstrap-tagsinput.css" rel="stylesheet">
     <link href="{{ STATIC_URL }}css/theme.css" rel="stylesheet">
 
     <script src="{{ STATIC_URL }}js/jquery.min.js"></script>
     <script src="{{ STATIC_URL }}js/bootstrap.min.js"></script>
+    <script src="{{ STATIC_URL }}js/bootstrap-tagsinput.js"></script>
 
     {% include 'autocomplete_light/static.html' %}
 
@@ -92,9 +94,10 @@
                     <form class="navbar-form" action="{% url 'films:search' %}" method="get">
                         <div class="form-group" style="display:inline;">
                             <div class="input-group">
-                                <input class="form-control" name="title"
-                                       placeholder="{% trans 'Search' %}"
-                                       autofocus="autofocus" type="text">
+                                <select multiple class="form-control" name="query"
+                                        data-role="tagsinput" id="searchInput"
+                                        placeholder="{% trans 'Search' %}" type="text">
+                                </select>
 
                                 <div class="input-group-btn">
                                     <button class="btn btn-default" type="submit">

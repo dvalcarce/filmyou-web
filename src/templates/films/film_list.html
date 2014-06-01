@@ -13,18 +13,6 @@
 {% endblock %}
 
 {% block content %}
-    {% if query %}
-        <h4 class="text-center">
-            {% for field, text in query %}
-                {% if text %}
-                    <span class="label label-info">{% trans field|capfirst %}: {{ text }}
-                        <a href="{% query_without query field text %}"><span
-                                class="glyphicon glyphicon-remove"></span></a></span>
-                {% endif %}
-            {% endfor %}
-        </h4>
-    {% endif %}
-    <br/>
     <div id="rows_append" class="row">
         {% if films %}
             {% include page_template %}
@@ -68,4 +56,18 @@
             }
         });
     </script>
+
+    {% if query %}
+        <script type='text/javascript'>
+            $(document).ready(function () {
+                var searchInput = $('#searchInput');
+
+                {% for field, text in query %}
+                    searchInput.tagsinput('add', '{% trans field|capfirst %}: {{ text }}');
+                {% endfor %}
+
+            });
+        </script>
+    {% endif %}
+
 {% endblock %}

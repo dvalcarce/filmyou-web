@@ -74,7 +74,7 @@ class FilmSearcher(object):
                 query.add(BooleanClause(SpanNearQuery(spans, 2, True), BooleanClause.Occur.SHOULD))
 
         field_names, field_texts = zip(*fields)
-        flags = [BooleanClause.Occur.MUST] * len(field_names)
+        flags = [BooleanClause.Occur.SHOULD] * len(field_names)
 
         query_parser_query = MultiFieldQueryParser.parse(
             Version.LUCENE_CURRENT,
@@ -93,7 +93,9 @@ class FilmSearcher(object):
             field_names,
             flags,
             StandardAnalyzer(Version.LUCENE_CURRENT))
-        query.add(BooleanClause(fuzzy_query_parser_query, BooleanClause.Occur.SHOULD))
+        query.add(BooleanClause(fuzzy_query_parser_query, BooleanClause.Occur.MUST))
+
+        print query
 
         return query
 
