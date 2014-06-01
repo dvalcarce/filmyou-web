@@ -1,6 +1,7 @@
 {% extends 'page.html' %}
 {% load i18n %}
 {% load umessages_tags %}
+{% load endless %}
 
 
 {% block title %}Messages{% endblock %}
@@ -15,7 +16,9 @@
             <span class="glyphicon glyphicon-plus"> {% trans "Compose" %}</span>
         </a>
     </p>
+    {% paginate message_list %}
     <ul class="list-group">
+        {% show_pages %}
         {% for message in message_list %}
             {% if message.um_from_user == user %}
                 {% get_unread_message_count_between user and message.um_to_user as unread_between_count %}
@@ -50,8 +53,7 @@
                     </li>
                 </a>
             {% endif %}
-
-            </li>
+            {% show_pages %}
         {% endfor %}
     </ul>
     <p class="text-right">

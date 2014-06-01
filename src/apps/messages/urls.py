@@ -23,6 +23,12 @@ urlpatterns = patterns(
         messages_views.message_compose, {'compose_form': MessageForm},
         name='userena_umessages_compose'),
 
+    url(r'^$',
+        login_required(messages_views.MessageListView.as_view(
+            paginate_by=None,
+        )),
+        name='userena_umessages_list'),
+
     url(r'^view/(?P<username>[\.\w]+)/$',
         login_required(messages_views.MessageDetailListView.as_view(
             paginate_by=None,
@@ -30,10 +36,4 @@ urlpatterns = patterns(
         )),
         name='userena_umessages_detail'),
 
-    url(r'^view/(?P<username>[\.\w]+)/(?P<page>[\d]+)/$',
-        login_required(messages_views.MessageDetailListView.as_view(
-            paginate_by=None,
-            extra_context={'form': MessageForm()}
-        )),
-        name='userena_umessages_detail'),
 )
