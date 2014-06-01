@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import absolute_import
+from django.http import Http404
 
 
 def retrieve_in_order_from_db(model, ids, prefetch=True):
@@ -25,3 +26,20 @@ def retrieve_in_order_from_db(model, ids, prefetch=True):
     filtered_entities = filter(None, ordered_entities)
 
     return filtered_entities
+
+
+def retrieve_with_related_or_404(model, id):
+    """
+    Retrieve an object from DB with prefetch related or raise 404 error
+    :param model: model
+    :param id: pk
+    :return: object
+    """
+    relationships = [m2m.attname for m2m in model._meta._many_to_many()]
+
+    try:
+        object = model.objects.all().prefetch_related(*relationships).get(pk=id)
+    except model.DoesNotExist:
+        raise Http404()
+
+    return object

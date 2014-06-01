@@ -6,7 +6,6 @@ from os import path
 import urllib
 
 from django.conf import settings
-
 from django.utils.translation import ugettext as _
 from django.core.urlresolvers import reverse
 from django.shortcuts import render, redirect
@@ -17,7 +16,7 @@ from django.views.generic.detail import DetailView
 from braces.views import LoginRequiredMixin
 
 from apps.reviews.forms import ReviewForm
-
+from apps.utils.db import retrieve_with_related_or_404
 from libs.search import FilmSearcher
 from .models import Film
 from .forms import SearchForm
@@ -30,7 +29,7 @@ class FilmDetails(DetailView):
     model = Film
 
     def get_object(self, queryset=None):
-        film = super(FilmDetails, self).get_object(queryset)
+        film = retrieve_with_related_or_404(Film, int(self.kwargs['pk']))
         if self.request.user.is_authenticated():
             film.set_preference(self.request.user.profile)
 

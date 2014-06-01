@@ -1,12 +1,13 @@
 from os import path
 
 from braces.views import LoginRequiredMixin
+from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404
 from django.utils.translation import ugettext as _
-from django.views.generic import View, CreateView
+from django.views.generic import View, CreateView, DeleteView
 
 from apps.films.models import Film
 from apps.reviews.forms import ReviewForm
@@ -81,8 +82,6 @@ class Reviews(LoginRequiredMixin, View):
 
 class CreateReview(LoginRequiredMixin, CreateView):
     """Creates a Review for a Film"""
-    template_name = path.join(app_name, "film_details.html")
-    # success_url = reverse('film:details')
     model = Review
     form_class = ReviewForm
 
@@ -90,3 +89,18 @@ class CreateReview(LoginRequiredMixin, CreateView):
         form.instance.author = self.request.user.profile
         form.instance.film = get_object_or_404(Film, pk=int(self.kwargs['pk']))
         return super(CreateReview, self).form_valid(form)
+
+
+class RemoveReview(LoginRequiredMixin, DeleteView):
+    """Delete a Review"""
+    model = Review
+
+    def get_success_url(self):
+        return self.film.get_absolute_url()
+
+    def get_object(self, queryset=None):
+        obj = super(RemoveReview, self).get_object()
+        if not obj.author == self.request.user.profile:
+            raise PermissionDenied()
+        self.film = obj.film
+        return obj

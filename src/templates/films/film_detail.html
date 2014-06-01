@@ -1,5 +1,6 @@
 {% extends "page.html" %}
 {% load i18n %}
+{% load endless %}
 
 
 {% block head %}
@@ -72,46 +73,56 @@
             <div class="clearfix"></div>
             <hr>
             <div class="container-fluid">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h5>{% trans 'Reviews' %}</h5>
-                    </div>
-                    <div class="panel-body">
-                        {% for review in film.review_set.all %}
-                            <p class="text-justify">
-                                {{ review.text }}
-                            </p>
-                            <p class="text-right">
-                                <small>
-                                    {% trans 'By' %}
-                                    <strong>{{ review.author.user.username }}</strong>
-                                    ({{ review.created|date:'DATETIME_FORMAT' }})
-                                </small>
-                                <br>
-                                <a class="label label-danger" href="#">
-                                    {% trans 'Remove' %} <span
-                                        class="glyphicon glyphicon-remove"></span>
-                                </a>
-                            </p>
-                            <hr>
-                        {% empty %}
-                            {% trans 'No reviews' %}
-                        {% endfor %}
-                        <hr>
-                        <form method="post" role="form" class="form"
-                              action="{% url 'reviews:create' film.film_id %}">
-                            <div class="form-group">
-                                {% csrf_token %}
-                                {{ form.text }}
-                            </div>
-                            <button type="input" class="btn btn-primary pull-right"
-                                    href="{% url 'home' %}">{% trans 'Send review' %}</button>
-                        </form>
+                {% with film.review_set.all as reviews %}
+                    {% paginate reviews %}
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4>{% trans 'Reviews' %}</h4>
+                        </div>
+                        <div class="panel-body">
 
+                            {% for review in reviews %}
+                                <p class="text-justify">
+                                    {{ review.text }}
+                                </p>
+                                <p class="text-right">
+                                    <small>
+                                        {% trans 'By' %}
+                                        <strong>{{ review.author.user.username }}</strong>
+                                        ({{ review.created|date:'DATETIME_FORMAT' }})
+                                    </small>
+                                    {% if review.author == request.user.profile %}
+                                        <br>
+                                        <form method="POST" role="form" class="pull-right"
+                                              action="{% url 'reviews:remove' review.review_id %}">
+                                            {% csrf_token %}
+                                            <button type="submit" value="delete"
+                                                    class="btn btn-danger btn-xs">
+                                                {% trans 'Remove' %} <span
+                                                    class="glyphicon glyphicon-remove"></span>
+                                            </button>
+                                        </form>
+                                        <div class="clearfix"></div>
+                                    {% endif %}
+                                </p>
+                            {% empty %}
+                                {% trans 'No reviews' %}
+                            {% endfor %}
+                            <hr/>
+                            {% show_pages %}
+                            <form method="post" role="form" class="form"
+                                  action="{% url 'reviews:create' film.film_id %}">
+                                <div class="form-group">
+                                    {% csrf_token %}
+                                    {{ form.text }}
+                                </div>
+                                <button type="input" class="btn btn-primary pull-right"
+                                        href="{% url 'home' %}">{% trans 'Send review' %}</button>
+                            </form>
+                        </div>
                     </div>
-                </div>
+                {% endwith %}
             </div>
-
         </div>
     </div>
 
