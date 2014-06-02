@@ -9,6 +9,7 @@ from django.shortcuts import render, get_object_or_404
 from django.utils.translation import ugettext as _
 from django.views.generic import View, CreateView, DeleteView
 
+from apps.films.views import FilmDetails
 from apps.films.models import Film
 from apps.reviews.forms import ReviewForm
 from apps.reviews.models import Review
@@ -84,6 +85,10 @@ class CreateReview(LoginRequiredMixin, CreateView):
     """Creates a Review for a Film"""
     model = Review
     form_class = ReviewForm
+    template_name = path.join("films", "film_detail.html")
+
+    def get(self, *args, **kwargs):
+        return FilmDetails.as_view()(self.request, *args, **kwargs)
 
     def form_valid(self, form):
         form.instance.author = self.request.user.profile
@@ -94,6 +99,7 @@ class CreateReview(LoginRequiredMixin, CreateView):
 class RemoveReview(LoginRequiredMixin, DeleteView):
     """Delete a Review"""
     model = Review
+    template_name = path.join("films", "film_detail.html")
 
     def get_success_url(self):
         return self.film.get_absolute_url()
