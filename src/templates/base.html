@@ -100,7 +100,7 @@
                                 </select>
 
                                 <div class="input-group-btn">
-                                    <button class="btn btn-default" type="submit">
+                                    <button class="btn btn-default" type="submit" id="searchButton">
                                         <i class="glyphicon glyphicon-search"></i>
                                     </button>
                                 </div>
@@ -111,12 +111,9 @@
             </div>
         </div>
         <!-- /top nav -->
-
         <div id="content" class="row row-offcanvas row-offcanvas-left">
-
             {% block main %}
             {% endblock %}
-
         </div>
         <!-- /row -->
     </div>
@@ -214,7 +211,16 @@
     <!-- /login-modal -->
 {% endif %}
 
+
 {% block script %}
+    <script type='text/javascript'>
+        $('#searchButton').click(function () {
+            var e = jQuery.Event("keydown");
+            e.which = 13
+            e.keyCode = 13;
+            $('#searchInput2').trigger(e);
+        });
+    </script>
 {% endblock %}
 
 </body>

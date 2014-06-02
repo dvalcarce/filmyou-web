@@ -3,6 +3,7 @@
 from __future__ import absolute_import
 
 import os
+
 import logging
 
 import lucene
@@ -11,6 +12,7 @@ from django.conf import settings
 from apps.films.models import Film
 from apps.utils.db import retrieve_in_order_from_db
 from java.io import File
+
 from org.apache.lucene.analysis.standard import StandardAnalyzer
 from org.apache.lucene.index import DirectoryReader, Term
 from org.apache.lucene.search import IndexSearcher, ScoreDoc
@@ -19,6 +21,10 @@ from org.apache.lucene.search.spans import SpanNearQuery, SpanTermQuery
 from org.apache.lucene.store import FSDirectory
 from org.apache.lucene.util import Version
 from org.apache.lucene.queryparser.classic import MultiFieldQueryParser
+from org.apache.lucene.queries import CustomScoreQuery
+from org.apache.lucene.queries.function import FunctionQuery
+from org.apache.lucene.queries.function.valuesource import LinearFloatFunction, PowFloatFunction, \
+    DoubleConstValueSource, ScaleFloatFunction, IntFieldSource, DoubleFieldSource
 
 
 class FilmSearcher(object):
@@ -64,8 +70,8 @@ class FilmSearcher(object):
         for (field, text) in fields:
             if field.startswith("year"):
                 start, end = text.split(",")
-                numeric_query = NumericRangeQuery.newIntRange('year', int(start), int(end), True,
-                                                              True)
+                numeric_query = NumericRangeQuery.newIntRange(
+                    'year', int(start), int(end), True, True)
                 query.add(BooleanClause(numeric_query, BooleanClause.Occur.MUST))
             if field == 'title':
                 spans = []
@@ -74,7 +80,7 @@ class FilmSearcher(object):
                 query.add(BooleanClause(SpanNearQuery(spans, 2, True), BooleanClause.Occur.SHOULD))
 
         field_names, field_texts = zip(*fields)
-        flags = [BooleanClause.Occur.SHOULD] * len(field_names)
+        flags = [BooleanClause.Occur.MUST] * len(field_names)
 
         query_parser_query = MultiFieldQueryParser.parse(
             Version.LUCENE_CURRENT,
@@ -82,7 +88,7 @@ class FilmSearcher(object):
             field_names,
             flags,
             StandardAnalyzer(Version.LUCENE_CURRENT))
-        query.add(BooleanClause(query_parser_query, BooleanClause.Occur.SHOULD))
+        query.add(BooleanClause(query_parser_query, BooleanClause.Occur.MUST))
 
         fuzzify = lambda s: (s + " ").replace(" ", "~1 ")
         fuzzy_field_texts = map(fuzzify, field_texts)
@@ -95,10 +101,15 @@ class FilmSearcher(object):
             StandardAnalyzer(Version.LUCENE_CURRENT))
         query.add(BooleanClause(fuzzy_query_parser_query, BooleanClause.Occur.MUST))
 
-        print query
+        boostQuery = FunctionQuery(
+            LinearFloatFunction(
+                PowFloatFunction(
+                    DoubleConstValueSource(0.0001),
+                    ScaleFloatFunction(IntFieldSource("imdb_votes_boost"), 0.0, 1.0)
+                ), -1.0, 1.0))
+        query = CustomScoreQuery(query, boostQuery)
 
         return query
-
 
     def query(self, fields, count=12):
         """
@@ -111,7 +122,6 @@ class FilmSearcher(object):
             return []
 
         query = self._create_query(fields)
-        # sort = self._get_sort()
 
         score_docs = self.searcher.search(query, count).scoreDocs
 

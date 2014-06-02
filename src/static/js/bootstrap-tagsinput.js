@@ -35,7 +35,7 @@
         this.inputSize = Math.max(1, this.placeholderText.length);
 
         this.$container = $('<div class="bootstrap-tagsinput"></div>');
-        this.$input = $('<input size="' + this.inputSize + '" type="text" autofocus="autofocus" placeholder="' + this.placeholderText + '"/>').appendTo(this.$container);
+        this.$input = $('<input size="' + this.inputSize + '" id="searchInput2" type="text" autofocus="autofocus" placeholder="' + this.placeholderText + '"/>').appendTo(this.$container);
 
         this.$element.after(this.$container);
 
@@ -352,9 +352,11 @@
                         // When key corresponds one of the confirmKeys, add current input
                         // as a new tag
                         if (self.options.freeInput && $.inArray(event.which, self.options.confirmKeys) >= 0) {
+                            if (isNaN($input.val())) {
+                                event.preventDefault();
+                            }
                             self.add($input.val());
                             $input.val('');
-                            event.preventDefault();
                         }
                 }
 
