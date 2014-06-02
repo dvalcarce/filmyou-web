@@ -171,3 +171,4 @@ if __name__ == '__main__':
 
     store_dir = os.path.join(base_dir, "sql")
     OutputSQL(reader, store_dir)
+
