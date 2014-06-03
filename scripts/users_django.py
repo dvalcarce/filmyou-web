@@ -1,13 +1,11 @@
-#!/usr/bin/env python2
+# !/usr/bin/env python2
 
 # -*- coding: utf-8 -*-
-
 import sys
 
 from django.contrib.auth.models import User
-
-import names
-
+from userena.models import UserenaSignup
+from userena import settings as userena_settings
 
 """
 This script will create Netflix users on Django.
@@ -32,13 +30,11 @@ if __name__ == '__main__':
             users.add(int(user))
 
     for u in user:
-        user = User(
-            first_name=unicode(names.get_first_name()),
-            last_name=unicode(names.get_last_name()),
-            id=unicode(u),
-            username=u'user%d' % u,
-            password=u'pbkdf2_sha256$10000$MekzC5PQ58x2$3C5TLXHec3X4Ihd7vWFZHYM4Uf3PPvqfVfi5k0TeERM=',
-            is_active=True)
-        data.append(user)
+        User.objects.create_user(u, '', '1234')
 
-User.objects.bulk_create(users)
+        new_user = UserenaSignup.objects.create_user(
+            u,
+            '',
+            '1234',
+            not userena_settings.USERENA_ACTIVATION_REQUIRED,
+            userena_settings.USERENA_ACTIVATION_REQUIRED)
