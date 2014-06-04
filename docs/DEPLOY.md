@@ -47,6 +47,7 @@ $ python manage.py check_permissions
 Add some default properties:
 
 ```
+SET datestyle = "ISO, DMY";
 ALTER TABLE films_film ALTER COLUMN n_votes SET DEFAULT 0;
 ALTER TABLE films_film ALTER COLUMN sum_votes SET DEFAULT 0.0;
 ```
