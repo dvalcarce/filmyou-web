@@ -16,6 +16,11 @@ def _retrieve_int(querydict, key):
         return None
 
 
+def _clean(text, removable_chars=u"+-&|!(){}[]^\"~*?:\\"):
+    table = {ord(char): None for char in removable_chars}
+    return text.translate(table)
+
+
 def sanitize(text):
     """
     Sanitize text for Lucene
@@ -23,7 +28,7 @@ def sanitize(text):
     :return: sanitized text
     """
     if text:
-        return text.lower().strip().replace(":", "").encode('utf-8')
+        return _clean(text.lower().strip()).encode("utf-8")
     raise ValueError
 
 
