@@ -23,7 +23,7 @@ path.append(DJANGO_ROOT)
 
 # ######### DEBUG CONFIGURATION
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#debug
-DEBUG = False
+DEBUG = True
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#template-debug
 TEMPLATE_DEBUG = DEBUG
@@ -61,7 +61,7 @@ CASSANDRA = {
 }
 
 LUCENE = {
-    'PATH': environ.get("LUCENE_PATH", 'Films.index')
+'PATH': environ.get("LUCENE_PATH", normpath(join(SITE_ROOT, 'Films.index')))
 }
 ########## END DATABASE CONFIGURATION
 
@@ -89,7 +89,7 @@ USE_TZ = True
 MEDIA_ROOT = normpath(join(SITE_ROOT, 'media'))
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#media-url
-MEDIA_URL = '/media/'
+MEDIA_URL = '/filmyou/media/'
 ########## END MEDIA CONFIGURATION
 
 
@@ -98,7 +98,7 @@ MEDIA_URL = '/media/'
 STATIC_ROOT = normpath(join(SITE_ROOT, 'assets'))
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#static-url
-STATIC_URL = '/static/'
+STATIC_URL = '/filmyou/static/'
 
 # See: https://docs.djangoproject.com/en/dev/ref/contrib/staticfiles/#std:setting-STATICFILES_DIRS
 STATICFILES_DIRS = (
@@ -317,3 +317,4 @@ ENDLESS_PAGINATION_DEFAULT_CALLABLE_EXTREMES = 1
 ENDLESS_PAGINATION_DEFAULT_CALLABLE_AROUNDS = 2
 ENDLESS_PAGINATION_DEFAULT_CALLABLE_ARROWS = False
 ########## END ENDLESS CONFIGURATION
+
