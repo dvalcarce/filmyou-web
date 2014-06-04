@@ -1,62 +1,70 @@
 {% extends "page.html" %}
 {% load i18n %}
+{% load staticfiles %}
+
 
 {% block head %}
-    <style type="text/css">
-
-    </style>
-
+    {{ block.super }}
+    <script src="{% static 'js/jquery.raty.min.js' %}"></script>
 {% endblock %}
 
 {% block content %}
 
     {% if suggestions %}
         <h2 class="text-center">{% trans 'Top recommendations for you' %}</h2>
-
-        {% for film in suggestions %}
-            {% include 'films/film_panel.html' %}
-            {% if forloop.counter|divisibleby:4 %}
-                <div class="clearfix visible-lg"></div>
-            {% endif %}
-            {% if forloop.counter|divisibleby:3 %}
-                <div class="clearfix visible-md"></div>
-            {% endif %}
-            {% if forloop.counter|divisibleby:2 %}
-                <div class="clearfix visible-sm"></div>
-            {% endif %}
-        {% endfor %}
+        <br/>
+        {% with prefix='rec-' %}
+            {% for film in suggestions %}
+                {% include 'films/film_panel.html' %}
+                {% if forloop.counter|divisibleby:4 %}
+                    <div class="clearfix visible-lg"></div>
+                {% endif %}
+                {% if forloop.counter|divisibleby:3 %}
+                    <div class="clearfix visible-md"></div>
+                {% endif %}
+                {% if forloop.counter|divisibleby:2 %}
+                    <div class="clearfix visible-sm"></div>
+                {% endif %}
+            {% endfor %}
+        {% endwith %}
     {% endif %}
-
+    <div class="clearfix"></div>
     {% if rated %}
         <h2 class="text-center">{% trans 'Your last ratings' %}</h2>
-        {% for film in rated %}
-            {% include 'films/film_panel.html' %}
-            {% if forloop.counter|divisibleby:4 %}
-                <div class="clearfix visible-lg"></div>
-            {% endif %}
-            {% if forloop.counter|divisibleby:3 %}
-                <div class="clearfix visible-md"></div>
-            {% endif %}
-            {% if forloop.counter|divisibleby:2 %}
-                <div class="clearfix visible-sm"></div>
-            {% endif %}
-        {% endfor %}
+        <br/>
+        {% with prefix='rat-' %}
+            {% for film in rated %}
+                {% include 'films/film_panel.html' %}
+                {% if forloop.counter|divisibleby:4 %}
+                    <div class="clearfix visible-lg"></div>
+                {% endif %}
+                {% if forloop.counter|divisibleby:3 %}
+                    <div class="clearfix visible-md"></div>
+                {% endif %}
+                {% if forloop.counter|divisibleby:2 %}
+                    <div class="clearfix visible-sm"></div>
+                {% endif %}
+            {% endfor %}
+        {% endwith %}
     {% endif %}
-
+    <div class="clearfix"></div>
     {% if reviewed %}
         <h2 class="text-center">{% trans 'Your last reviews' %}</h2>
-        {% for review in reviewed %}
-            {% include 'reviews/review_panel.html' %}
-            {% if forloop.counter|divisibleby:4 %}
-                <div class="clearfix visible-lg"></div>
-            {% endif %}
-            {% if forloop.counter|divisibleby:3 %}
-                <div class="clearfix visible-md"></div>
-            {% endif %}
-            {% if forloop.counter|divisibleby:2 %}
-                <div class="clearfix visible-sm"></div>
-            {% endif %}
-        {% endfor %}
+        <br/>
+        {% with 'rev-' as prefix %}
+            {% for review in reviewed %}
+                {% include 'reviews/review_panel.html' %}
+                {% if forloop.counter|divisibleby:4 %}
+                    <div class="clearfix visible-lg"></div>
+                {% endif %}
+                {% if forloop.counter|divisibleby:3 %}
+                    <div class="clearfix visible-md"></div>
+                {% endif %}
+                {% if forloop.counter|divisibleby:2 %}
+                    <div class="clearfix visible-sm"></div>
+                {% endif %}
+            {% endfor %}
+        {% endwith %}
     {% endif %}
 
 {% endblock %}

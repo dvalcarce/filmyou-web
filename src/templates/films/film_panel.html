@@ -1,4 +1,6 @@
 {% load i18n %}
+{% load staticfiles %}
+
 
 <div class="panel-film col-xs-12 col-sm-6 col-md-4 col-lg-3 col">
     <div class="panel panel-default">
@@ -14,7 +16,7 @@
             </p>
 
             <h1>
-                <span id="star{{ film.film_id }}"></span>
+                <span id="{{ prefix }}star{{ film.film_id }}"></span>
                 {{ film.score|floatformat:1 }}
             </h1>
             <dl>
@@ -33,10 +35,10 @@
 </div>
 
 <script type="text/javascript">
-    $("#star{{ film.film_id }}").raty({
+    $("#{{ prefix }}star{{ film.film_id }}").raty({
         score: {{ film.preference|default:"0" }},
-        starOff: '{{ STATIC_URL }}img/star-off.png',
-        starOn: '{{ STATIC_URL }}img/star-on.png',
+        starOff: "{% static 'img/star-off.png' %}",
+        starOn: "{% static 'img/star-on.png' %}",
         click: function (score, evt) {
             $.ajax({
                 url: "{% url 'films:rate' %}?film={{ film.film_id }}&score=" + score

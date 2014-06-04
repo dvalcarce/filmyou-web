@@ -212,10 +212,15 @@ class Recommendations(LoginRequiredMixin, View):
 def render_homepage(request):
     template = path.join(app_name, 'home.html')
     profile = request.user.profile
+
+    reviews = profile.review_set.all().prefetch_related("film")[:4]
+    films = {review.film for review in reviews}
+    profile.get_preferences_for_films(films)
+
     c = {
         'suggestions': profile.get_recommendations(count=4),
         'rated': profile.get_rated_films(count=4),
-        'reviewed': profile.review_set.all().prefetch_related("film")[:4]
+        'reviewed': reviews
     }
 
     return render(request, template, c)

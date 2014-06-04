@@ -25,10 +25,8 @@ class Reviews(LoginRequiredMixin, View):
         return reverse('reviews:list') + '?page=' + str(int(page) + 1)
 
 
-    def _get_preferences(self, reviews):
-        films = set()
-        for review in reviews:
-            films.add(review.film)
+    def get_preferences(self, reviews):
+        films = {review.film for review in reviews}
         self.request.user.profile.get_preferences_for_films(films)
 
     def get(self, *args, **kwargs):
@@ -44,7 +42,7 @@ class Reviews(LoginRequiredMixin, View):
         except:
             reviews = []
 
-        self._get_preferences(reviews)
+        self.get_preferences(reviews)
 
         c = {
             'page_template': self.page_template,
@@ -69,7 +67,7 @@ class Reviews(LoginRequiredMixin, View):
             return HttpResponse()
 
         if reviews:
-            self._get_preferences(reviews)
+            self.get_preferences(reviews)
 
             c = {
                 'reviews': reviews,

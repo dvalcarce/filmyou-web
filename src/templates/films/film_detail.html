@@ -1,11 +1,12 @@
 {% extends "page.html" %}
 {% load i18n %}
 {% load endless %}
+{% load staticfiles %}
 
 
 {% block head %}
     {{ block.super }}
-    <script src="{{ STATIC_URL }}js/jquery.raty.min.js"></script>
+    <script src="{% static 'js/jquery.raty.min.js' %}"></script>
 {% endblock %}
 
 {% block content %}
@@ -134,8 +135,8 @@
         {% endif %}
         $("#star{{ film.film_id }}").raty({
             score: {{ film.preference|default:"0" }},
-            starOff: '{{ STATIC_URL }}img/star-off.png',
-            starOn: '{{ STATIC_URL }}img/star-on.png',
+            starOff: "{% static 'img/star-off.png' %}",
+            starOn: "{% static 'img/star-on.png' %}",
             click: function (score, evt) {
                 if (not_rated) {
                     var n_votes = $("#n_votes");

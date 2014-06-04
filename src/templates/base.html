@@ -1,4 +1,5 @@
 {% load i18n %}
+{% load staticfiles %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -10,13 +11,13 @@
 
     <title>FilmYou - {% block title %}{% endblock %}</title>
 
-    <link href="{{ STATIC_URL }}css/bootstrap.min.css" rel="stylesheet">
-    <link href="{{ STATIC_URL }}css/bootstrap-tagsinput.css" rel="stylesheet">
-    <link href="{{ STATIC_URL }}css/theme.css" rel="stylesheet">
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/bootstrap-tagsinput.css' %}" rel="stylesheet">
+    <link href="{% static 'css/theme.css' %}" rel="stylesheet">
 
-    <script src="{{ STATIC_URL }}js/jquery.min.js"></script>
-    <script src="{{ STATIC_URL }}js/bootstrap.min.js"></script>
-    <script src="{{ STATIC_URL }}js/bootstrap-tagsinput.js"></script>
+    <script src="{% static 'js/jquery.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap-tagsinput.js' %}"></script>
 
     {% include 'autocomplete_light/static.html' %}
 
@@ -39,7 +40,7 @@
                         <span class="icon-bar"></span>
                     </button>
                     <a href="{% url 'home' %}" class="navbar-brand logo">
-                        <img src="{{ STATIC_URL }}/img/filmyou_mini.png" alt="FilmYou"/>
+                        <img src="{% static '/img/filmyou_mini.png' %}" alt="FilmYou"/>
                     </a>
                 </div>
                 <div class="navbar-collapse collapse">

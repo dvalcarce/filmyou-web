@@ -1,11 +1,12 @@
 {% extends "page.html" %}
 {% load i18n %}
 {% load filmyou_tags %}
+{% load staticfiles %}
 
 
 {% block head %}
     {{ block.super }}
-    <script src="{{ STATIC_URL }}js/jquery.raty.min.js"></script>
+    <script src="{% static 'js/jquery.raty.min.js' %}"></script>
 {% endblock %}
 
 {% block content_title %}

@@ -1,4 +1,6 @@
 {% load i18n %}
+{% load staticfiles %}
+
 
 <div class="panel-film col-xs-12 col-sm-6 col-md-4 col-lg-3">
     <div class="panel panel-default">
@@ -14,7 +16,7 @@
             </p>
 
             <h1>
-                <span id="star{{ review.review_id }}"></span>
+                <span id="{{ prefix }}star{{ review.review_id }}"></span>
                 {{ review.film.score|floatformat:1 }}
             </h1>
 
@@ -24,24 +26,28 @@
 
             <p class="text-right">
                 <small>{{ review.created|date:'DATETIME_FORMAT' }}</small>
-                <br>
-                <a class="label label-danger" href="#">
+            </p>
+            <br>
+
+            <form method="POST" role="form" class="pull-right"
+                  action="{% url 'reviews:remove' review.review_id %}">
+                {% csrf_token %}
+                <button type="submit" value="delete"
+                        class="btn btn-danger btn-xs">
                     {% trans 'Remove' %} <span
                         class="glyphicon glyphicon-remove"></span>
-                </a>
-            </p>
-
-
+                </button>
+            </form>
         </div>
     </div>
 </div>
 
 
 <script type="text/javascript">
-    $("#star{{ review.review_id }}").raty({
+    $("#{{ prefix }}star{{ review.review_id }}").raty({
         score: {{ review.film.preference|default:"0" }},
-        starOff: '{{ STATIC_URL }}img/star-off.png',
-        starOn: '{{ STATIC_URL }}img/star-on.png',
+        starOff: "{% static 'img/star-off.png' %}",
+        starOn: "{% static 'img/star-on.png' %}",
         click: function (score, evt) {
             $.ajax({
                 url: "{% url 'films:rate' %}?film={{ review.film.film_id }}&score=" + score
