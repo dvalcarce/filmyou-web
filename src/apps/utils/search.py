@@ -23,7 +23,7 @@ def sanitize(text):
     :return: sanitized text
     """
     if text:
-        return text.lower().replace(":", "").encode('utf-8')
+        return text.lower().strip().replace(":", "").encode('utf-8')
     raise ValueError
 
 
@@ -46,8 +46,9 @@ def check_field(field):
     :param field: field
     :return: field or KeyError
     """
-    if field.lower() in valid_fields:
-        return field.lower()
+    sanitized_field = sanitize(field)
+    if sanitized_field in valid_fields:
+        return sanitized_field
     raise KeyError(field + " is not a valid field")
 
 
