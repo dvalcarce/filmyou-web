@@ -262,8 +262,7 @@ class MyUser(UserenaBaseProfile):
             query = "SELECT item, relevance " \
                     "FROM recommendations " \
                     "WHERE user = %(user)s " \
-                    "AND relevance > %(last_relevance)s " \
-                    "AND item > %(last_item)s" \
+                    "AND relevance <= %(last_relevance)s " \
                     " LIMIT " \
                     "%(limit)s"
 

@@ -173,7 +173,7 @@ class Recommendations(LoginRequiredMixin, View):
         if films:
             return reverse('films:recommendations') \
                    + '?last_item=' + str(films[-1].film_id) \
-                   + '?last_relevance=' + str(films[-1].relevance)
+                   + '&last_relevance=' + str(films[-1].relevance)
 
     def get(self, *args, **kwargs):
         if self.request.is_ajax():
@@ -192,7 +192,7 @@ class Recommendations(LoginRequiredMixin, View):
 
     def _recommendations_ajax(self):
         try:
-            last = int(self.request.GET['last'])
+            last = (float(self.request.GET['last_relevance']), int(self.request.GET['last_item']))
         except:
             return HttpResponse("")
 
@@ -219,8 +219,8 @@ def render_homepage(request):
 
     c = {
         'suggestions': profile.get_recommendations(count=4),
-        'rated': profile.get_rated_films(count=4),
         'reviewed': reviews
     }
 
     return render(request, template, c)
+
