@@ -29,25 +29,6 @@
         {% endwith %}
     {% endif %}
     <div class="clearfix"></div>
-    {% if rated %}
-        <h2 class="text-center">{% trans 'Your last ratings' %}</h2>
-        <br/>
-        {% with prefix='rat-' %}
-            {% for film in rated %}
-                {% include 'films/film_panel.html' %}
-                {% if forloop.counter|divisibleby:4 %}
-                    <div class="clearfix visible-lg"></div>
-                {% endif %}
-                {% if forloop.counter|divisibleby:3 %}
-                    <div class="clearfix visible-md"></div>
-                {% endif %}
-                {% if forloop.counter|divisibleby:2 %}
-                    <div class="clearfix visible-sm"></div>
-                {% endif %}
-            {% endfor %}
-        {% endwith %}
-    {% endif %}
-    <div class="clearfix"></div>
     {% if reviewed %}
         <h2 class="text-center">{% trans 'Your last reviews' %}</h2>
         <br/>

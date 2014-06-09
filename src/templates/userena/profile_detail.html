@@ -48,12 +48,11 @@
     <div class="row">
         <div class="col-xs-0 col-sm-1 col-md-2 col-lg-3"></div>
         <div class="col-xs-12 col-sm-10 col-md-8 col-lg-6">
-            <img src="http:{{ profile.get_mugshot_url }}" alt="{% trans "Your mugshot" %}"/>
+			<div class="text-center">
+				<img src="http:{{ profile.get_mugshot_url }}" alt="{% trans "Your mugshot" %}"/>
+			</div>
 
             <dl class="dl-horizontal">
-                <dt>{% trans 'Id' %}</dt>
-                <dd>{{ user.id }}</dd>
-
                 <dt>{% trans 'Username' %}</dt>
                 <dd>{{ user.username }}</dd>
 
@@ -75,3 +74,4 @@
         </div>
     </div>
 {% endblock %}
+

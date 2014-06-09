@@ -17,7 +17,7 @@
 
             <h1>
                 <span id="{{ prefix }}star{{ review.review_id }}"></span>
-                {{ review.film.score|floatformat:1 }}
+				<span class="pull-right">{{ review.film.score|floatformat:1 }}</span>
             </h1>
 
             <p class="text-justify">

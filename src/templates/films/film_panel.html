@@ -17,7 +17,7 @@
 
             <h1>
                 <span id="{{ prefix }}star{{ film.film_id }}"></span>
-                {{ film.score|floatformat:1 }}
+				<span class="pull-right">{{ film.score|floatformat:1 }}</span>
             </h1>
             <dl>
                 <dt>{% trans 'Year' %}</dt>
