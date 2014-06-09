@@ -14,27 +14,29 @@ Default password is '1234'.
 Instructions:
     $ python manage.py shell
     >>> import sys
-    >>> sys.argv = ['path_to_ratings_file']
+    >>> sys.argv = ['users_django.py', 'path_to_ratings_file']
     >>> execfile('path_to_this_script')
 
 """
-if __name__ == '__main__':
+
+if __name__ == '__builtin__':
     if len(sys.argv) < 2:
         print "{0} <ratings>".format(sys.argv[0])
         sys.exit(0)
 
+    print "Reading ratings"
     with open(sys.argv[1], 'r') as data:
         users = set([])
         for line in data:
             user, film, score = line[:-1].split(",")
             users.add(int(user))
 
-    for u in user:
-        User.objects.create_user(u, '', '1234')
-
+    print "Creating", len(users), "users"
+    for u in users:
         new_user = UserenaSignup.objects.create_user(
-            u,
-            '',
-            '1234',
-            not userena_settings.USERENA_ACTIVATION_REQUIRED,
-            userena_settings.USERENA_ACTIVATION_REQUIRED)
+            username='user' + str(u),
+            email='filmyou_user_' + str(u) + '@irlab.org',
+            password='1234',
+            active=True,
+            send_email=False)
+
