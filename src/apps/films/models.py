@@ -11,7 +11,6 @@ from apps.utils.db import retrieve_in_order_from_db
 from apps.utils import poster
 from libs.cassandra import CassandraConnection
 
-
 class Person(models.Model):
     """
     Person model.
@@ -116,6 +115,12 @@ class Film(models.Model):
             score = 0.0
 
         return score
+
+    @property
+    def similar_films(self):
+        from libs.lucene import FilmSearcher
+        with FilmSearcher() as searcher:
+            return searcher.more_like_this(self)
 
     def set_preference(self, user):
         """

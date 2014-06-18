@@ -16,15 +16,16 @@ from java.io import File
 from org.apache.lucene.analysis.standard import StandardAnalyzer
 from org.apache.lucene.index import DirectoryReader, Term
 from org.apache.lucene.search import IndexSearcher, ScoreDoc
-from org.apache.lucene.search import BooleanQuery, BooleanClause, NumericRangeQuery
+from org.apache.lucene.search import BooleanQuery, BooleanClause, NumericRangeQuery, TermQuery
 from org.apache.lucene.search.spans import SpanNearQuery, SpanTermQuery
 from org.apache.lucene.store import FSDirectory
 from org.apache.lucene.util import Version
 from org.apache.lucene.queryparser.classic import MultiFieldQueryParser
 from org.apache.lucene.queries import CustomScoreQuery
+from org.apache.lucene.queries.mlt import MoreLikeThis
 from org.apache.lucene.queries.function import FunctionQuery
 from org.apache.lucene.queries.function.valuesource import LinearFloatFunction, PowFloatFunction, \
-    DoubleConstValueSource, ScaleFloatFunction, IntFieldSource, DoubleFieldSource
+    DoubleConstValueSource, ScaleFloatFunction, IntFieldSource
 
 
 class FilmSearcher(object):
@@ -35,6 +36,7 @@ class FilmSearcher(object):
     def __enter__(self):
         vm_env = lucene.getVMEnv()
         vm_env.attachCurrentThread()
+        self.reader = reader
         self.searcher = searcher
         self.analyzer = analyzer
         return self
@@ -143,6 +145,33 @@ class FilmSearcher(object):
         last_doc = ScoreDoc(last_id, last_score)
 
         score_docs = self.searcher.searchAfter(last_doc, query, count).scoreDocs
+
+        return self._retrieve_in_order(score_docs)
+
+    def more_like_this(self, film, count=4):
+        """
+        Use query by document techniques to find related documents
+        :param film: film
+        :param count: number of results
+        :return: a list of related films
+        """
+        # Retrieve doc id of the given film
+        film_query = TermQuery(Term('id', str(film.film_id)))
+        results = self.searcher.search(film_query, 1)
+        if results.totalHits != 1:
+            return []
+
+        # Use MoreLikeThis query by document technology
+        mlt = MoreLikeThis(reader)
+        mlt.setFieldNames(["title", "director", "writer", "genre", "cast", "fullplot"])
+        mlt.setAnalyzer(self.analyzer)
+        mlt_query = mlt.like(results.scoreDocs[0].doc)
+
+        # Filter the original film
+        filtered_query = BooleanQuery()
+        filtered_query.add(mlt_query, BooleanClause.Occur.MUST)
+        filtered_query.add(film_query, BooleanClause.Occur.MUST_NOT)
+        score_docs = self.searcher.search(filtered_query, count).scoreDocs
 
         return self._retrieve_in_order(score_docs)
 

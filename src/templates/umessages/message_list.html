@@ -44,8 +44,8 @@
                         <li class="list-group-item list-group-item-info">
                             {% else %}
                         <li class="list-group-item">
-                    {% endif %}                        <span
-                        class="label label-primary">{{ message.um_from_user }}</span>
+                    {% endif %}
+                    <span class="label label-primary">{{ message.um_from_user }}</span>
                     <span class="badge">{{ unread_between_count }}</span>
                     {% with message.latest_message as latest_message %}
                         {{ latest_message }}
