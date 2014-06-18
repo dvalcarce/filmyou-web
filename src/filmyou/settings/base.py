@@ -66,6 +66,17 @@ LUCENE = {
 ########## END DATABASE CONFIGURATION
 
 
+########## CACHE CONFIGURATION
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+    }
+}
+
+SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
+########## END CACHE CONFIGURATION
+
+
 ########## GENERAL CONFIGURATION
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#time-zone
 TIME_ZONE = 'Europe/Madrid'
@@ -89,7 +100,7 @@ USE_TZ = True
 MEDIA_ROOT = normpath(join(SITE_ROOT, 'media'))
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#media-url
-MEDIA_URL = '/filmyou/media/'
+MEDIA_URL = '/media/'
 ########## END MEDIA CONFIGURATION
 
 
@@ -98,7 +109,7 @@ MEDIA_URL = '/filmyou/media/'
 STATIC_ROOT = normpath(join(SITE_ROOT, 'assets'))
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#static-url
-STATIC_URL = '/filmyou/static/'
+STATIC_URL = '/static/'
 
 # See: https://docs.djangoproject.com/en/dev/ref/contrib/staticfiles/#std:setting-STATICFILES_DIRS
 STATICFILES_DIRS = (

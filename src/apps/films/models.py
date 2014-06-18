@@ -6,56 +6,66 @@ from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.db import models
 from userena.models import UserenaBaseProfile
+from caching.base import CachingManager, CachingMixin
 
 from apps.utils.db import retrieve_in_order_from_db
 from apps.utils import poster
 from libs.cassandra import CassandraConnection
 
-class Person(models.Model):
+
+class Person(CachingMixin, models.Model):
     """
     Person model.
     """
     person_id = models.PositiveIntegerField(primary_key=True)
     name = models.CharField(max_length=150)
 
+    objects = CachingManager()
+
     def __unicode__(self):
         return self.name
 
 
-class Genre(models.Model):
+class Genre(CachingMixin, models.Model):
     """
     Film genre model.
     """
     genre_id = models.PositiveIntegerField(primary_key=True)
     name = models.CharField(max_length=50)
 
+    objects = CachingManager()
+
     def __unicode__(self):
         return self.name
 
 
-class Country(models.Model):
+class Country(CachingMixin, models.Model):
     """
     Film country model.
     """
     country_id = models.PositiveIntegerField(primary_key=True)
     name = models.CharField(max_length=50)
 
+    objects = CachingManager()
+
     def __unicode__(self):
         return self.name
 
 
-class Language(models.Model):
+class Language(CachingMixin, models.Model):
     """
     Film country model.
     """
     language_id = models.PositiveIntegerField(primary_key=True)
     name = models.CharField(max_length=50)
 
+    objects = CachingManager()
+
     def __unicode__(self):
         return self.name
 
 
-class Film(models.Model):
+class Film(CachingMixin, models.Model):
     """
     Film model
     """
@@ -86,6 +96,8 @@ class Film(models.Model):
     genres = models.ManyToManyField(Genre)
     countries = models.ManyToManyField(Country)
     languages = models.ManyToManyField(Language)
+
+    objects = CachingManager()
 
     def __unicode__(self):
         return self.title
@@ -119,6 +131,7 @@ class Film(models.Model):
     @property
     def similar_films(self):
         from libs.lucene import FilmSearcher
+
         with FilmSearcher() as searcher:
             return searcher.more_like_this(self)
 
@@ -184,8 +197,10 @@ class Film(models.Model):
         self.save()
 
 
-class MyUser(UserenaBaseProfile):
+class MyUser(CachingMixin, UserenaBaseProfile):
     user = models.OneToOneField(User, unique=True, related_name='profile')
+
+    objects = CachingManager()
 
     def get_preferences_for_films(self, films):
         """
