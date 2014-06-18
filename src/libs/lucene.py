@@ -164,6 +164,8 @@ class FilmSearcher(object):
         # Use MoreLikeThis query by document technology
         mlt = MoreLikeThis(reader)
         mlt.setFieldNames(["title", "director", "writer", "genre", "cast", "fullplot"])
+        mlt.setMinTermFreq(0)
+        mlt.setMinDocFreq(0)
         mlt.setAnalyzer(self.analyzer)
         mlt_query = mlt.like(results.scoreDocs[0].doc)
 
