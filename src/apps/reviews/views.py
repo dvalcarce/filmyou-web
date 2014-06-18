@@ -30,10 +30,10 @@ class Reviews(LoginRequiredMixin, View):
         self.request.user.profile.get_preferences_for_films(films)
 
     def get(self, *args, **kwargs):
-        if self.request.is_ajax():
-            return self._reviews_ajax()
-
         page = self.request.GET.get('page', 1)
+
+        if self.request.is_ajax():
+            return self._reviews_ajax(page)
 
         all_reviews = self.request.user.profile.review_set.all().prefetch_related("film")
         paginator = Paginator(all_reviews, 12)
