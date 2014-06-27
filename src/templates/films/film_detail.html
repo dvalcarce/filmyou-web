@@ -115,7 +115,7 @@
             <div class="clearfix"></div>
             <div class="container-fluid">
                 {% with film.review_set.all as reviews %}
-                    {% paginate reviews %}
+                    {% paginate 5 reviews %}
                     <div class="panel panel-default">
                         <div class="panel-heading">
                             <h4>{% trans 'Reviews' %}</h4>

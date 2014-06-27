@@ -53,7 +53,7 @@
                 url: "{% url 'films:rate' %}",
                 type: "POST",
                 data: {
-                    film: "{{ film.film_id }}",
+                    film: "{{ review.film.film_id }}",
                     score: score,
                     current: window.location.pathname + window.location.search
                 },
