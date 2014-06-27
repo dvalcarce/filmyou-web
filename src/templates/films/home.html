@@ -9,43 +9,53 @@
 {% endblock %}
 
 {% block content %}
-
-    {% if suggestions %}
-        <h2 class="text-center">{% trans 'Top recommendations for you' %}</h2>
+    {% if not suggestions and not reviewed %}
+        <h1 class="text-center">{% trans 'Welcome to FilmYou' %}</h1>
         <br/>
-        {% with prefix='rec-' %}
-            {% for film in suggestions %}
-                {% include 'films/film_panel.html' %}
-                {% if forloop.counter|divisibleby:4 %}
-                    <div class="clearfix visible-lg"></div>
-                {% endif %}
-                {% if forloop.counter|divisibleby:3 %}
-                    <div class="clearfix visible-md"></div>
-                {% endif %}
-                {% if forloop.counter|divisibleby:2 %}
-                    <div class="clearfix visible-sm"></div>
-                {% endif %}
-            {% endfor %}
-        {% endwith %}
-    {% endif %}
-    <div class="clearfix"></div>
-    {% if reviewed %}
-        <h2 class="text-center">{% trans 'Your last reviews' %}</h2>
+        <h3 class="text-center">
+            {% trans 'Rate some films and get personalised recommendations!' %}
+        </h3>
         <br/>
-        {% with 'rev-' as prefix %}
-            {% for review in reviewed %}
-                {% include 'reviews/review_panel.html' %}
-                {% if forloop.counter|divisibleby:4 %}
-                    <div class="clearfix visible-lg"></div>
-                {% endif %}
-                {% if forloop.counter|divisibleby:3 %}
-                    <div class="clearfix visible-md"></div>
-                {% endif %}
-                {% if forloop.counter|divisibleby:2 %}
-                    <div class="clearfix visible-sm"></div>
-                {% endif %}
-            {% endfor %}
-        {% endwith %}
+        <h3 class="text-center">
+            {% trans 'Make friends, make reviews and enjoy cinema!' %}
+        </h3>
+    {% else %}
+        {% if suggestions %}
+            <h2 class="text-center">{% trans 'Top recommendations for you' %}</h2>
+            <br/>
+            {% with prefix='rec-' %}
+                {% for film in suggestions %}
+                    {% include 'films/film_panel.html' %}
+                    {% if forloop.counter|divisibleby:4 %}
+                        <div class="clearfix visible-lg"></div>
+                    {% endif %}
+                    {% if forloop.counter|divisibleby:3 %}
+                        <div class="clearfix visible-md"></div>
+                    {% endif %}
+                    {% if forloop.counter|divisibleby:2 %}
+                        <div class="clearfix visible-sm"></div>
+                    {% endif %}
+                {% endfor %}
+            {% endwith %}
+        {% endif %}
+        <div class="clearfix"></div>
+        {% if reviewed %}
+            <h2 class="text-center">{% trans 'Your last reviews' %}</h2>
+            <br/>
+            {% with 'rev-' as prefix %}
+                {% for review in reviewed %}
+                    {% include 'reviews/review_panel.html' %}
+                    {% if forloop.counter|divisibleby:4 %}
+                        <div class="clearfix visible-lg"></div>
+                    {% endif %}
+                    {% if forloop.counter|divisibleby:3 %}
+                        <div class="clearfix visible-md"></div>
+                    {% endif %}
+                    {% if forloop.counter|divisibleby:2 %}
+                        <div class="clearfix visible-sm"></div>
+                    {% endif %}
+                {% endfor %}
+            {% endwith %}
+        {% endif %}
     {% endif %}
-
 {% endblock %}
