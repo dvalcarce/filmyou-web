@@ -17,7 +17,7 @@
 
             <h1>
                 <span id="{{ prefix }}star{{ film.film_id }}"></span>
-				<span class="pull-right">{{ film.score|floatformat:1 }}</span>
+                <span class="pull-right">{{ film.score|floatformat:1 }}</span>
             </h1>
             <dl>
                 <dt>{% trans 'Year' %}</dt>
@@ -41,7 +41,18 @@
         starOn: "{% static 'img/star-on.png' %}",
         click: function (score, evt) {
             $.ajax({
-                url: "{% url 'films:rate' %}?film={{ film.film_id }}&score=" + score
+                url: "{% url 'films:rate' %}",
+                type: "POST",
+                data: {
+                    film: "{{ film.film_id }}",
+                    score: score,
+                    current: window.location.pathname + window.location.search
+                },
+                success: function (data) {
+                    if (data) {
+                        window.location.href = data;
+                    }
+                }
             });
         }
     });

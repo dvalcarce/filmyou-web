@@ -175,18 +175,22 @@
             starOff: "{% static 'img/star-off.png' %}",
             starOn: "{% static 'img/star-on.png' %}",
             click: function (score, evt) {
-                if (not_rated) {
-                    var n_votes = $("#n_votes");
-                    n = parseInt(n_votes.text()) + 1;
-                    n_votes.text(n);
-                    not_rated = false;
-                }
                 $.ajax({
-                    url: "{% url 'films:rate' %}?film={{ film.film_id }}&score=" + score
+                    url: "{% url 'films:rate' %}",
+                    type: "POST",
+                    data: {
+                        film: "{{ film.film_id }}",
+                        score: score,
+                        current: window.location.pathname + window.location.search
+                    },
+                    success: function (data) {
+                        if (data) {
+                            window.location.href = data;
+                        }
+                    }
                 });
             }
         });
-
     </script>
 
 {% endblock %}

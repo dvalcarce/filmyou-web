@@ -4,6 +4,7 @@ from __future__ import absolute_import
 
 from os import path
 import urllib
+import json
 
 from django.conf import settings
 from django.utils.translation import ugettext as _
@@ -149,18 +150,18 @@ def rate(request):
     Rate a film via AJAX.
     """
     if request.is_ajax():
+        current = request.POST['current']
         if request.user.is_authenticated():
-            film_id = int(request.GET['film'])
-            score = float(request.GET['score'])
+            film_id = int(request.POST['film'])
+            score = float(request.POST['score'])
 
             film = Film.objects.get(film_id=film_id)
             film.rate(request.user.profile, score)
 
             return HttpResponse()
         else:
-            # TODO: redirect
-            return redirect(settings.LOGIN_URL)
-
+            response = settings.LOGIN_URL + "?next=" + current
+            return HttpResponse(response)
     else:
         raise PermissionDenied
 

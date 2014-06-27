@@ -62,11 +62,9 @@
         <script type='text/javascript'>
             $(document).ready(function () {
                 var searchInput = $('#searchInput');
-
                 {% for field, text in query %}
                     searchInput.tagsinput('add', "{% trans field|capfirst %}: {{ text|safe }}");
                 {% endfor %}
-
             });
         </script>
     {% endif %}
