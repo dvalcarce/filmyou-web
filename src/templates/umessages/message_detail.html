@@ -16,35 +16,35 @@
 {% block content %}
     {% paginate message_list %}
 
-    <ul class="list-group">
-        {% show_pages %}
-        {% for message in message_list reversed %}
-            {% if message.sender == user %}
-                <li class="list-group-item">
-                    <p class="text-left">{{ message }}</p>
-                    <p class="text-right">
-                        <small>{{ message.sent_at|date:"DATETIME_FORMAT" }}</small>
-                        <span class="label label-primary">{{ message.sender }}</span>
-                    </p>
-                </li>
-            {% else %}
-                <li class="list-group-item list-group-item-success">
-
-                    <p class="text-right">{{ message }}</p>
-
-                    <p class="text-left">
-                        <span class="label label-primary">{{ message.sender }}</span>
-                        <small>{{ message.sent_at|date:"DATETIME_FORMAT" }}</small>
-                    </p>
-                </li>
-            {% endif %}
-        {% endfor %}
-        {% show_pages %}
-    </ul>
-
     <div class="row">
-        <div class="col-xs-0 col-sm-1 col-md-2 col-lg-3"></div>
-        <div class="col-xs-12 col-sm-10 col-md-8 col-lg-6">
+        <div class="col-sm-offset-1 col-md-offset-2 col-lg-offset-3 col-xs-12 col-sm-10 col-md-8 col-lg-6">
+            <ul class="list-group">
+                {% show_pages %}
+                {% for message in message_list reversed %}
+                    {% if message.sender == user %}
+                        <li class="list-group-item">
+                            <p class="text-left">{{ message.body }}</p>
+
+                            <p class="text-right">
+                                <small>{{ message.sent_at|date:"DATETIME_FORMAT" }}</small>
+                                <span class="label label-primary">{{ message.sender }}</span>
+                            </p>
+                        </li>
+                    {% else %}
+                        <li class="list-group-item list-group-item-success">
+
+                            <p class="text-right">{{ message.body }}</p>
+
+                            <p class="text-left">
+                                <span class="label label-primary">{{ message.sender }}</span>
+                                <small>{{ message.sent_at|date:"DATETIME_FORMAT" }}</small>
+                            </p>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+                {% show_pages %}
+            </ul>
+
             <form action="{% url 'userena_umessages_compose' %}" method="post"
                   id="compose_message_form">
                 {% csrf_token %}

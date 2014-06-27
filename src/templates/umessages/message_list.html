@@ -11,49 +11,53 @@
 {% endblock %}
 
 {% block content %}
-    <p class="text-right">
-        <a href="{% url 'userena_umessages_compose' %}" class="btn btn-default">
-            <span class="glyphicon glyphicon-plus"> {% trans "Compose" %}</span>
-        </a>
-    </p>
-    {% paginate message_list %}
-    <ul class="list-group">
-        {% show_pages %}
-        {% for message in message_list %}
-            {% if message.um_from_user == user %}
-                {% get_unread_message_count_between user and message.um_to_user as unread_between_count %}
-                <a class="no-link"
-                   href="{% url 'userena_umessages_detail' message.um_to_user.username %}">
-                    {% if unread_between_count %}
-                        <li class="list-group-item list-group-item-info">
-                            {% else %}
-                        <li class="list-group-item">
-                    {% endif %}
-                    <span class="label label-primary">{{ message.um_to_user }}</span>
-                    <span class="badge">{{ unread_between_count }}</span>
-                    {% with message.latest_message as latest_message %}
-                        {{ latest_message }}
-                    {% endwith %}
-                    </li>
-                </a>
-            {% else %}
-                {% get_unread_message_count_between user and message.um_from_user as unread_between_count %}
-                <a class="no-link"
-                   href="{% url 'userena_umessages_detail' message.um_from_user.username %}">
-                    {% if unread_between_count %}
-                        <li class="list-group-item list-group-item-info">
-                            {% else %}
-                        <li class="list-group-item">
-                    {% endif %}
-                    <span class="label label-primary">{{ message.um_from_user }}</span>
-                    <span class="badge">{{ unread_between_count }}</span>
-                    {% with message.latest_message as latest_message %}
-                        {{ latest_message }}
-                    {% endwith %}
-                    </li>
-                </a>
-            {% endif %}
+    <div class="col-sm-offset-1 col-md-offset-2 col-lg-offset-3 col-xs-12 col-sm-10 col-md-8 col-lg-6">
+        <p class="text-right">
+            <a href="{% url 'userena_umessages_compose' %}" class="btn btn-default">
+                <span class="glyphicon glyphicon-plus"> {% trans "Compose" %}</span>
+            </a>
+        </p>
+        {% paginate message_list %}
+        <ul class="list-group">
             {% show_pages %}
-        {% endfor %}
-    </ul>
+            {% for message in message_list %}
+                {% if message.um_from_user == user %}
+                    {% get_unread_message_count_between user and message.um_to_user as unread_between_count %}
+                    <a class="no-link"
+                       href="{% url 'userena_umessages_detail' message.um_to_user.username %}">
+                        {% if unread_between_count %}
+                            <li class="list-group-item list-group-item-info">
+                                {% else %}
+                            <li class="list-group-item">
+                        {% endif %}
+                        <span class="label label-primary">{{ message.um_to_user }}</span>
+                        <span class="badge">{{ unread_between_count }}</span>
+                        {% with message.latest_message as latest_message %}
+                            {{ latest_message }}
+                        {% endwith %}
+                        </li>
+                    </a>
+                {% else %}
+                    {% get_unread_message_count_between user and message.um_from_user as unread_between_count %}
+                    <a class="no-link"
+                       href="{% url 'userena_umessages_detail' message.um_from_user.username %}">
+                        {% if unread_between_count %}
+                            <li class="list-group-item list-group-item-info">
+                                {% else %}
+                            <li class="list-group-item">
+                        {% endif %}
+                        <span class="label label-primary">{{ message.um_from_user }}</span>
+                        <span class="badge">{{ unread_between_count }}</span>
+                        {% with message.latest_message as latest_message %}
+                            {{ latest_message }}
+                        {% endwith %}
+                        </li>
+                    </a>
+                {% endif %}
+                {% show_pages %}
+            {% empty %}
+                <p class="text-center">{% trans 'No messages!' %}</p>
+            {% endfor %}
+        </ul>
+    </div>
 {% endblock %}
