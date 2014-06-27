@@ -64,9 +64,9 @@
                         <dt>{% trans 'Released' %}</dt>
                         <dd>{{ film.released|date|default:"--" }}</dd>
                     {% endif %}
-                    {% if film.fullplot %}
+                    {% if film.fullplot or film.plot %}
                         <dt>{% trans 'Plot' %}</dt>
-                        <dd class="justify">{{ film.fullplot|default:"--" }}</dd>
+                        <dd class="justify">{{ film.fullplot|default:film.plot }}</dd>
                     {% endif %}
                 </dl>
             </div>
