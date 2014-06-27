@@ -54,10 +54,10 @@
                         </li>
                     </a>
                 {% endif %}
-                {% show_pages %}
             {% empty %}
                 <p class="text-center">{% trans 'No messages!' %}</p>
             {% endfor %}
+            {% show_pages %}
         </ul>
     </div>
 {% endblock %}
