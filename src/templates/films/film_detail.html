@@ -101,6 +101,9 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                            {% if forloop.counter|divisibleby:2 %}
+                                                <div class="clearfix visible-sm visible-md"></div>
+                                            {% endif %}
                                         {% endfor %}
                                     </div>
                                 </div>
